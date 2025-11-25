@@ -126,7 +126,7 @@ export const CardAnimation = ({
 				ref={effectContainerRef}
 				className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
 			/>
-			<div ref={cardRef} className="transform-style-3d relative h-full w-full">
+			<div ref={cardRef} className="hover-3d transform-style-3d relative h-full w-full">
 				<div className="backface-hidden absolute h-full w-full overflow-hidden rounded-lg">
 					<ImgWithFallback
 						src={frontImageSignedUrl}
@@ -145,6 +145,14 @@ export const CardAnimation = ({
 						decoding="auto"
 					/>
 				</div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
 			</div>
 
 			{['SUPER_RARE', 'SS_RARE', 'ULTRA_RARE', 'SECRET_RARE'].includes(
