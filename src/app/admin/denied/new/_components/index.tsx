@@ -120,6 +120,7 @@ const DeniedBookingCreatePage = () => {
 							label="開始日"
 							selectedDate={field.value ?? null}
 							onChange={field.onChange}
+							errorMessage={errors.startDate?.message}
 						/>
 					)}
 				/>
@@ -132,6 +133,7 @@ const DeniedBookingCreatePage = () => {
 								label="終了日"
 								selectedDate={field.value ?? null}
 								onChange={field.onChange}
+								errorMessage={errors.endDate?.message}
 							/>
 						)}
 					/>

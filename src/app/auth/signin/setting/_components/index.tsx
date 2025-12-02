@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useWatch } from 'react-hook-form'
 import AuthLoadingIndicator from '@/domains/auth/ui/AuthLoadingIndicator'
 import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
 import { signOutUser } from '@/domains/user/hooks/useSignOut'
@@ -25,11 +26,10 @@ const SigninSetting = () => {
 		register,
 		handleSubmit,
 		control,
-		watch,
 		formState: { errors, isSubmitting },
 	} = form
 
-	const selectedRole = watch('role')
+	const selectedRole = useWatch({ control, name: 'role' })
 	const isStudent = selectedRole === 'STUDENT'
 
 	const handleSignOut = async () => {
