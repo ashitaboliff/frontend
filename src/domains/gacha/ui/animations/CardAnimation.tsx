@@ -48,7 +48,7 @@ export const CardAnimation = ({
 			gsap.killTweensOf(
 				effectContainerRef.current.querySelectorAll('.particle-effect'),
 			)
-			effectContainerRef.current.innerHTML = '' // Clear dynamically added effect elements
+			effectContainerRef.current.innerHTML = ''
 		}
 	}
 
@@ -126,7 +126,10 @@ export const CardAnimation = ({
 				ref={effectContainerRef}
 				className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
 			/>
-			<div ref={cardRef} className="hover-3d transform-style-3d relative h-full w-full">
+			<div
+				ref={cardRef}
+				className="hover-3d transform-style-3d relative h-[25rem] w-[18.75rem]"
+			>
 				<div className="backface-hidden absolute h-full w-full overflow-hidden rounded-lg">
 					<ImgWithFallback
 						src={frontImageSignedUrl}
@@ -136,7 +139,11 @@ export const CardAnimation = ({
 						decoding="auto"
 					/>
 				</div>
-				<div className="backface-hidden rotateY-180 absolute h-full w-full overflow-hidden rounded-lg">
+				{Array.from({ length: 8 }).map((_, index) => (
+					/* biome-ignore lint: complexity/noArrayIndexKey */
+					<div key={`hover-3d-cell-${index}`} aria-hidden tabIndex={-1} />
+				))}
+				<div className="backface-hidden rotateY-180 !scale-100 absolute h-full w-full overflow-hidden rounded-lg">
 					<img
 						src="/backimage.webp"
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-うら面`}
@@ -145,14 +152,6 @@ export const CardAnimation = ({
 						decoding="auto"
 					/>
 				</div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
 			</div>
 
 			{['SUPER_RARE', 'SS_RARE', 'ULTRA_RARE', 'SECRET_RARE'].includes(

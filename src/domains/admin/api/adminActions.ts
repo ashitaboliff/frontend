@@ -27,7 +27,7 @@ import { type ApiResponse, StatusCode } from '@/types/response'
 export const getAllPadLocksAction = async (): Promise<
 	ApiResponse<PadLock[]>
 > => {
-	const res = await apiGet<RawPadLock[]>('/admin/padlocks', {
+	const res = await apiGet<RawPadLock[]>('/auth/admin/padlocks', {
 		next: { revalidate: 6 * 30 * 24 * 60 * 60, tags: ['padlocks'] },
 	})
 
@@ -50,7 +50,7 @@ export const getAllUserDetailsAction = async ({
 	const res = await apiGet<{
 		users: RawUserDetail[]
 		totalCount: number
-	}>('/admin/users', {
+	}>('/users/admin', {
 		searchParams: {
 			page,
 			perPage,
@@ -77,7 +77,7 @@ export const deleteUserAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiDelete<null>(`/admin/users/${id}`)
+	const res = await apiDelete<null>(`/users/${id}`)
 
 	if (!res.ok) {
 		return {
@@ -98,7 +98,7 @@ export const updateUserRoleAction = async ({
 	id: string
 	role: AccountRole
 }): Promise<ApiResponse<null>> => {
-	const res = await apiPut<null>(`/admin/users/${id}/role`, {
+	const res = await apiPut<null>(`/users/${id}/role`, {
 		body: { role },
 	})
 
@@ -125,7 +125,7 @@ export const createPadLockAction = async ({
 	name: string
 	password: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiPost<unknown>('/admin/padlocks', {
+	const res = await apiPost<unknown>('/auth/admin/padlocks', {
 		body: { name, password },
 	})
 
@@ -146,7 +146,7 @@ export const deletePadLockAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiDelete<null>(`/admin/padlocks/${id}`)
+	const res = await apiDelete<null>(`/auth/admin/padlocks/${id}`)
 
 	if (!res.ok) {
 		return {

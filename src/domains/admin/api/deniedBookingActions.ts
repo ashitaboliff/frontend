@@ -145,7 +145,7 @@ export const createDeniedBookingAction = async (
 		return request.error
 	}
 
-	const res = await apiPost<unknown>('/admin/booking/denials', {
+	const res = await apiPost<unknown>('/booking/denied', {
 		body: request.payload,
 	})
 
@@ -183,7 +183,7 @@ export const getDeniedBookingAction = async ({
 	const res = await apiGet<{
 		data: RawDeniedBooking[]
 		totalCount: number
-	}>('/admin/booking/denials', {
+	}>('/booking/denied', {
 		searchParams: {
 			page,
 			perPage,
@@ -216,7 +216,7 @@ export const deleteDeniedBookingAction = async ({
 	id: string
 	date: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiDelete<null>(`/admin/booking/denials/${id}`)
+	const res = await apiDelete<null>(`/booking/denied/${id}`)
 
 	if (!res.ok) {
 		return {
