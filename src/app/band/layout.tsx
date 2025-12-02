@@ -8,7 +8,7 @@ export const metadata = createMetaData({
 	url: '/band',
 })
 
-export default function RootLayout({
+export default function Layout({
 	children,
 }: Readonly<{
 	children: ReactNode

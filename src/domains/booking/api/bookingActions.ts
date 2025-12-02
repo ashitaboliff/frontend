@@ -287,7 +287,6 @@ export const authBookingAction = async ({
 
 export const getBookingIds = async (): Promise<string[]> => {
 	const response = await apiGet<string[]>('/booking/ids', {
-		cache: 'no-store',
 		next: { revalidate: 24 * 60 * 60, tags: ['booking'] },
 	})
 

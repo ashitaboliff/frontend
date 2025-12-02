@@ -1,7 +1,5 @@
 import AdminMain from '@/app/admin/_components'
 
-const Page = async () => {
+export default async function Page() {
 	return <AdminMain />
 }
-
-export default Page
