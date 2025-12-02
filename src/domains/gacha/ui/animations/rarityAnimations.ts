@@ -49,7 +49,6 @@ const animateRare: RarityAnimation = ({ timeline, card }) => {
 		card.querySelectorAll<HTMLDivElement>('.backface-hidden'),
 		{
 			boxShadow: '0 0 0px 0px rgba(100,100,255,0)',
-			borderRadius: '1.7rem',
 		},
 		{
 			boxShadow: '0 0 20px 8px rgba(100,100,255,0.7)',
@@ -57,7 +56,6 @@ const animateRare: RarityAnimation = ({ timeline, card }) => {
 			yoyo: true,
 			repeat: 3,
 			delay: 0.5,
-			borderRadius: '1.7rem',
 		},
 		'<0.5',
 	)
@@ -72,14 +70,12 @@ const animateSuperRare: RarityAnimation = ({ timeline, card }) => {
 			card.querySelectorAll<HTMLDivElement>('.backface-hidden'),
 			{
 				boxShadow: '0 0 0px 0px rgba(255,215,0,0)',
-				borderRadius: '1.7rem',
 			},
 			{
 				boxShadow: '0 0 30px 12px rgba(255,215,0,0.8)',
 				duration: 0.5,
 				yoyo: true,
 				repeat: 3,
-				borderRadius: '1.7rem',
 			},
 			'-=0.5',
 		)

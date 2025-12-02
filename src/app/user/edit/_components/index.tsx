@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useWatch } from 'react-hook-form'
 import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
 import { expectedYearMap } from '@/domains/user/model/profileSchema'
 import { PartOptions, type Profile } from '@/domains/user/model/userTypes'
@@ -23,12 +24,11 @@ const ProfileEdit = ({ profile }: Props) => {
 		register,
 		handleSubmit,
 		control,
-		watch,
 		formState: { errors, isSubmitting },
 	} = form
 
-	const selectedRole = watch('role')
-	const isStudent = selectedRole === 'STUDENT'
+	const role = useWatch({ control, name: 'role' })
+	const isStudent = role === 'STUDENT'
 
 	return (
 		<div className="flex flex-col items-center justify-center rounded-lg bg-white p-4 shadow-lg">
@@ -55,7 +55,7 @@ const ProfileEdit = ({ profile }: Props) => {
 						<input
 							type="radio"
 							value="STUDENT"
-							{...register('role')}
+							{...register('role', { required: true })}
 							className="radio radio-primary"
 						/>
 						<span className="label-text">現役生</span>
@@ -65,7 +65,7 @@ const ProfileEdit = ({ profile }: Props) => {
 						<input
 							type="radio"
 							value="GRADUATE"
-							{...register('role')}
+							{...register('role', { required: true })}
 							className="radio radio-primary"
 						/>
 						<span className="label-text">卒業生</span>
