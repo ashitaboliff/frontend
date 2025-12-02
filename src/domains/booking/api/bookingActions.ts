@@ -241,7 +241,7 @@ export const deleteBookingAction = async ({
 	cookieStore.set(
 		'booking:flash',
 		JSON.stringify({ type: 'success', message: '予約を削除しました。' }),
-		{ path: '/booking', maxAge: 10, httpOnly: true },
+		{ path: '/booking', maxAge: 10, httpOnly: false },
 	)
 
 	return noContentResponse()
