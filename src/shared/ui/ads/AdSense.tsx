@@ -94,6 +94,10 @@ const RealAdSense = ({
 	// クリック検知（オプション）
 	useAdClickDetection(enableClickDetection, adSlot, placement, clickThreshold)
 
+	if (typeof window === 'undefined') {
+		return null
+	}
+
 	return (
 		<ins
 			className="adsbygoogle"
