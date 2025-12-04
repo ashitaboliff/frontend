@@ -12,11 +12,10 @@ import {
 import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
 import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'
+import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import { useQueryState } from '@/shared/hooks/useQueryState'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
-import FlashMessage, {
-	type NoticeType,
-} from '@/shared/ui/molecules/FlashMessage'
+import FlashMessage from '@/shared/ui/molecules/FlashMessage'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import { logError } from '@/shared/utils/logger'
 import type { ApiError } from '@/types/response'
@@ -43,8 +42,6 @@ type Props = {
 	readonly initialQuery: DeniedBookingQuery
 	readonly extraSearchParams?: string
 	readonly initialError?: ApiError
-	type?: NoticeType
-	message?: string
 }
 
 const DeniedBookingPage = ({
@@ -54,8 +51,6 @@ const DeniedBookingPage = ({
 	initialQuery,
 	extraSearchParams,
 	initialError,
-	type,
-	message,
 }: Props) => {
 	const router = useRouter()
 	const globalFeedback = useFeedback()
@@ -78,6 +73,9 @@ const DeniedBookingPage = ({
 		() => Math.max(1, Math.ceil(totalCount / query.perPage) || 1),
 		[totalCount, query.perPage],
 	)
+	const { type, message } = useFlashMessage({
+		key: 'admin/denied:flash',
+	})
 
 	const handleSelectBooking = useCallback(
 		(booking: DeniedBooking) => {

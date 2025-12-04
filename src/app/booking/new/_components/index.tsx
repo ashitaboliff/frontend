@@ -16,26 +16,20 @@ import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarC
 import { LATEST_GACHA_VERSION } from '@/domains/gacha/config/gachaConfig'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
 import { executeGachaPlay } from '@/domains/gacha/services/executeGachaPlay'
-import GachaResult, {
-	type GachaResultViewState,
-} from '@/domains/gacha/ui/GachaResult'
+import type { GachaResultViewState } from '@/domains/gacha/ui/GachaResult'
 import { useFeedback } from '@/shared/hooks/useFeedback'
-import PublicEnv from '@/shared/lib/env/public'
 import { Ads } from '@/shared/ui/ads'
-import ShareButton from '@/shared/ui/atoms/ShareButton'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
-import AddCalendarPopup from '@/shared/ui/molecules/AddCalendarPopup'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import PasswordInputField from '@/shared/ui/molecules/PasswordInputField'
-import Popup from '@/shared/ui/molecules/Popup'
 import {
 	DateToDayISOstring,
 	getCurrentJSTDateString,
 	toDateKey,
 } from '@/shared/utils'
-import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 import { logError } from '@/shared/utils/logger'
 import type { Session } from '@/types/session'
+import BookingResultPopup, { type BookingSummary } from './BookingResultPopup'
 
 const today = getCurrentJSTDateString()
 
@@ -43,14 +37,6 @@ interface Props {
 	readonly session: Session
 	readonly initialDateParam?: string
 	readonly initialTimeParam?: string
-}
-
-interface CreatedBookingSummary {
-	id: string
-	bookingDate: Date
-	bookingTimeIndex: number
-	registName: string
-	name: string
 }
 
 const BookingCreate = ({
@@ -61,10 +47,10 @@ const BookingCreate = ({
 	const router = useRouter()
 	const { mutate } = useSWRConfig()
 	const messageFeedback = useFeedback()
-	const [calendarPopupOpen, setCalendarPopupOpen] = useState(false)
 	const [popupOpen, setPopupOpen] = useState(false)
-	const [createdBooking, setCreatedBooking] =
-		useState<CreatedBookingSummary | null>(null)
+	const [createdBooking, setCreatedBooking] = useState<BookingSummary | null>(
+		null,
+	)
 	const [showPassword, setShowPassword] = useState(false)
 	const [gachaResultState, setGachaResultState] =
 		useState<GachaResultViewState>({ status: 'idle' })
@@ -89,8 +75,7 @@ const BookingCreate = ({
 	const defaultValues: Partial<BookingCreateFormInput> = useMemo(
 		() => ({
 			bookingDate: toDateKey(defaultBookingDate),
-			bookingTime:
-				BOOKING_TIME_LIST[defaultBookingTimeIndex] ?? BOOKING_TIME_LIST[0],
+			bookingTime: defaultBookingTimeIndex ?? 0,
 			registName: '',
 			name: '',
 			password: '',
@@ -101,7 +86,6 @@ const BookingCreate = ({
 	const {
 		register,
 		handleSubmit,
-		watch,
 		reset,
 		formState: { errors, isSubmitting },
 	} = useForm<BookingCreateFormInput, unknown, BookingCreateFormValues>({
@@ -139,25 +123,16 @@ const BookingCreate = ({
 		})
 	}, [gachaPlayCountToday, onGachaPlayedSuccessfully, session.user.id])
 
-	const shareUrl = useMemo(() => {
-		return `${PublicEnv.NEXT_PUBLIC_APP_URL}/booking/${createdBooking?.id}`
-	}, [createdBooking])
-
 	const onSubmit: SubmitHandler<BookingCreateFormValues> = async (data) => {
 		messageFeedback.clearFeedback()
 		setCreatedBooking(null)
-		setCalendarPopupOpen(false)
 		setGachaResultState({ status: 'idle' })
 
 		const bookingDate = new Date(data.bookingDate)
-		const bookingTimeIndex =
-			BOOKING_TIME_LIST.indexOf(data.bookingTime) >= 0
-				? BOOKING_TIME_LIST.indexOf(data.bookingTime)
-				: defaultBookingTimeIndex
 
 		const reservationData = {
 			bookingDate: DateToDayISOstring(bookingDate),
-			bookingTime: bookingTimeIndex,
+			bookingTime: data.bookingTime,
 			registName: data.registName,
 			name: data.name,
 			isDeleted: false,
@@ -176,7 +151,7 @@ const BookingCreate = ({
 				setCreatedBooking({
 					id: res.data.id,
 					bookingDate,
-					bookingTimeIndex,
+					bookingTimeIndex: data.bookingTime,
 					registName: data.registName,
 					name: data.name,
 				})
@@ -204,151 +179,89 @@ const BookingCreate = ({
 		}
 	}
 
-	const registNameValue = watch('registName')
-	const nameValue = watch('name')
-
 	return (
-		<div className="mx-auto max-w-md justify-center rounded-lg bg-white p-4 shadow-md">
-			<h2 className="mb-8 text-center font-bold text-2xl">新規予約</h2>
-			<div className="mx-auto max-w-md space-y-4">
-				<form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
-					<TextInputField
-						label="日付"
-						register={register('bookingDate')}
-						type="date"
-						disabled
-						autocomplete="off"
+		<div className="mx-auto max-w-md">
+			<div className="card my-4 bg-white shadow-xl">
+				<div className="card-body">
+					<input
+						type="hidden"
+						{...register('bookingTime', { valueAsNumber: true })}
 					/>
-					<TextInputField
-						label="時間"
-						register={register('bookingTime')}
-						type="text"
-						disabled
-						autocomplete="off"
-					/>
-					<TextInputField
-						type="text"
-						label="バンド名"
-						register={register('registName')}
-						placeholder="バンド名"
-						errorMessage={errors.registName?.message}
-						autocomplete="off"
-					/>
-					<TextInputField
-						type="text"
-						label="責任者"
-						register={register('name')}
-						placeholder="責任者名"
-						errorMessage={errors.name?.message}
-						autocomplete="off"
-					/>
-					<PasswordInputField
-						label="パスワード"
-						register={register('password')}
-						showPassword={showPassword}
-						handleClickShowPassword={() => setShowPassword((prev) => !prev)}
-						handleMouseDownPassword={(e) => e.preventDefault()}
-						errorMessage={errors.password?.message}
-					/>
-					<Ads placement="MenuDisplay" />
-					<div className="flex justify-center space-x-4">
-						<button
-							type="submit"
-							className="btn btn-primary"
-							disabled={isSubmitting}
-						>
-							{isSubmitting ? '処理中...' : '予約する'}
-						</button>
-						<button
-							type="button"
-							className="btn btn-outline"
-							onClick={() => router.push('/booking')}
-						>
-							カレンダーに戻る
-						</button>
-					</div>
-					{messageFeedback.feedback?.kind === 'error' && (
-						<FeedbackMessage source={messageFeedback.feedback} />
-					)}
-				</form>
-
-				{createdBooking && (
-					<Popup
-						id={`booking-create-popup-${createdBooking.id}`}
-						title="予約完了"
-						open={popupOpen}
-						onClose={() => setPopupOpen(false)}
+					<h2 className="card-title justify-center text-2xl">新規予約</h2>
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						className="space-y-2"
+						id="booking-create"
 					>
-						<h3 className="text-center font-semibold text-lg">
-							以下の内容で予約が完了しました
-						</h3>
-						<p className="text-center">
-							日付:{' '}
-							{formatDateSlashWithWeekday(createdBooking.bookingDate, {
-								space: false,
-							})}
-						</p>
-						<p className="text-center">
-							時間: {BOOKING_TIME_LIST[createdBooking.bookingTimeIndex]}
-						</p>
-						<p className="text-center">バンド名: {createdBooking.registName}</p>
-						<p className="text-center">責任者: {createdBooking.name}</p>
-						<GachaResult state={gachaResultState} />
-						<div className="flex flex-col justify-center gap-2 pt-2 sm:flex-row">
-							<button
-								type="button"
-								className="btn btn-primary"
-								onClick={() => setCalendarPopupOpen(true)}
-							>
-								スマホに予定追加
-							</button>
-							{shareUrl ? (
-								<ShareButton
-									url={shareUrl}
-									title="LINEで共有"
-									text={`予約日時: ${formatDateSlashWithWeekday(
-										createdBooking.bookingDate,
-										{ space: false },
-									)} ${BOOKING_TIME_LIST[createdBooking.bookingTimeIndex]}`}
-									isFullButton
-									isOnlyLine
-									className="btn btn-outline"
-								/>
-							) : (
-								<span className="text-center text-gray-500 text-sm">
-									シェアURLを取得できませんでした。
-								</span>
-							)}
-							<button
-								type="button"
-								className="btn btn-outline"
-								onClick={() => router.push('/booking')}
-							>
-								ホームに戻る
-							</button>
-						</div>
-					</Popup>
-				)}
+						<TextInputField
+							label="日付"
+							register={register('bookingDate')}
+							type="date"
+							disabled
+							autocomplete="off"
+						/>
+						<TextInputField
+							label="時間"
+							type="text"
+							value={BOOKING_TIME_LIST[defaultBookingTimeIndex]}
+							disabled
+						/>
+						<TextInputField
+							type="text"
+							label="バンド名"
+							register={register('registName')}
+							placeholder="バンド名"
+							errorMessage={errors.registName?.message}
+							autocomplete="off"
+						/>
+						<TextInputField
+							type="text"
+							label="責任者"
+							register={register('name')}
+							placeholder="責任者名"
+							errorMessage={errors.name?.message}
+							autocomplete="off"
+						/>
+						<PasswordInputField
+							label="パスワード"
+							register={register('password')}
+							showPassword={showPassword}
+							handleClickShowPassword={() => setShowPassword((prev) => !prev)}
+							handleMouseDownPassword={(e) => e.preventDefault()}
+							errorMessage={errors.password?.message}
+						/>
+						{messageFeedback.feedback?.kind === 'error' && (
+							<FeedbackMessage source={messageFeedback.feedback} />
+						)}
+					</form>
+				</div>
 			</div>
-
-			<AddCalendarPopup
-				bookingDetail={{
-					id: createdBooking?.id ?? '',
-					userId: session.user.id,
-					createdAt: new Date(),
-					updatedAt: new Date(),
-					bookingDate: DateToDayISOstring(
-						createdBooking?.bookingDate ?? defaultBookingDate,
-					),
-					bookingTime:
-						createdBooking?.bookingTimeIndex ?? defaultBookingTimeIndex,
-					registName: createdBooking?.registName ?? registNameValue,
-					name: createdBooking?.name ?? nameValue,
-					isDeleted: false,
-				}}
-				isPopupOpen={calendarPopupOpen}
-				setIsPopupOpen={setCalendarPopupOpen}
-			/>
+			<Ads placement="MenuDisplay" />
+			<div className="flex w-full flex-col gap-2">
+				<button
+					form="booking-create"
+					type="submit"
+					className="btn btn-primary w-full"
+					disabled={isSubmitting}
+				>
+					{isSubmitting ? '処理中...' : '予約する'}
+				</button>
+				<button
+					type="button"
+					className="btn btn-ghost w-full"
+					onClick={() => router.push('/booking')}
+				>
+					カレンダーに戻る
+				</button>
+			</div>
+			{createdBooking && (
+				<BookingResultPopup
+					booking={createdBooking}
+					popupOpen={popupOpen}
+					setPopupOpen={setPopupOpen}
+					gachaResultState={gachaResultState}
+				/>
+			)}
 		</div>
 	)
 }

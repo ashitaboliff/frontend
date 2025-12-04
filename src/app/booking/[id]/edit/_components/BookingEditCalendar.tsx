@@ -28,6 +28,9 @@ type Props = {
 	readonly className?: string
 }
 
+const EditCalendarCellClass =
+	'w-10 h-11 sm:w-full sm:h-16 flex flex-col justify-center items-center text-center break-words overflow-hidden py-1'
+
 const BookingEditCalendar = ({
 	bookingResponse,
 	actualBookingDate,
@@ -58,9 +61,9 @@ const BookingEditCalendar = ({
 			containerClassName={
 				className ? `flex justify-center ${className}` : 'flex justify-center'
 			}
-			cornerCellClassName="border border-base-200 w-11 sm:w-14 md:w-16"
-			headerCellClassName="border border-base-200 p-1 sm:p-2 w-11 h-9 sm:w-14 sm:h-12 md:w-16 md:h-14"
-			timeCellClassName="border border-base-200 p-1 sm:p-2 w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 break-words"
+			cornerCellClassName="border border-base-200 w-10 sm:w-14 md:w-16"
+			headerCellClassName="border border-base-200 p-0 sm:p-2 w-10 h-9 sm:w-14 sm:h-12 md:w-16 md:h-14"
+			timeCellClassName="border border-base-200 p-0 sm:p-2 w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 break-words"
 			renderCell={({ date, timeIndex }) => {
 				const booking = bookingResponse[date]?.[timeIndex]
 				const isSelected = date === bookingDate && timeIndex === bookingTime
@@ -83,7 +86,7 @@ const BookingEditCalendar = ({
 						onClick: withinRange
 							? () => handleSelect(date, timeIndex)
 							: undefined,
-						content: <AvailableCell />,
+						content: <AvailableCell className={EditCalendarCellClass} />,
 					}
 				}
 
@@ -91,7 +94,7 @@ const BookingEditCalendar = ({
 					return {
 						key,
 						className,
-						content: <DeniedCell />,
+						content: <DeniedCell className={EditCalendarCellClass} />,
 					}
 				}
 
@@ -106,6 +109,7 @@ const BookingEditCalendar = ({
 							<BookingInfoCell
 								registName={booking.registName}
 								name={booking.name}
+								className={EditCalendarCellClass}
 							/>
 						),
 					}
@@ -114,7 +118,7 @@ const BookingEditCalendar = ({
 				return {
 					key,
 					className,
-					content: <DeniedCell />,
+					content: <DeniedCell className={EditCalendarCellClass} />,
 				}
 			}}
 		/>

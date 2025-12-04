@@ -13,20 +13,18 @@ import {
 	useBookingWeekNavigation,
 } from '@/domains/booking/hooks/bookingHooks'
 import { useFeedback } from '@/shared/hooks/useFeedback'
+import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
-import FlashMessage, {
-	type NoticeType,
-} from '@/shared/ui/molecules/FlashMessage'
+import FlashMessage from '@/shared/ui/molecules/FlashMessage'
 import { formatMonthDay, formatWeekday } from '@/shared/utils/dateFormat'
 import type { ApiError } from '@/types/response'
 
 interface Props {
 	readonly initialViewDate: string
-	readonly type?: NoticeType
-	readonly message?: string
 }
 
-const BookingMainPage = ({ initialViewDate, type, message }: Props) => {
+const BookingMainPage = ({ initialViewDate }: Props) => {
+	const { type, message } = useFlashMessage({ key: 'booking:flash' })
 	const initialDate = useMemo(
 		() => new Date(initialViewDate),
 		[initialViewDate],

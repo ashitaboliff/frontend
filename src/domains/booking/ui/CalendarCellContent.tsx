@@ -12,10 +12,15 @@ const truncateWithEllipsis = (value: string, maxLength: number): string => {
 interface BookingInfoCellProps {
 	readonly registName: string
 	readonly name: string
+	readonly className?: string
 }
 
-export const BookingInfoCell = ({ registName, name }: BookingInfoCellProps) => (
-	<div className={CALENDAR_CELL_CONTENT_CLASS}>
+export const BookingInfoCell = ({
+	registName,
+	name,
+	className,
+}: BookingInfoCellProps) => (
+	<div className={className || CALENDAR_CELL_CONTENT_CLASS}>
 		<p className="font-bold text-base-content text-xxxs sm:text-xs-custom">
 			{truncateWithEllipsis(registName, 21)}
 		</p>
@@ -27,10 +32,11 @@ export const BookingInfoCell = ({ registName, name }: BookingInfoCellProps) => (
 
 interface DeniedCellProps {
 	readonly label?: string
+	readonly className?: string
 }
 
-export const DeniedCell = ({ label }: DeniedCellProps) => (
-	<div className={CALENDAR_CELL_CONTENT_CLASS}>
+export const DeniedCell = ({ label, className }: DeniedCellProps) => (
+	<div className={className || CALENDAR_CELL_CONTENT_CLASS}>
 		<HiMiniXMark color="red" size={20} />
 		{label ? (
 			<p className="text-base-content text-xxxs sm:text-xs-custom">{label}</p>
@@ -38,8 +44,12 @@ export const DeniedCell = ({ label }: DeniedCellProps) => (
 	</div>
 )
 
-export const AvailableCell = () => (
-	<div className={CALENDAR_CELL_CONTENT_CLASS}>
+interface AvailableCellProps {
+	readonly className?: string
+}
+
+export const AvailableCell = ({ className }: AvailableCellProps) => (
+	<div className={className || CALENDAR_CELL_CONTENT_CLASS}>
 		<PiCircle color="blue" size={20} />
 	</div>
 )

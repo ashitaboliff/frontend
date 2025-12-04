@@ -1,3 +1,6 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
 import type { CSSProperties } from 'react'
 import type { AdFormat, AdLayout } from '@/shared/lib/ads'
 import AdSense from './AdSense'
@@ -68,6 +71,7 @@ const Ads = ({
 	enableClickDetection,
 	clickThreshold,
 }: AdsProps) => {
+	const pathname = usePathname()
 	const config = ADS_CONFIG[placement] as AdsConfig | undefined
 
 	if (!config) {
@@ -98,6 +102,7 @@ const Ads = ({
 	return (
 		<div className={mergedClassName || undefined}>
 			<AdSense
+				key={pathname}
 				clientId={clientId}
 				adSlot={slot}
 				adFormat={format}
