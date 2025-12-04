@@ -25,7 +25,7 @@ const BookingDetail = ({ bookingDetail }: Props) => {
 	}
 
 	return (
-		<div className="container mx-auto flex flex-col items-center">
+		<div className="mx-auto max-w-md">
 			<BookingDetailBox
 				bookingDate={bookingDetail.bookingDate}
 				bookingTime={bookingDetail.bookingTime}
@@ -33,41 +33,40 @@ const BookingDetail = ({ bookingDetail }: Props) => {
 				name={bookingDetail.name}
 			/>
 			<Ads placement="MenuDisplay" />
-			<div className="flex w-full max-w-md flex-col items-center justify-center gap-2 sm:flex-row">
+			<div className="flex w-full flex-row items-center justify-center gap-2">
 				<button
 					type="button"
-					className="btn btn-primary w-full sm:w-1/3"
+					className="btn btn-primary flex-1"
 					onClick={() => router.push(`/booking/${bookingDetail?.id}/edit`)}
 				>
 					編集
 				</button>
 				<button
 					type="button"
-					className="btn btn-accent btn-outline w-full sm:w-1/3"
+					className="btn btn-accent btn-outline flex-1"
 					onClick={() => setIsPopupOpen(true)}
 				>
-					スマホに追加
+					スマホ追加
 				</button>
 				<ShareButton
 					url={pathname}
-					title="LINEで共有"
+					title="共有"
 					text={`予約日時: ${formatDateSlashWithWeekday(
 						bookingDetail.bookingDate,
 						{ space: false },
 					)} ${BOOKING_TIME_LIST[Number(bookingDetail.bookingTime)]}`}
 					isFullButton
 					isOnlyLine
+					className="btn btn-outline flex-1"
 				/>
 			</div>
-			<div className="mt-4 flex w-full max-w-md justify-center">
-				<button
-					type="button"
-					className="btn btn-ghost w-full sm:w-auto"
-					onClick={() => router.push('/booking')}
-				>
-					コマ表に戻る
-				</button>
-			</div>
+			<button
+				type="button"
+				className="btn btn-ghost mt-2 w-full"
+				onClick={() => router.push('/booking')}
+			>
+				戻る
+			</button>
 			<AddCalendarPopup
 				bookingDetail={bookingDetail}
 				isPopupOpen={isPopupOpen}

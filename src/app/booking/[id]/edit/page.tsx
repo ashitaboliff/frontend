@@ -2,6 +2,7 @@
 
 import { addDays, subDays } from 'date-fns'
 import type { Metadata, ResolvingMetadata } from 'next'
+import { redirect } from 'next/navigation'
 import BookingEdit from '@/app/booking/[id]/edit/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import {
@@ -75,6 +76,9 @@ const Page = async ({ params }: PageProps) => {
 				])
 
 				if (!bookingDetail.ok || !bookingDetail.data) {
+					if (bookingDetail.status === 404) {
+						redirect('/booking')
+					}
 					logError('Failed to get booking detail for edit page', bookingDetail)
 					return <BookingDetailNotFound />
 				}

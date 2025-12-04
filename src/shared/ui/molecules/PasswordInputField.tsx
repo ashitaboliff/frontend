@@ -30,7 +30,7 @@ const PasswordInputField = ({
 	className?: string
 }) => {
 	return (
-		<div>
+		<div className="flex w-full flex-col">
 			{label && <LabelInputField label={label} labelId={labelId} />}
 			<div className="relative">
 				<input

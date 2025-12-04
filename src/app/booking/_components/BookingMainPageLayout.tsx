@@ -23,7 +23,7 @@ const MainPageLayout = async () => {
 			<Modal
 				id={modalId}
 				btnText="使い方の表示"
-				btnClass="btn btn-outline btn-md"
+				btnClass="btn btn-outline btn-md w-30"
 				modalClass="prose prose-h3:text-center max-w-none text-base-content max-h-[80vh] overflow-y-auto"
 			>
 				<MDXRemote source={markdownContent} />

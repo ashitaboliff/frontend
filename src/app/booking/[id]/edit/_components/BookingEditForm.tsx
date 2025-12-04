@@ -4,10 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
-import {
-	type BookingAccessGrant,
-	updateBookingAction,
-} from '@/domains/booking/api/bookingActions'
+import { updateBookingAction } from '@/domains/booking/api/bookingActions'
 import {
 	type BookingEditFormValues,
 	bookingEditSchema,
@@ -32,9 +29,8 @@ interface Props {
 	readonly onSuccess: (updatedBooking: Booking) => void
 	readonly initialBookingResponse: BookingResponse | null
 	readonly initialViewDay: Date
-	readonly bookingAccess: BookingAccessGrant | null
-	readonly requiresAuthToken: boolean
 	readonly onRequireAuth: (message: string) => void
+	readonly ensureAccessToken: () => string | null
 }
 
 const today = getCurrentJSTDateString()
@@ -46,9 +42,8 @@ const BookingEditForm = ({
 	onSuccess,
 	initialBookingResponse,
 	initialViewDay,
-	bookingAccess,
-	requiresAuthToken,
 	onRequireAuth,
+	ensureAccessToken,
 }: Props) => {
 	const { mutate } = useSWRConfig()
 	const [calendarOpen, setCalendarOpen] = useState(false)
@@ -80,36 +75,18 @@ const BookingEditForm = ({
 			: Number(watchedBookingTime ?? 0)
 
 	const onSubmit = async (data: BookingEditFormValues) => {
+		const isOwner = bookingDetail.userId === session.user.id
 		setSubmitStatus('loading')
 		submissionFeedback.clearFeedback()
-		const tokenExpiredMessage =
-			'予約の操作トークンの有効期限が切れています。もう一度認証してください。'
-		const tokenRequiredMessage =
-			'予約を編集するには再度パスワード認証が必要です。'
 		const tokenInvalidMessage =
 			'予約の操作トークンが無効になりました。再度認証してください。'
 
-		if (requiresAuthToken) {
-			if (!bookingAccess) {
-				submissionFeedback.showError(tokenRequiredMessage, {
-					code: StatusCode.FORBIDDEN,
-				})
-				onRequireAuth(tokenRequiredMessage)
-				setSubmitStatus('idle')
-				return
-			}
-			const expiresAt = new Date(bookingAccess.expiresAt).getTime()
-			if (Number.isNaN(expiresAt) || expiresAt <= Date.now()) {
-				submissionFeedback.showError(tokenExpiredMessage, {
-					code: StatusCode.FORBIDDEN,
-				})
-				onRequireAuth(tokenExpiredMessage)
-				setSubmitStatus('idle')
-				return
-			}
-		}
-
 		try {
+			const token = ensureAccessToken()
+			if (!isOwner && !token) {
+				setSubmitStatus('idle')
+				return
+			}
 			const response = await updateBookingAction({
 				bookingId: bookingDetail.id,
 				userId: session.user.id,
@@ -121,7 +98,7 @@ const BookingEditForm = ({
 					isDeleted: false,
 				},
 				today,
-				authToken: bookingAccess?.token,
+				authToken: token ?? undefined,
 			})
 
 			if (response.ok) {
@@ -140,17 +117,12 @@ const BookingEditForm = ({
 				})
 				setSubmitStatus('idle')
 				return
-			} else if (
-				response.status === StatusCode.FORBIDDEN &&
-				requiresAuthToken
-			) {
-				onRequireAuth(tokenInvalidMessage)
-				submissionFeedback.showError(tokenInvalidMessage, {
-					code: StatusCode.FORBIDDEN,
-				})
 			} else {
-				submissionFeedback.showApiError(response)
+				if (response.status === StatusCode.FORBIDDEN) {
+					onRequireAuth(tokenInvalidMessage)
+				}
 			}
+			submissionFeedback.showApiError(response)
 			setSubmitStatus('idle')
 		} catch (error) {
 			submissionFeedback.showError(
@@ -170,24 +142,18 @@ const BookingEditForm = ({
 			: null
 
 	return (
-		<div className="space-y-6 pt-4">
-			<div className="text-center">
-				<h2 className="font-bold text-2xl">予約編集</h2>
-			</div>
-
-			<div className="mx-auto max-w-md space-y-4">
-				<BookingEditFormFields
-					register={register}
-					errors={errors}
-					isSubmitting={isSubmitting}
-					isLoading={submitStatus === 'loading'}
-					onCancel={onCancel}
-					onOpenCalendar={() => setCalendarOpen(true)}
-					onSubmit={handleSubmit(onSubmit)}
-					errorFeedback={errorFeedback}
-					bookingTimeIndex={bookingTimeIndex}
-				/>
-			</div>
+		<>
+			<BookingEditFormFields
+				register={register}
+				errors={errors}
+				isSubmitting={isSubmitting}
+				isLoading={submitStatus === 'loading'}
+				onCancel={onCancel}
+				onOpenCalendar={() => setCalendarOpen(true)}
+				onSubmit={handleSubmit(onSubmit)}
+				errorFeedback={errorFeedback}
+				bookingTimeIndex={bookingTimeIndex}
+			/>
 
 			<BookingEditCalendarPopup
 				open={calendarOpen}
@@ -200,7 +166,7 @@ const BookingEditForm = ({
 				bookingTime={bookingTimeIndex}
 				setValue={setValue}
 			/>
-		</div>
+		</>
 	)
 }
 

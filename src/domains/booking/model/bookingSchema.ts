@@ -6,7 +6,7 @@ export const bookingAuthSchema = zod.object({
 
 export const bookingCreateSchema = zod.object({
 	bookingDate: zod.string().min(1, { message: '予約日を入力してください。' }),
-	bookingTime: zod.string().min(1, { message: '予約時間を入力してください。' }),
+	bookingTime: zod.number(),
 	registName: zod
 		.string()
 		.trim()

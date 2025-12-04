@@ -141,7 +141,7 @@ export const CardAnimation = ({
 				</div>
 				{Array.from({ length: 8 }).map((_, index) => (
 					/* biome-ignore lint: complexity/noArrayIndexKey */
-					<div key={`hover-3d-cell-${index}`} aria-hidden tabIndex={-1} />
+					<div key={`hover-3d-cell-${index}`} tabIndex={-1} />
 				))}
 				<div className="backface-hidden rotateY-180 !scale-100 absolute h-full w-full overflow-hidden rounded-lg">
 					<img
