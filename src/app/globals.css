@@ -338,6 +338,53 @@
 	cursor: wait;
 }
 
+@layer components {
+	.gaming {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.7rem;
+    padding: 3px;
+  }
+
+	.gaming::before {
+		content: '';
+		position: absolute;
+		inset: -120px;
+		background: conic-gradient(
+			from 0deg,
+			#ff3b30,
+			#ff9500,
+			#ffcc00,
+			#34c759,
+			#32ade6,
+			#007aff,
+			#5856d6,
+			#ff2d55,
+			#ff3b30
+		);
+		animation: gaming-rotate 2s linear infinite;
+		z-index: -3;
+		filter: blur(0.2);
+	}
+
+	.gaming > .inner {
+    position: relative;
+    border-radius: inherit;
+    z-index: 1;
+		background-color: #fff;
+		padding: 3px 9px !important;
+  }
+
+	@keyframes gaming-rotate {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+}
+
 @keyframes creeping-overlay-drop {
 	0% {
 		top: -220px;

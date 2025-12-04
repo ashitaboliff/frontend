@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { nicomoji } from '@/shared/lib/fonts'
 import {
+	FaPaypal,
 	FaRegUserCircle,
 	FaYoutube,
 	IoHomeOutline,
@@ -12,12 +13,33 @@ import {
 import HeaderIcon from './HeaderIcon'
 
 const MenuLinks = [
-	{ href: '/home', label: 'ホーム', icon: IoHomeOutline },
-	{ href: '/booking', label: 'コマ表', icon: MdOutlineEditCalendar },
-	{ href: '/video', label: '過去動画', icon: FaYoutube },
-	{ href: '/booking/logs', label: '予約ログ', icon: RxCountdownTimer },
-	{ href: '/auth/signin', label: '利用登録', icon: FaRegUserCircle },
-]
+	{ id: 'home', href: '/home', label: 'ホーム', icon: IoHomeOutline },
+	{
+		id: 'booking',
+		href: '/booking',
+		label: 'コマ表',
+		icon: MdOutlineEditCalendar,
+	},
+	{ id: 'video', href: '/video', label: '過去動画', icon: FaYoutube },
+	{
+		id: 'log',
+		href: '/booking/logs',
+		label: '予約ログ',
+		icon: RxCountdownTimer,
+	},
+	{
+		id: 'signin',
+		href: '/auth/signin',
+		label: '利用登録',
+		icon: FaRegUserCircle,
+	},
+	{
+		id: 'paypal',
+		href: 'https://paypal.me/watabeggg?locale.x=ja_JP&country.x=JP',
+		label: 'わたべに投げ銭する',
+		icon: FaPaypal,
+	},
+] as const
 
 const Header = async () => {
 	const drawerId = 'main-menu-drawer'
@@ -70,10 +92,13 @@ const Header = async () => {
 						</div>
 					</li>
 					{MenuLinks.map((link) => (
-						<li key={link.href}>
+						<li
+							key={link.href}
+							className={link.id === 'paypal' ? 'gaming' : ''}
+						>
 							<Link
 								href={link.href}
-								className="flex items-center gap-4 text-lg"
+								className={`flex items-center gap-4 text-lg ${link.id === 'paypal' ? 'inner' : ''}`}
 							>
 								<link.icon />
 								{link.label}
