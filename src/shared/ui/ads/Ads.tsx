@@ -74,6 +74,10 @@ const Ads = ({
 	const pathname = usePathname()
 	const config = ADS_CONFIG[placement] as AdsConfig | undefined
 
+	if(typeof window === 'undefined'){
+		return null
+	}
+
 	if (!config) {
 		console.warn(`Ads: Unknown placement "${placement}" requested.`)
 		return null
