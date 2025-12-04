@@ -11,7 +11,7 @@ export const metadata = createMetaData({
 	url: '/booking',
 })
 
-export default function RootLayout({
+export default function Layout({
 	children,
 }: Readonly<{
 	children: ReactNode

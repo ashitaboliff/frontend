@@ -9,8 +9,8 @@ import {
 } from '@/domains/booking/hooks/bookingHooks'
 import type { BookingEditFormValues } from '@/domains/booking/model/bookingSchema'
 import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
-import { BookingErrorMessage } from '@/domains/booking/ui/BookingActionFeedback'
 import { useFeedback } from '@/shared/hooks/useFeedback'
+import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import Popup from '@/shared/ui/molecules/Popup'
 import type { ApiError } from '@/types/response'
 import BookingEditCalendar from './BookingEditCalendar'
@@ -87,29 +87,29 @@ const BookingEditCalendarPopup = ({
 			onClose={onClose}
 		>
 			<div className="flex flex-col items-center justify-center gap-y-2">
-				<div className="justify中心 flex flex-row space-x-2">
+				<div className="flex flex-row items-center gap-2">
 					<button
 						type="button"
-						className="btn btn-outline"
+						className="btn btn-outline btn-sm sm:btn-md"
 						onClick={goPrevWeek}
 						disabled={!canGoPrevWeek || isLoading}
 					>
 						{'<'}
 					</button>
-					<div className="mx-2 w-60 text-center font-bold text-lg">
+					<div className="w-48 text-center font-bold text-base sm:w-60 sm:text-lg">
 						{viewDate.toLocaleDateString()}~
 						{addDays(viewDate, viewRangeDays - 1).toLocaleDateString()}
 					</div>
 					<button
 						type="button"
-						className="btn btn-outline"
+						className="btn btn-outline btn-sm sm:btn-md"
 						onClick={goNextWeek}
 						disabled={!canGoNextWeek || isLoading}
 					>
 						{'>'}
 					</button>
 				</div>
-				<BookingErrorMessage feedback={calendarFeedback.feedback} />
+				<FeedbackMessage source={calendarFeedback.feedback} />
 				{bookingResponse ? (
 					<BookingEditCalendar
 						bookingResponse={bookingResponse}

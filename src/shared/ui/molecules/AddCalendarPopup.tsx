@@ -16,7 +16,10 @@ const AddCalendarPopup = ({
 	isPopupOpen,
 	setIsPopupOpen,
 }: {
-	bookingDetail: Booking
+	bookingDetail: Omit<
+		Booking,
+		'userId' | 'createdAt' | 'updatedAt' | 'isDeleted'
+	>
 	isPopupOpen: boolean
 	setIsPopupOpen: (arg: boolean) => void
 }) => {

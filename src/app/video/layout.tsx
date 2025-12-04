@@ -8,7 +8,7 @@ export const metadata = createMetaData({
 	url: '/video',
 })
 
-export default function RootLayout({
+export default function Layout({
 	children,
 }: Readonly<{
 	children: ReactNode

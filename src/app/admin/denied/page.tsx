@@ -6,7 +6,6 @@ import {
 	parseDeniedBookingQuery,
 } from '@/domains/admin/query/deniedBookingQuery'
 import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
-import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import { getCurrentJSTDateString } from '@/shared/utils'
 import type { ApiError } from '@/types/response'
 
@@ -15,9 +14,6 @@ type Props = {
 }
 
 const Page = async ({ searchParams }: Props) => {
-	const { type, message } = await useFlashMessage({
-		key: 'admin/denied:flash',
-	})
 	const urlParams = new URLSearchParams()
 
 	for (const [key, value] of Object.entries(await searchParams)) {
@@ -68,8 +64,6 @@ const Page = async ({ searchParams }: Props) => {
 			initialQuery={query}
 			extraSearchParams={extraSearchParams}
 			initialError={error}
-			type={type}
-			message={message}
 		/>
 	)
 }

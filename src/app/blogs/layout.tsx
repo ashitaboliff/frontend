@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import HomePageHeader from '@/shared/ui/molecules/HomePageHeader'
 
-export default function RootLayout({
+export default function Layout({
 	children,
 }: Readonly<{
 	children: ReactNode

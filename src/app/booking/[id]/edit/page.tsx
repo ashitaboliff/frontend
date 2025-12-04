@@ -2,7 +2,7 @@
 
 import { addDays, subDays } from 'date-fns'
 import type { Metadata, ResolvingMetadata } from 'next'
-import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import BookingEdit from '@/app/booking/[id]/edit/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import {
@@ -50,8 +50,6 @@ export async function generateMetadata(
 }
 
 const Page = async ({ params }: PageProps) => {
-	const cookieStore = await cookies()
-	const flash = cookieStore.get('booking:flash')?.value
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
@@ -78,8 +76,8 @@ const Page = async ({ params }: PageProps) => {
 				])
 
 				if (!bookingDetail.ok || !bookingDetail.data) {
-					if (flash) {
-						return null
+					if (bookingDetail.status === 404) {
+						redirect('/booking')
 					}
 					logError('Failed to get booking detail for edit page', bookingDetail)
 					return <BookingDetailNotFound />

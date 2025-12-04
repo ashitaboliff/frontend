@@ -1,7 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Inter } from 'next/font/google'
-import { headers } from 'next/headers'
 import Script from 'next/script'
 import PublicEnv from '@/shared/lib/env/public'
 import './globals.css'
@@ -18,19 +17,11 @@ export const metadata = createMetaData({
 	url: '/',
 })
 
-export default async function RootLayout({
+export default function RootLayout({
 	children,
 }: Readonly<{
 	children: ReactNode
 }>) {
-	const headersList = await headers()
-	const proto = headersList.get('x-forwarded-proto') ?? 'https'
-	const host =
-		headersList.get('x-forwarded-host') ??
-		headersList.get('host') ??
-		'localhost'
-	const path = headersList.get('x-invoke-path') ?? '/'
-	const pathname = new URL(path, `${proto}://${host}`).pathname
 	return (
 		<html lang="ja">
 			<body className={`overflow-x-hidden ${inter.className}`}>
@@ -47,7 +38,7 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 					<main className="container mx-auto mt-24 h-full max-w-screen-lg px-2">
 						{children}
 					</main>
-					<Ads placement="Field" key={pathname} />
+					<Ads placement="Field" />
 					<Footer />
 				</AdSenseProvider>
 				<Script

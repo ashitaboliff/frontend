@@ -14,8 +14,8 @@ import {
 } from '@/domains/booking/model/bookingSchema'
 import type { Booking } from '@/domains/booking/model/bookingTypes'
 import BookingDetailBox from '@/domains/booking/ui/BookingDetailBox'
-import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
 import { useFeedback } from '@/shared/hooks/useFeedback'
+import { Ads } from '@/shared/ui/ads'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import PasswordInputField from '@/shared/ui/molecules/PasswordInputField'
 import { logError } from '@/shared/utils/logger'
@@ -55,10 +55,6 @@ const BookingEditAuthForm = ({
 		}
 	}, [initialError, showError])
 
-	if (!bookingDetail) {
-		return <BookingDetailNotFound />
-	}
-
 	const togglePassword = () => setShowPassword((prev) => !prev)
 
 	const onSubmit = async (data: BookingAuthFormValues) => {
@@ -88,49 +84,44 @@ const BookingEditAuthForm = ({
 	}
 
 	return (
-		<div className="flex flex-col">
-			<div className="flex justify-center">
-				<BookingDetailBox
-					bookingDate={bookingDetail.bookingDate}
-					bookingTime={bookingDetail.bookingTime}
-					registName={bookingDetail.registName}
-					name={bookingDetail.name}
-				/>
-			</div>
+		<div className="mx-auto max-w-md">
+			<BookingDetailBox
+				bookingDate={bookingDetail.bookingDate}
+				bookingTime={bookingDetail.bookingTime}
+				registName={bookingDetail.registName}
+				name={bookingDetail.name}
+			/>
+			<Ads placement="MenuDisplay" />
 			<form
 				onSubmit={handleSubmit(onSubmit)}
-				className="mt-4 flex flex-col items-center space-y-4"
+				className="flex flex-col items-center space-y-4"
 			>
-				<div className="form-control w-full max-w-xs">
-					<label className="label" htmlFor="password">
-						<span className="label-text">パスワード</span>
-					</label>
-					<PasswordInputField
-						register={register('password')}
-						showPassword={showPassword}
-						handleClickShowPassword={togglePassword}
-						handleMouseDownPassword={(event) => event.preventDefault()}
-						errorMessage={errors.password?.message}
-					/>
-				</div>
-				<div className="flex gap-4">
+				<FeedbackMessage source={feedback.feedback} />
+				<PasswordInputField
+					label="パスワード"
+					register={register('password')}
+					showPassword={showPassword}
+					handleClickShowPassword={togglePassword}
+					handleMouseDownPassword={(event) => event.preventDefault()}
+					errorMessage={errors.password?.message}
+				/>
+				<div className="flex w-full flex-col gap-2">
 					<button
 						type="submit"
-						className="btn btn-primary"
+						className="btn btn-primary w-full"
 						disabled={isSubmitting}
 					>
 						{isSubmitting ? '認証中...' : 'ログイン'}
 					</button>
 					<button
 						type="button"
-						className="btn btn-outline"
+						className="btn btn-ghost w-full"
 						onClick={() => router.push(`/booking/${bookingDetail.id}`)}
 					>
-						予約詳細に戻る
+						戻る
 					</button>
 				</div>
 			</form>
-			<FeedbackMessage source={feedback.feedback} className="mt-4" />
 		</div>
 	)
 }

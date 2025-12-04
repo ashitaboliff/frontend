@@ -1,17 +1,33 @@
-'use server'
+'use client'
 
-import { cookies } from 'next/headers'
 import type { NoticeType } from '@/shared/ui/molecules/FlashMessage'
 
 interface Option {
 	readonly key: string
 }
 
-const useFlashMessage = async (options: Option) => {
-	const cookieStore = await cookies()
-	const flash = cookieStore.get(options.key)?.value
+const useFlashMessage = (options: Option) => {
 	let type: NoticeType | undefined
 	let message: string | undefined
+	if (typeof document === 'undefined') {
+		return { type, message }
+	}
+	const cookie = document.cookie
+	const flash = (() => {
+		const name = `${options.key}=`
+		for (const part of cookie.split(';')) {
+			const trimmed = part.trim()
+			if (trimmed.startsWith(name)) {
+				const raw = trimmed.slice(name.length)
+				try {
+					return decodeURIComponent(raw.replace(/\+/g, ' '))
+				} catch {
+					return raw
+				}
+			}
+		}
+		return undefined
+	})()
 
 	if (flash) {
 		;({ type, message } = JSON.parse(flash) as {

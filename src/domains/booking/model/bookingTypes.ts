@@ -1,4 +1,4 @@
-export interface Booking {
+export type Booking = {
 	id: string
 	userId: string
 	createdAt: Date

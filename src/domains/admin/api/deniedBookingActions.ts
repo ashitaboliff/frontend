@@ -163,7 +163,7 @@ export const createDeniedBookingAction = async (
 	cookieStore.set(
 		'admin/denied:flash',
 		JSON.stringify({ type: 'success', message: '予約禁止日を作成しました。' }),
-		{ path: '/admin/denied', maxAge: 10, httpOnly: true },
+		{ path: '/admin/denied', maxAge: 10, httpOnly: false },
 	)
 
 	return createdResponse('created')

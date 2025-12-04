@@ -17,7 +17,7 @@ const BookingRefreshButton = () => {
 	return (
 		<button
 			type="button"
-			className="btn btn-info text-white"
+			className="btn btn-info w-30 text-white"
 			onClick={handleClick}
 			disabled={isPending}
 		>

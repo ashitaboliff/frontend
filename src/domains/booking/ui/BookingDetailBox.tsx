@@ -40,7 +40,7 @@ const BookingDetailBox = ({
 	]
 
 	return (
-		<div className="card mx-auto my-4 w-full max-w-md bg-base-100 shadow-xl">
+		<div className="card mx-auto my-4 w-full max-w-md bg-white shadow-xl">
 			<div className="card-body">
 				<h2 className="card-title justify-center text-2xl">予約詳細</h2>
 				<div className="divider my-1"></div>
