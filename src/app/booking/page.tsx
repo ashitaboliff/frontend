@@ -3,12 +3,12 @@ import BookingMainPageLayout from '@/app/booking/_components/BookingMainPageLayo
 import { getCurrentJSTDateString } from '@/shared/utils'
 
 const Page = async () => {
-	const initialViewDate = new Date(getCurrentJSTDateString({ offsetDays: -1 }))
+	const initialViewDate = getCurrentJSTDateString({ offsetDays: -1 })
 
 	return (
 		<>
 			<BookingMainPageLayout />
-			<BookingMainPage initialViewDate={initialViewDate.toISOString()} />
+			<BookingMainPage initialViewDate={initialViewDate} />
 		</>
 	)
 }
