@@ -26,6 +26,9 @@ jobs:
         with:
           version: 10.12.4
 
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -36,7 +39,7 @@ jobs:
         run: corepack enable
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Deploy Preview
         id: vercel
