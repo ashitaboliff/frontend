@@ -16,18 +16,15 @@ import { useFeedback } from '@/shared/hooks/useFeedback'
 import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import FlashMessage from '@/shared/ui/molecules/FlashMessage'
+import { getCurrentJSTDateString } from '@/shared/utils'
 import { formatMonthDay, formatWeekday } from '@/shared/utils/dateFormat'
 import type { ApiError } from '@/types/response'
 
-interface Props {
-	readonly initialViewDate: string
-}
-
-const BookingMainPage = ({ initialViewDate }: Props) => {
+const BookingMainPage = () => {
 	const { type, message } = useFlashMessage({ key: 'booking:flash' })
 	const initialDate = useMemo(
-		() => new Date(initialViewDate),
-		[initialViewDate],
+		() => new Date(getCurrentJSTDateString({ offsetDays: -1 })),
+		[],
 	)
 
 	const {
