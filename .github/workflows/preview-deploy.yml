@@ -25,14 +25,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Deploy Preview
         id: vercel
         run: |
-          url=$(vercel --token ${{ secrets.VERCEL_TOKEN }} \
+          url=$(pnpm dlx vercel@latest --token ${{ secrets.VERCEL_TOKEN }} \
                        --scope ${{ secrets.VERCEL_ORG_ID }} \
                        --confirm --cwd . | tail -n1)
           echo "preview_url=$url" >> $GITHUB_OUTPUT

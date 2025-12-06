@@ -1,5 +1,5 @@
 {
-  "name": "ashitabo-frontend",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -52,5 +52,6 @@
     "tailwindcss": "^4.1.7",
     "typescript": "^5",
     "vitest": "^4.0.4"
-  }
+  },
+  "packageManager": "pnpm@10.12.4"
 }

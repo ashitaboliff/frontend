@@ -30,11 +30,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: package-lock.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Enable corepack
+        run: corepack enable
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Set up environment variables
         # ここで最低限のダミー値を設定
@@ -43,10 +46,10 @@ jobs:
           echo "NEXT_PUBLIC_API_URL=https://api.example.com" >> $GITHUB_ENV
           echo "NODE_ENV=production" >> $GITHUB_ENV
           echo "API_KEY=dummy-ci-key" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_GA_ID=" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_ADS_ID=" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_GA_ID=dammy" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_ADS_ID=dammy" >> $GITHUB_ENV
           echo "MAINTENANCE_MODE=" >> $GITHUB_ENV
           echo "MAINTENANCE_WHITELIST=" >> $GITHUB_ENV
 
       - name: Run ${{ matrix.command }}
-        run: npm run ${{ matrix.command }}
+        run: pnpm run ${{ matrix.command }}

@@ -50,7 +50,7 @@ const defaultHeader = (date: string) => (
 const defaultTime = (time: string) => {
 	const [start = '', end = ''] = time.split('~')
 	return (
-		<p className="break-words text-base-content text-xs-custom sm:text-sm">
+		<p className="wrap-break-words text-base-content text-xs-custom sm:text-sm">
 			{start}~
 			<br />
 			{end}
