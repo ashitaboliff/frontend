@@ -6,9 +6,10 @@ import {
 	deleteUserAction,
 	updateUserRoleAction,
 } from '@/domains/admin/api/adminActions'
-import type { AdminUserQuery } from '@/domains/admin/query/adminUserQuery'
+import { ADMIN_USER_DEFAULT_QUERY, type AdminUserQuery } from '@/domains/admin/query/adminUserQuery'
 import { createAdminUserQueryOptions } from '@/domains/admin/query/adminUserQuery'
-import type { AccountRole, UserDetail } from '@/domains/user/model/userTypes'
+import type { AccountRole } from '@/domains/user/model/userTypes'
+import type { UserForAdmin, UserListForAdmin } from '@ashitaboliff/types/modules/user/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryState } from '@/shared/hooks/useQueryState'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
@@ -30,42 +31,35 @@ const SORT_OPTIONS: Array<{ value: AdminUserQuery['sort']; label: string }> = [
 ]
 
 type Props = {
-	readonly users: UserDetail[]
-	readonly totalCount: number
-	readonly defaultQuery: AdminUserQuery
+	readonly users: UserListForAdmin
 	readonly initialQuery: AdminUserQuery
-	readonly extraSearchParams?: string
 	readonly initialError?: ApiError
 }
 
 const AdminUserPage = ({
 	users,
-	totalCount,
-	defaultQuery,
 	initialQuery,
-	extraSearchParams,
 	initialError,
 }: Props) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
-	const [selectedUser, setSelectedUser] = useState<UserDetail | null>(null)
+	const [selectedUser, setSelectedUser] = useState<UserForAdmin | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 	const [isActionLoading, setIsActionLoading] = useState(false)
 
 	const { query, updateQuery, isPending } = useQueryState<AdminUserQuery>({
-		queryOptions: createAdminUserQueryOptions(defaultQuery),
+		queryOptions: createAdminUserQueryOptions(ADMIN_USER_DEFAULT_QUERY),
 		initialQuery,
-		extraSearchParams,
 	})
 
 	const pageCount = useMemo(
-		() => Math.max(1, Math.ceil(totalCount / query.perPage) || 1),
-		[totalCount, query.perPage],
+		() => Math.max(1, Math.ceil(users.totalCount / query.perPage) || 1),
+		[users.totalCount, query.perPage],
 	)
 
 	const handleSelectUser = useCallback(
-		(user: UserDetail) => {
+		(user: UserForAdmin) => {
 			actionFeedback.clearFeedback()
 			setSelectedUser(user)
 			setIsDetailOpen(true)
@@ -149,12 +143,12 @@ const AdminUserPage = ({
 					pagination={{
 						currentPage: query.page,
 						totalPages: pageCount,
-						totalCount,
+						totalCount: users.totalCount,
 						onPageChange: (page) => updateQuery({ page }),
 					}}
 				>
 					<UserManageList
-						users={users}
+						users={users.users}
 						onUserItemClick={handleSelectUser}
 						isLoading={isPending}
 						error={initialError}

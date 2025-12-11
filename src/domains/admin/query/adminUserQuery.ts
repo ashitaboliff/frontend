@@ -1,8 +1,5 @@
 import type { AdminUserSort } from '@/domains/admin/model/adminTypes'
 import {
-	buildQueryString,
-	type ParsedQuery,
-	parseQueryParams,
 	type QueryOptions,
 } from '@/shared/utils/queryParams'
 
@@ -52,20 +49,3 @@ export const createAdminUserQueryOptions = (
 	defaultQuery,
 	definitions: ADMIN_USER_QUERY_DEFINITIONS,
 })
-
-export const parseAdminUserQuery = (
-	params: URLSearchParams,
-	defaultQuery: AdminUserQuery,
-): ParsedQuery<AdminUserQuery> =>
-	parseQueryParams(params, createAdminUserQueryOptions(defaultQuery))
-
-export const buildAdminUserQueryString = (
-	query: AdminUserQuery,
-	defaultQuery: AdminUserQuery,
-	extraSearchParams?: string,
-) =>
-	buildQueryString(
-		query,
-		createAdminUserQueryOptions(defaultQuery),
-		extraSearchParams,
-	)

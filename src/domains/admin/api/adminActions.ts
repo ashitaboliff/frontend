@@ -1,75 +1,73 @@
 'use server'
 
 import { revalidateTag } from 'next/cache'
+import { z } from 'zod'
 import {
 	getCreatePadlockErrorMessage,
 	getDeletePadlockErrorMessage,
 	getDeleteUserErrorMessage,
 	getUpdateUserRoleErrorMessage,
 } from '@/domains/admin/api/adminErrorMessages'
-import {
-	mapRawPadLocks,
-	mapRawUserDetails,
-	type RawPadLock,
-	type RawUserDetail,
-} from '@/domains/admin/api/dto'
-import type { AdminUserSort, PadLock } from '@/domains/admin/model/adminTypes'
-import type { AccountRole, UserDetail } from '@/domains/user/model/userTypes'
-import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
+import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/v2/crud'
 import {
 	createdResponse,
-	mapSuccess,
 	noContentResponse,
 	okResponse,
+	withFallbackMessage,
 } from '@/shared/lib/api/helper'
 import { type ApiResponse, StatusCode } from '@/types/response'
+import {
+	PadLockCreateSchema,
+	PadLockSchema,
+} from '@ashitaboliff/types/modules/auth/schema'
+import {
+	UpdateUserRoleSchema,
+	UserListForAdminResponseSchema,
+	UserQuerySchema,
+} from '@ashitaboliff/types/modules/user/schema'
+import type {
+	UserListForAdmin
+} from '@ashitaboliff/types/modules/user/types'
+type AdminUserQuery = z.infer<typeof UserQuerySchema>
+type UpdateUserRolePayload = z.input<typeof UpdateUserRoleSchema>
 
-export const getAllPadLocksAction = async (): Promise<
-	ApiResponse<PadLock[]>
-> => {
-	const res = await apiGet<RawPadLock[]>('/auth/admin/padlocks', {
+export const getAllPadLocksAction = async () => {
+	const res = await apiGet('/auth/admin/padlocks', {
 		next: { revalidate: 6 * 30 * 24 * 60 * 60, tags: ['padlocks'] },
+		schemas: { response: z.array(PadLockSchema) },
 	})
 
-	return mapSuccess(
-		res,
-		mapRawPadLocks,
-		'部室パスワード一覧の取得に失敗しました',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '部室パスワード一覧の取得に失敗しました')
+	}
+
+	return okResponse(res.data)
 }
 
-export const getAllUserDetailsAction = async ({
+export const getUserDetailsListAction = async ({
 	page,
 	perPage,
 	sort,
-}: {
-	page: number
-	perPage: number
-	sort: AdminUserSort
-}): Promise<ApiResponse<{ users: UserDetail[]; totalCount: number }>> => {
-	const res = await apiGet<{
-		users: RawUserDetail[]
-		totalCount: number
-	}>('/users/admin', {
-		searchParams: {
-			page,
-			perPage,
-			sort,
-		},
+}: AdminUserQuery): Promise<
+	ApiResponse<UserListForAdmin>
+> => {
+	const res = await apiGet('/users/admin', {
+		searchParams: { page, perPage, sort },
 		next: {
 			revalidate: 7 * 24 * 60 * 60,
 			tags: ['users'],
 		},
+		schemas: {
+			searchParams: UserQuerySchema,
+			response: UserListForAdminResponseSchema,
+		},
 	})
 
-	return mapSuccess(
-		res,
-		(data) => ({
-			users: mapRawUserDetails(data.users),
-			totalCount: data.totalCount ?? 0,
-		}),
-		'ユーザー一覧の取得に失敗しました',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザー一覧の取得に失敗しました')
+	}
+
+	return okResponse(res.data)
 }
 
 export const deleteUserAction = async ({
@@ -77,7 +75,9 @@ export const deleteUserAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiDelete<null>(`/users/${id}`)
+	const res = await apiDelete(`/users/${id}`, {
+		schemas: { response: z.null() },
+	})
 
 	if (!res.ok) {
 		return {
@@ -96,10 +96,14 @@ export const updateUserRoleAction = async ({
 	role,
 }: {
 	id: string
-	role: AccountRole
+	role: UpdateUserRolePayload['role']
 }): Promise<ApiResponse<null>> => {
-	const res = await apiPut<null>(`/users/${id}/role`, {
+	const res = await apiPut(`/users/${id}/role`, {
 		body: { role },
+		schemas: {
+			body: UpdateUserRoleSchema,
+			response: z.union([z.null(), z.undefined()]),
+		},
 	})
 
 	if (!res.ok) {
@@ -125,8 +129,12 @@ export const createPadLockAction = async ({
 	name: string
 	password: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiPost<unknown>('/auth/admin/padlocks', {
+	const res = await apiPost('/auth/admin/padlocks', {
 		body: { name, password },
+		schemas: {
+			body: PadLockCreateSchema,
+			response: z.union([z.null(), z.undefined()]),
+		},
 	})
 
 	if (!res.ok) {
@@ -146,7 +154,9 @@ export const deletePadLockAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiDelete<null>(`/auth/admin/padlocks/${id}`)
+	const res = await apiDelete(`/auth/admin/padlocks/${id}`, {
+		schemas: { response: z.null() },
+	})
 
 	if (!res.ok) {
 		return {

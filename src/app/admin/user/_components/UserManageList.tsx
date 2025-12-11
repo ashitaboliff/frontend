@@ -3,14 +3,14 @@
 import {
 	AccountRoleMap,
 	RoleMap,
-	type UserDetail,
 } from '@/domains/user/model/userTypes'
+import type { UserForAdmin } from '@ashitaboliff/types/modules/user/types'
 import type { MessageSource } from '@/shared/ui/molecules/FeedbackMessage'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 
 interface Props {
-	readonly users: UserDetail[]
-	readonly onUserItemClick: (user: UserDetail) => void
+	readonly users: UserForAdmin[]
+	readonly onUserItemClick: (user: UserForAdmin) => void
 	readonly isLoading: boolean
 	readonly error: MessageSource
 }
@@ -30,7 +30,7 @@ const UserManageList = ({
 	error,
 }: Props) => {
 	return (
-		<GenericTable<UserDetail>
+		<GenericTable<UserForAdmin>
 			headers={headers}
 			data={users}
 			isLoading={isLoading}
@@ -45,7 +45,7 @@ const UserManageList = ({
 					<td>{user.name}</td>
 					<td>{user.fullName}</td>
 					<td>{user.studentId}</td>
-					<td>{user.role !== undefined ? RoleMap[user.role] : '不明'}</td>
+					<td>{user.role !== undefined && user.role !== null ? RoleMap[user.role] : '不明'}</td>
 					<td>
 						{user.accountRole != null
 							? AccountRoleMap[user.accountRole]

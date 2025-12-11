@@ -58,7 +58,7 @@ const UserDetailPopup = ({
 						<div>{selectedUser.studentId}</div>
 						<div className="font-bold">学籍状況:</div>
 						<div>
-							{selectedUser.role !== undefined
+							{selectedUser.role !== undefined && selectedUser.role !== null
 								? RoleMap[selectedUser.role]
 								: '不明'}
 						</div>
@@ -78,14 +78,14 @@ const UserDetailPopup = ({
 						<div>{selectedUser.expected}年度</div>
 						<div className="font-bold">作成日:</div>
 						<div>
-							{selectedUser.createAt
-								? formatDateTimeJaWithUnits(selectedUser.createAt)
+							{selectedUser.createdAt
+								? formatDateTimeJaWithUnits(selectedUser.createdAt)
 								: ''}
 						</div>
 						<div className="font-bold">更新日:</div>
 						<div>
-							{selectedUser.updateAt
-								? formatDateTimeJaWithUnits(selectedUser.updateAt)
+							{selectedUser.updatedAt
+								? formatDateTimeJaWithUnits(selectedUser.updatedAt)
 								: ''}
 						</div>
 					</div>

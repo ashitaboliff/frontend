@@ -1,44 +1,41 @@
 import AdminUserPage from '@/app/admin/user/_components'
-import { getAllUserDetailsAction } from '@/domains/admin/api/adminActions'
+import { getUserDetailsListAction } from '@/domains/admin/api/adminActions'
+import {
+	UserQuerySchema,
+} from '@ashitaboliff/types/modules/user/schema'
 import {
 	ADMIN_USER_DEFAULT_QUERY,
-	buildAdminUserQueryString,
-	parseAdminUserQuery,
 } from '@/domains/admin/query/adminUserQuery'
-import type { UserDetail } from '@/domains/user/model/userTypes'
+import type { UserForAdmin } from '@ashitaboliff/types/modules/user/types'
 import type { ApiError } from '@/types/response'
+
+const safeSearchParamsSchema = UserQuerySchema.catch(() => ({
+	page: ADMIN_USER_DEFAULT_QUERY.page,
+	perPage: ADMIN_USER_DEFAULT_QUERY.perPage,
+	sort: ADMIN_USER_DEFAULT_QUERY.sort,
+}))
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
 const Page = async ({ searchParams }: Props) => {
-	const urlParams = new URLSearchParams()
-	for (const [key, value] of Object.entries(await searchParams)) {
-		if (typeof value === 'string') {
-			urlParams.set(key, value)
-		} else if (Array.isArray(value)) {
-			value.forEach((v) => {
-				urlParams.append(key, v)
-			})
-		}
-	}
+	const params = await searchParams
+	const query = safeSearchParamsSchema.parse({
+		page: params.page,
+		perPage: params.perPage,
+		sort: params.sort,
+	})
 
-	const { query, extraSearchParams } = parseAdminUserQuery(
-		urlParams,
-		ADMIN_USER_DEFAULT_QUERY,
-	)
-	const searchParamsString = buildAdminUserQueryString(
-		query,
-		ADMIN_USER_DEFAULT_QUERY,
-		extraSearchParams,
-	)
-
-	let users: UserDetail[] = []
+	let users: UserForAdmin[] = []
 	let totalCount = 0
 	let error: ApiError | undefined
 
-	const response = await getAllUserDetailsAction(query)
+	const response = await getUserDetailsListAction({
+		page: query.page,
+		perPage: query.perPage,
+		sort: query.sort,
+	})
 	if (response.ok) {
 		users = response.data.users
 		totalCount = response.data.totalCount
@@ -48,12 +45,9 @@ const Page = async ({ searchParams }: Props) => {
 
 	return (
 		<AdminUserPage
-			key={searchParamsString}
-			users={users}
-			totalCount={totalCount}
-			defaultQuery={ADMIN_USER_DEFAULT_QUERY}
+			key={params.toString()}
+			users={{users, totalCount}}
 			initialQuery={query}
-			extraSearchParams={extraSearchParams}
 			initialError={error}
 		/>
 	)

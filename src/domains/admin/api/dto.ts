@@ -44,24 +44,6 @@ export interface RawUserDetail {
 	part?: Part[] | null
 }
 
-export const mapRawUserDetail = (raw: RawUserDetail): UserDetail => ({
-	id: raw.id,
-	name: raw.name,
-	fullName: raw.fullName ?? undefined,
-	studentId: raw.studentId ?? undefined,
-	expected: raw.expected ?? undefined,
-	image: raw.image,
-	createAt: toDate(raw.createAt),
-	updateAt: toDate(raw.updateAt),
-	accountRole: raw.accountRole,
-	role: raw.role ?? undefined,
-	part: raw.part ?? undefined,
-})
-
-export const mapRawUserDetails = (
-	raw: RawUserDetail[] | null | undefined,
-): UserDetail[] => (raw ? raw.map(mapRawUserDetail) : [])
-
 export interface RawDeniedBooking {
 	id: string
 	createdAt: string

@@ -1,3 +1,6 @@
+import { z } from 'zod'
+import type { UserDetailForAdminSchema } from '@ashitaboliff/types/modules/user/schema'
+
 export type Role = 'GRADUATE' | 'STUDENT'
 
 type RoleEnum = '卒業生' | '現役生'
@@ -79,19 +82,7 @@ export interface User {
 	updatedAt: Date
 }
 
-export interface UserDetail {
-	id: string
-	name: string | null
-	fullName?: string
-	studentId?: string
-	expected?: string
-	image: string | null
-	createAt: Date
-	updateAt: Date
-	accountRole: AccountRole | null
-	role?: Role
-	part?: Part[]
-}
+export type UserDetail = z.infer<typeof UserDetailForAdminSchema>
 
 export interface UserForSelectProfile {
 	name?: string | null
