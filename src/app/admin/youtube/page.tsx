@@ -1,51 +1,45 @@
+import { YoutubeSearchQuerySchema } from '@ashitaboliff/types/modules/video/schema'
+import type {
+	PlaylistDoc,
+	SearchResponse,
+} from '@ashitaboliff/types/modules/video/types'
 import YoutubeManagement from '@/app/admin/youtube/_components'
-import { searchPlaylistAction } from '@/domains/video/api/videoActions'
-import type { PlaylistDoc } from '@/domains/video/model/videoTypes'
-import {
-	ADMIN_YOUTUBE_DEFAULT_QUERY,
-	parseYoutubeQuery,
-} from '@/domains/video/query/youtubeQuery'
+import { searchYoutubeAction } from '@/domains/video/api/videoActions'
+import { ADMIN_YOUTUBE_DEFAULT_QUERY } from '@/domains/video/query/youtubeQuery'
 import { logError } from '@/shared/utils/logger'
 import type { ApiError } from '@/types/response'
+
+const safeSearchParamsSchema = YoutubeSearchQuerySchema.catch(() => ({
+	liveOrBand: ADMIN_YOUTUBE_DEFAULT_QUERY.liveOrBand,
+	bandName: ADMIN_YOUTUBE_DEFAULT_QUERY.bandName,
+	liveName: ADMIN_YOUTUBE_DEFAULT_QUERY.liveName,
+	sort: ADMIN_YOUTUBE_DEFAULT_QUERY.sort,
+	page: ADMIN_YOUTUBE_DEFAULT_QUERY.page,
+	videoPerPage: ADMIN_YOUTUBE_DEFAULT_QUERY.videoPerPage,
+}))
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-const YoutubePage = async ({ searchParams }: Props) => {
-	const rawParams = new URLSearchParams()
-	for (const [key, value] of Object.entries(await searchParams)) {
-		if (typeof value === 'string') {
-			rawParams.set(key, value)
-		} else if (Array.isArray(value)) {
-			value.forEach((v) => {
-				rawParams.append(key, v)
-			})
-		}
-	}
+const Page = async ({ searchParams }: Props) => {
+	const params = await searchParams
+	const query = safeSearchParamsSchema.parse({
+		liveOrBand: params.liveOrBand,
+		bandName: params.bandName,
+		liveName: params.liveName,
+		sort: params.sort,
+		page: params.page,
+		videoPerPage: params.videoPerPage,
+	})
 
-	const { query: currentQuery, extraSearchParams } = parseYoutubeQuery(
-		rawParams,
-		ADMIN_YOUTUBE_DEFAULT_QUERY,
-	)
-
-	const playlistQuery = {
-		...currentQuery,
-		liveOrBand: 'live' as const,
-		bandName: '',
-		liveName: '',
-		sort: 'new' as const,
-	}
-
-	const result = await searchPlaylistAction(playlistQuery)
+	const result = await searchYoutubeAction(query)
 
 	let error: ApiError | undefined
-	let playlists: PlaylistDoc[] = []
-	let total = 0
+	let playlists: SearchResponse = { items: [] as PlaylistDoc[], total: 0 }
 
 	if (result.ok) {
-		playlists = result.data.items
-		total = result.data.total
+		playlists = result.data
 	} else {
 		error = result
 		logError('Admin Youtube Page', 'Failed to fetch playlists', result)
@@ -53,18 +47,13 @@ const YoutubePage = async ({ searchParams }: Props) => {
 
 	return (
 		<YoutubeManagement
+			key={params.toString()}
 			playlists={playlists}
-			total={total}
 			defaultQuery={ADMIN_YOUTUBE_DEFAULT_QUERY}
-			initialQuery={playlistQuery}
-			extraSearchParams={extraSearchParams}
+			initialQuery={query}
 			error={error}
 		/>
 	)
-}
-
-const Page = async (props: Props) => {
-	return <YoutubePage {...props} />
 }
 
 export default Page

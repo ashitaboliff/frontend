@@ -72,7 +72,6 @@ const BookingLogs = ({ bookingLog }: Props) => {
 					data={currentLogs}
 					isLoading={false}
 					emptyDataMessage="予約ログはありません。"
-					loadingMessage="予約ログを読み込み中です..."
 					onRowClick={(log) => {
 						setIsPopupOpen(true)
 						setPopupData(log)
@@ -95,7 +94,7 @@ const BookingLogs = ({ bookingLog }: Props) => {
 							<td className="whitespace-nowrap p-3 text-xs-custom sm:table-cell sm:text-sm">
 								{BOOKING_TIME_LIST[log.bookingTime]}
 							</td>
-							<td className="break-words p-3 text-xs-custom sm:text-sm">
+							<td className="wrap-break-words p-3 text-xs-custom sm:text-sm">
 								{log.registName}
 							</td>
 							<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm md:table-cell">

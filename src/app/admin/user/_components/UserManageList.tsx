@@ -1,10 +1,7 @@
 'use client'
 
-import {
-	AccountRoleMap,
-	RoleMap,
-} from '@/domains/user/model/userTypes'
 import type { UserForAdmin } from '@ashitaboliff/types/modules/user/types'
+import { AccountRoleMap, RoleMap } from '@/domains/user/model/userTypes'
 import type { MessageSource } from '@/shared/ui/molecules/FeedbackMessage'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 
@@ -16,7 +13,7 @@ interface Props {
 }
 
 const headers = [
-	{ key: 'lineName', label: 'LINE登録名' },
+	{ key: 'lineName', label: 'LINE名' },
 	{ key: 'fullName', label: '本名' },
 	{ key: 'studentId', label: '学籍番号' },
 	{ key: 'studentStatus', label: '学籍状況' },
@@ -36,7 +33,6 @@ const UserManageList = ({
 			isLoading={isLoading}
 			error={error}
 			emptyDataMessage="ユーザー情報はありません。"
-			loadingMessage="ユーザー情報を読み込み中です..."
 			onRowClick={onUserItemClick}
 			itemKeyExtractor={(user) => user.id}
 			rowClassName="cursor-pointer"
@@ -45,7 +41,11 @@ const UserManageList = ({
 					<td>{user.name}</td>
 					<td>{user.fullName}</td>
 					<td>{user.studentId}</td>
-					<td>{user.role !== undefined && user.role !== null ? RoleMap[user.role] : '不明'}</td>
+					<td>
+						{user.role !== undefined && user.role !== null
+							? RoleMap[user.role]
+							: '不明'}
+					</td>
 					<td>
 						{user.accountRole != null
 							? AccountRoleMap[user.accountRole]

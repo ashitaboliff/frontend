@@ -1,10 +1,10 @@
 'use client'
 
-import type { PadLock } from '@/domains/admin/model/adminTypes'
+import type { PublicPadLock as PadLock } from '@ashitaboliff/types/modules/auth/types'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateTimeJaWithUnits } from '@/shared/utils/dateFormat'
 
-interface PadlockDetailDialogProps {
+type PadlockDetailDialogProps = {
 	readonly padLock: PadLock | null
 	readonly open: boolean
 	onRequestDelete: () => void

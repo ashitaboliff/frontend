@@ -1,5 +1,6 @@
 'use client'
 
+import type { ZodError, ZodTypeAny, z } from 'zod'
 import env from '@/shared/lib/env'
 import {
 	type ApiError,
@@ -8,7 +9,6 @@ import {
 	StatusCode,
 	type SuccessStatus,
 } from '@/types/response'
-import type { z, ZodError, ZodTypeAny } from 'zod'
 
 export type QueryValue =
 	| string
@@ -55,7 +55,9 @@ const appendSearchParams = (url: URL, params?: Record<string, QueryValue>) => {
 	for (const [key, value] of Object.entries(params)) {
 		if (value === undefined || value === null) continue
 		if (Array.isArray(value)) {
-			value.forEach((v) => url.searchParams.append(key, String(v)))
+			value.forEach((v) => {
+				url.searchParams.append(key, String(v))
+			})
 		} else {
 			url.searchParams.set(key, String(value))
 		}

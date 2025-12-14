@@ -5,7 +5,7 @@ import Message, { type MessageVariant } from '@/shared/ui/atoms/Message'
 
 export type NoticeType = MessageVariant
 
-export interface Props {
+type Props = {
 	type?: NoticeType
 	children: ReactNode
 	className?: string
@@ -48,7 +48,7 @@ const FlashMessage = ({
 	return (
 		<div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center">
 			<div
-				className={`pointer-events-auto mt-4 transform will-change-transform ${inView ? 'translate-y-0 duration-[350ms] ease-out' : '-translate-y-full duration-[280ms] ease-in'}`}
+				className={`pointer-events-auto mt-4 transform will-change-transform ${inView ? 'translate-y-0 duration-350 ease-out' : '-translate-y-full duration-280 ease-in'}`}
 			>
 				<Message
 					variant={type}

@@ -1,5 +1,5 @@
-import { z } from 'zod'
 import type { UserDetailForAdminSchema } from '@ashitaboliff/types/modules/user/schema'
+import type { z } from 'zod'
 
 export type Role = 'GRADUATE' | 'STUDENT'
 

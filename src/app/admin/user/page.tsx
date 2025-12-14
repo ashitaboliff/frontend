@@ -1,12 +1,8 @@
+import { UserQuerySchema } from '@ashitaboliff/types/modules/user/schema'
+import type { UserForAdmin } from '@ashitaboliff/types/modules/user/types'
 import AdminUserPage from '@/app/admin/user/_components'
 import { getUserDetailsListAction } from '@/domains/admin/api/adminActions'
-import {
-	UserQuerySchema,
-} from '@ashitaboliff/types/modules/user/schema'
-import {
-	ADMIN_USER_DEFAULT_QUERY,
-} from '@/domains/admin/query/adminUserQuery'
-import type { UserForAdmin } from '@ashitaboliff/types/modules/user/types'
+import { ADMIN_USER_DEFAULT_QUERY } from '@/domains/admin/query/adminUserQuery'
 import type { ApiError } from '@/types/response'
 
 const safeSearchParamsSchema = UserQuerySchema.catch(() => ({
@@ -46,7 +42,7 @@ const Page = async ({ searchParams }: Props) => {
 	return (
 		<AdminUserPage
 			key={params.toString()}
-			users={{users, totalCount}}
+			users={{ users, totalCount }}
 			initialQuery={query}
 			initialError={error}
 		/>

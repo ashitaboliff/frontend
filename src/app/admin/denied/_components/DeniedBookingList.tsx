@@ -34,7 +34,6 @@ const DeniedBookingList = ({
 			isLoading={isLoading}
 			error={error}
 			onRowClick={onDeniedBookingItemClick}
-			loadingMessage="予約禁止日を読み込み中です..."
 			emptyDataMessage="予約禁止日はありません。"
 			itemKeyExtractor={(booking) => booking.id}
 			rowClassName="align-middle"
@@ -60,7 +59,9 @@ const DeniedBookingList = ({
 						</td>
 						<td>{formatDateJa(booking.startDate)}</td>
 						<td>{timeLabel}</td>
-						<td className="max-w-[300px] break-words">{booking.description}</td>
+						<td className="wrap-break-words max-w-[300px]">
+							{booking.description}
+						</td>
 					</>
 				)
 			}}

@@ -6,7 +6,12 @@ import type {
 import { apiRequest } from '@/shared/lib/api/v2/index'
 
 const withMethod =
-	(method: ApiClientOptions<ZodTypeAny | undefined, ZodTypeAny | undefined>['method']) =>
+	(
+		method: ApiClientOptions<
+			ZodTypeAny | undefined,
+			ZodTypeAny | undefined
+		>['method'],
+	) =>
 	<
 		TResponseSchema extends ZodTypeAny | undefined = undefined,
 		TSearchSchema extends ZodTypeAny | undefined = undefined,
@@ -14,11 +19,7 @@ const withMethod =
 	>(
 		path: string,
 		options?: ApiClientOptions<TSearchSchema, TBodySchema> & {
-			schemas?: ApiRequestSchemas<
-				TSearchSchema,
-				TBodySchema,
-				TResponseSchema
-			>
+			schemas?: ApiRequestSchemas<TSearchSchema, TBodySchema, TResponseSchema>
 		},
 	) =>
 		apiRequest(path, {

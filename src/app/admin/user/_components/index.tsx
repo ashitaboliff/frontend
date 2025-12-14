@@ -1,15 +1,18 @@
 'use client'
 
+import type {
+	UserForAdmin,
+	UserListForAdmin,
+	UserQuery,
+} from '@ashitaboliff/types/modules/user/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import {
 	deleteUserAction,
 	updateUserRoleAction,
 } from '@/domains/admin/api/adminActions'
-import { ADMIN_USER_DEFAULT_QUERY, type AdminUserQuery } from '@/domains/admin/query/adminUserQuery'
-import { createAdminUserQueryOptions } from '@/domains/admin/query/adminUserQuery'
+import { AdminUserQueryOptions } from '@/domains/admin/query/adminUserQuery'
 import type { AccountRole } from '@/domains/user/model/userTypes'
-import type { UserForAdmin, UserListForAdmin } from '@ashitaboliff/types/modules/user/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryState } from '@/shared/hooks/useQueryState'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
@@ -25,22 +28,18 @@ const PER_PAGE_OPTIONS: Record<string, number> = {
 	'30件': 30,
 }
 
-const SORT_OPTIONS: Array<{ value: AdminUserQuery['sort']; label: string }> = [
+const SORT_OPTIONS: Array<{ value: UserQuery['sort']; label: string }> = [
 	{ value: 'new', label: '新しい順' },
 	{ value: 'old', label: '古い順' },
 ]
 
 type Props = {
 	readonly users: UserListForAdmin
-	readonly initialQuery: AdminUserQuery
+	readonly initialQuery: UserQuery
 	readonly initialError?: ApiError
 }
 
-const AdminUserPage = ({
-	users,
-	initialQuery,
-	initialError,
-}: Props) => {
+const AdminUserPage = ({ users, initialQuery, initialError }: Props) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
 	const [selectedUser, setSelectedUser] = useState<UserForAdmin | null>(null)
@@ -48,8 +47,8 @@ const AdminUserPage = ({
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 	const [isActionLoading, setIsActionLoading] = useState(false)
 
-	const { query, updateQuery, isPending } = useQueryState<AdminUserQuery>({
-		queryOptions: createAdminUserQueryOptions(ADMIN_USER_DEFAULT_QUERY),
+	const { query, updateQuery, isPending } = useQueryState<UserQuery>({
+		queryOptions: AdminUserQueryOptions,
 		initialQuery,
 	})
 

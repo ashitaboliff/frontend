@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { useCallback, useMemo, useTransition } from 'react'
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { buildQueryParams, type QueryOptions } from '@/shared/utils/queryParams'
 
 type UseQueryStateOptions<T extends Record<string, unknown>> = {
@@ -23,23 +23,29 @@ export const useQueryState = <T extends Record<string, unknown>>({
 		? explicitPathname.split('?')[0].split('#')[0]
 		: rawPathname.split('?')[0].split('#')[0]
 	const [isPending, startTransition] = useTransition()
+	const [query, setQuery] = useState(initialQuery)
 
 	const extra = extraSearchParams ?? ''
 
-	const query = initialQuery
-
 	const updateQuery = useCallback(
 		(patch: Partial<T>) => {
-			const nextQuery = { ...query, ...patch }
-			const params = buildQueryParams(nextQuery, queryOptions, extra)
-			const queryString = params.toString()
-			startTransition(() => {
-				const target = queryString ? `${pathname}?${queryString}` : pathname
-				router.replace(target)
+			setQuery((current) => {
+				const nextQuery = { ...current, ...patch }
+				const params = buildQueryParams(nextQuery, queryOptions, extra)
+				const queryString = params.toString()
+				startTransition(() => {
+					const target = queryString ? `${pathname}?${queryString}` : pathname
+					router.replace(target)
+				})
+				return nextQuery
 			})
 		},
-		[extra, pathname, query, queryOptions, router],
+		[extra, pathname, queryOptions, router],
 	)
+
+	useEffect(() => {
+		setQuery(initialQuery)
+	}, [initialQuery])
 
 	const hasCustomQuery = useMemo(() => {
 		const currentParams = buildQueryParams(query, queryOptions, extra)

@@ -1,13 +1,6 @@
+import type { UserQuery } from '@ashitaboliff/types/modules/user/types'
 import type { AdminUserSort } from '@/domains/admin/model/adminTypes'
-import {
-	type QueryOptions,
-} from '@/shared/utils/queryParams'
-
-export type AdminUserQuery = {
-	page: number
-	perPage: number
-	sort: AdminUserSort
-}
+import type { QueryOptions } from '@/shared/utils/queryParams'
 
 const clampPositiveInt = (values: string[], fallback: number, max?: number) => {
 	if (values.length === 0) return fallback
@@ -17,35 +10,31 @@ const clampPositiveInt = (values: string[], fallback: number, max?: number) => {
 	return max !== undefined && bounded > max ? max : bounded
 }
 
-const ADMIN_USER_QUERY_DEFINITIONS: QueryOptions<AdminUserQuery>['definitions'] =
-	{
-		page: {
-			parse: ({ values, defaultValue }) =>
-				clampPositiveInt(values, defaultValue),
+const ADMIN_USER_QUERY_DEFINITIONS: QueryOptions<UserQuery>['definitions'] = {
+	page: {
+		parse: ({ values, defaultValue }) => clampPositiveInt(values, defaultValue),
+	},
+	perPage: {
+		parse: ({ values, defaultValue }) =>
+			clampPositiveInt(values, defaultValue, 100),
+	},
+	sort: {
+		parse: ({ values, defaultValue }) => {
+			const latest = values[values.length - 1]
+			return latest === 'new' || latest === 'old'
+				? (latest as AdminUserSort)
+				: defaultValue
 		},
-		perPage: {
-			parse: ({ values, defaultValue }) =>
-				clampPositiveInt(values, defaultValue, 100),
-		},
-		sort: {
-			parse: ({ values, defaultValue }) => {
-				const latest = values[values.length - 1]
-				return latest === 'new' || latest === 'old'
-					? (latest as AdminUserSort)
-					: defaultValue
-			},
-		},
-	}
+	},
+}
 
-export const ADMIN_USER_DEFAULT_QUERY: AdminUserQuery = {
+export const ADMIN_USER_DEFAULT_QUERY: UserQuery = {
 	page: 1,
 	perPage: 10,
 	sort: 'new',
 }
 
-export const createAdminUserQueryOptions = (
-	defaultQuery: AdminUserQuery,
-): QueryOptions<AdminUserQuery> => ({
-	defaultQuery,
+export const AdminUserQueryOptions: QueryOptions<UserQuery> = {
+	defaultQuery: ADMIN_USER_DEFAULT_QUERY,
 	definitions: ADMIN_USER_QUERY_DEFINITIONS,
-})
+}

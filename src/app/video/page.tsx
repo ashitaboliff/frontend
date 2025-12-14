@@ -1,109 +1,58 @@
+import { YoutubeSearchQuerySchema } from '@ashitaboliff/types/modules/video/schema'
+import type { SearchResponse } from '@ashitaboliff/types/modules/video/types'
 import { Suspense } from 'react'
 import VideoListPage from '@/app/video/_components'
-import {
-	searchPlaylistAction,
-	searchVideoAction,
-} from '@/domains/video/api/videoActions'
-import type { PlaylistDoc, Video } from '@/domains/video/model/videoTypes'
-import {
-	buildYoutubeQueryString,
-	parseYoutubeQuery,
-	VIDEO_PAGE_DEFAULT_QUERY,
-} from '@/domains/video/query/youtubeQuery'
+import { searchYoutubeAction } from '@/domains/video/api/videoActions'
+import { VIDEO_PAGE_DEFAULT_QUERY } from '@/domains/video/query/youtubeQuery'
 import Loading from '@/shared/ui/atoms/Loading'
 import { logError } from '@/shared/utils/logger'
 import type { ApiError } from '@/types/response'
 
+const safeSearchParamsSchema = YoutubeSearchQuerySchema.catch(() => ({
+	liveOrBand: VIDEO_PAGE_DEFAULT_QUERY.liveOrBand,
+	bandName: VIDEO_PAGE_DEFAULT_QUERY.bandName,
+	liveName: VIDEO_PAGE_DEFAULT_QUERY.liveName,
+	sort: VIDEO_PAGE_DEFAULT_QUERY.sort,
+	page: VIDEO_PAGE_DEFAULT_QUERY.page,
+	videoPerPage: VIDEO_PAGE_DEFAULT_QUERY.videoPerPage,
+}))
+
 type Props = {
-	readonly searchParams: Promise<{
-		[key: string]: string | string[] | undefined
-	}>
+	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-const UNEXPECTED_ERROR_MESSAGE = '予期せぬエラーが発生しました。'
+const _UNEXPECTED_ERROR_MESSAGE = '予期せぬエラーが発生しました。'
 
-const Page = async ({ searchParams: params }: Props) => {
-	const queryParams = new URLSearchParams()
-	for (const [key, value] of Object.entries(await params)) {
-		if (typeof value === 'string') {
-			queryParams.set(key, value)
-		} else if (Array.isArray(value)) {
-			value.forEach((v) => {
-				queryParams.append(key, v)
-			})
-		}
-	}
+const Page = async ({ searchParams }: Props) => {
+	const params = await searchParams
+	const query = safeSearchParamsSchema.parse({
+		liveOrBand: params.liveOrBand,
+		bandName: params.bandName,
+		liveName: params.liveName,
+		sort: params.sort,
+		page: params.page,
+		videoPerPage: params.videoPerPage,
+	})
 
-	const { query: currentQuery, extraSearchParams } = parseYoutubeQuery(
-		queryParams,
-		VIDEO_PAGE_DEFAULT_QUERY,
-	)
-	const searchParamsString = buildYoutubeQueryString(
-		currentQuery,
-		VIDEO_PAGE_DEFAULT_QUERY,
-		extraSearchParams,
-	)
-
-	let youtubeDetails: Video[] | PlaylistDoc[] = []
-	let pageMax = 0
+	let youtubeList: SearchResponse = { items: [], total: 0 }
 	let error: ApiError | undefined
 
-	const assignApiError = (scope: string, apiError: ApiError) => {
-		logError('Video Page', scope, apiError)
-		error = apiError
-	}
-
-	const assignUnexpectedError = (scope: string, cause: unknown) => {
-		logError('Video Page', scope, cause)
-		error = {
-			ok: false,
-			status: 500,
-			message: UNEXPECTED_ERROR_MESSAGE,
-		}
-	}
-
-	if (currentQuery.liveOrBand === 'band') {
-		try {
-			const res = await searchVideoAction(currentQuery)
-			if (res.ok) {
-				youtubeDetails = res.data.items
-				pageMax = Math.ceil(res.data.total / currentQuery.videoPerPage)
-			} else {
-				assignApiError('Failed to fetch videos', res)
-			}
-		} catch (caughtError) {
-			assignUnexpectedError(
-				'Unexpected error while fetching videos',
-				caughtError,
-			)
-		}
+	const response = await searchYoutubeAction(query)
+	if (response.ok) {
+		youtubeList = response.data
 	} else {
-		try {
-			const res = await searchPlaylistAction(currentQuery)
-			if (res.ok) {
-				youtubeDetails = res.data.items
-				pageMax = Math.ceil(res.data.total / currentQuery.videoPerPage)
-			} else {
-				assignApiError('Failed to fetch playlists', res)
-			}
-		} catch (caughtError) {
-			assignUnexpectedError(
-				'Unexpected error while fetching playlists',
-				caughtError,
-			)
-		}
+		logError('Video Page', '動画の検索に失敗しました。', response)
+		error = response
 	}
 
 	return (
 		<Suspense fallback={<Loading />}>
 			<VideoListPage
-				key={searchParamsString}
-				youtubeDetails={youtubeDetails}
-				pageMax={pageMax}
+				key={params.toString()}
+				youtubeList={youtubeList}
 				error={error}
 				defaultQuery={VIDEO_PAGE_DEFAULT_QUERY}
-				initialQuery={currentQuery}
-				extraSearchParams={extraSearchParams}
+				initialQuery={query}
 			/>
 		</Suspense>
 	)

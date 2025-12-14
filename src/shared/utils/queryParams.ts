@@ -20,7 +20,6 @@ export type QueryOptions<T extends Record<string, unknown>> = {
 export type ParsedQuery<T extends Record<string, unknown>> = {
 	query: T
 	extraSearchParams: string
-	hasChanged: boolean
 }
 
 const toValuesMap = (params: URLSearchParams) => {
@@ -108,13 +107,10 @@ export const parseQueryParams = <T extends Record<string, unknown>>(
 	}
 
 	const extraString = extra.toString()
-	const normalized = buildQueryParams(query, options, extraString)
-	const hasChanged = normalized.toString().length > 0
 
 	return {
 		query,
 		extraSearchParams: extraString,
-		hasChanged,
 	}
 }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import type { PadLock } from '@/domains/admin/model/adminTypes'
+import type { PublicPadLock as PadLock } from '@ashitaboliff/types/modules/auth/types'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
@@ -12,7 +12,7 @@ const PER_PAGE_OPTIONS_LABELS: Record<string, number> = {
 	'30件': 30,
 }
 
-interface PadlockListProps {
+type PadlockListProps = {
 	readonly padLocks: PadLock[]
 	readonly perPage: number
 	readonly onPerPageChange: (perPage: number) => void
@@ -47,7 +47,6 @@ const PadlockList = ({
 				data={padLocks}
 				isLoading={false}
 				emptyDataMessage="パスワードが登録されていません。"
-				loadingMessage="パスワード一覧を読み込み中です..."
 				onRowClick={onSelect}
 				itemKeyExtractor={(padLock) => padLock.id}
 				rowClassName="cursor-pointer"

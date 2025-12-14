@@ -1,10 +1,5 @@
-import type { YoutubeSearchQuery } from '@/domains/video/model/videoTypes'
-import {
-	buildQueryString,
-	type ParsedQuery,
-	parseQueryParams,
-	type QueryOptions,
-} from '@/shared/utils/queryParams'
+import type { YoutubeSearchQuery } from '@ashitaboliff/types/modules/video/types'
+import { buildQueryString, type QueryOptions } from '@/shared/utils/queryParams'
 
 const clampPositiveInt = (value: string[], fallback: number, max?: number) => {
 	if (value.length === 0) return fallback
@@ -94,12 +89,6 @@ export const ADMIN_YOUTUBE_DEFAULT_QUERY: YoutubeSearchQuery = {
 	page: 1,
 	videoPerPage: 20,
 }
-
-export const parseYoutubeQuery = (
-	params: URLSearchParams,
-	defaultQuery: YoutubeSearchQuery,
-): ParsedQuery<YoutubeSearchQuery> =>
-	parseQueryParams(params, createYoutubeQueryOptions(defaultQuery))
 
 export const buildYoutubeQueryString = (
 	query: YoutubeSearchQuery,

@@ -7,7 +7,7 @@ import { BiSearch, RiQuestionLine } from '@/shared/ui/icons'
 import Popup from '@/shared/ui/molecules/Popup'
 import TextSearchField from '@/shared/ui/molecules/TextSearchField'
 
-interface Props {
+type Props = {
 	currentQuery: YoutubeSearchQuery
 	isSearching: boolean
 	onSearch: (query: Partial<YoutubeSearchQuery>) => void

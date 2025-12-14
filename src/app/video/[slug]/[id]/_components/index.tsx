@@ -1,15 +1,18 @@
 'use client'
 
+import type {
+	PlaylistItem,
+	VideoItem,
+} from '@ashitaboliff/types/modules/video/types'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { useRouter } from 'next/navigation'
-import type { PlaylistItem, Video } from '@/domains/video/model/videoTypes'
 import { useWindowOpen } from '@/shared/hooks/useBrowserApis'
 import { gkktt } from '@/shared/lib/fonts'
 import { HiOutlineExternalLink } from '@/shared/ui/icons'
 
 type Props =
 	| { liveOrBand: 'live'; detail: PlaylistItem }
-	| { liveOrBand: 'band'; detail: Video; playlist: PlaylistItem }
+	| { liveOrBand: 'band'; detail: VideoItem; playlist: PlaylistItem }
 
 const VideoDetailPage = (props: Props) => {
 	const router = useRouter()
@@ -27,7 +30,7 @@ const VideoDetailPage = (props: Props) => {
 					>
 						動画詳細
 					</div>
-					<div className="my-2 aspect-[16/9] w-full max-w-xl md:max-w-2xl">
+					<div className="my-2 aspect-video w-full max-w-xl md:max-w-2xl">
 						{videoId && <YouTubeEmbed videoid={videoId} />}
 					</div>
 					<div className="flex w-full max-w-xl flex-col justify-center px-2 md:max-w-2xl lg:max-w-3xl">
@@ -72,7 +75,7 @@ const VideoDetailPage = (props: Props) => {
 						</div>
 						<div className="flex w-full flex-col items-center justify-start gap-2 sm:flex-row sm:gap-3">
 							{playlist.videos?.[0]?.videoId && (
-								<div className="aspect-[16/9] w-full flex-shrink-0 overflow-hidden rounded sm:w-1/3 lg:w-1/4">
+								<div className="aspect-video w-full shrink-0 overflow-hidden rounded sm:w-1/3 lg:w-1/4">
 									<YouTubeEmbed videoid={playlist.videos[0].videoId} />
 								</div>
 							)}
@@ -109,7 +112,7 @@ const VideoDetailPage = (props: Props) => {
 				>
 					プレイリスト詳細
 				</div>
-				<div className="my-2 aspect-[16/9] w-full max-w-xl md:max-w-2xl">
+				<div className="my-2 aspect-video w-full max-w-xl md:max-w-2xl">
 					{firstVideoId && <YouTubeEmbed videoid={firstVideoId} />}
 				</div>
 				<div className="flex w-full max-w-xl flex-col justify-center px-2 md:max-w-2xl lg:max-w-3xl">

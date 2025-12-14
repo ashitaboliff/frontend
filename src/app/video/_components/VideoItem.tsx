@@ -1,31 +1,26 @@
 'use client'
 
+import type {
+	PlaylistDoc,
+	VideoDoc,
+} from '@ashitaboliff/types/modules/video/types'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { useRouter } from 'next/navigation'
-import type { PlaylistDoc, Video } from '@/domains/video/model/videoTypes'
 
-type BandItemProps = {
-	liveOrBand: 'band'
-	youtubeDetail: Video
+type Props = {
+	youtubeDetail: VideoDoc | PlaylistDoc
 }
 
-type LiveItemProps = {
-	liveOrBand: 'live'
-	youtubeDetail: PlaylistDoc
-}
-
-type Props = BandItemProps | LiveItemProps
-
-const VideoItem = ({ youtubeDetail, liveOrBand }: Props) => {
+const VideoItem = ({ youtubeDetail }: Props) => {
 	const router = useRouter()
 	const videoId = youtubeDetail.videoId
 	const displayTitle = youtubeDetail.title.split('(')[0]
 	const playlistTitle =
-		liveOrBand === 'band'
+		youtubeDetail.type === 'video'
 			? youtubeDetail.playlistTitle.split('(')[0]
 			: undefined
 	const detailHref =
-		liveOrBand === 'band'
+		youtubeDetail.type === 'video'
 			? `/video/band/${youtubeDetail.videoId}`
 			: `/video/live/${youtubeDetail.playlistId}`
 
@@ -34,11 +29,11 @@ const VideoItem = ({ youtubeDetail, liveOrBand }: Props) => {
 			{videoId && (
 				<button
 					type="button"
-					className="w-full flex-shrink-0 cursor-pointer text-left"
+					className="w-full shrink-0 cursor-pointer text-left"
 					onClick={() => router.push(detailHref)}
 					aria-label={`${displayTitle}の詳細を見る`}
 				>
-					<div className="aspect-[16/9] overflow-hidden rounded">
+					<div className="aspect-video overflow-hidden rounded">
 						<YouTubeEmbed videoid={videoId} />
 					</div>
 				</button>

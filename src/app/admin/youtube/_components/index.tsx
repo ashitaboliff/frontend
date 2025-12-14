@@ -1,13 +1,14 @@
 'use client'
 
+import type {
+	PlaylistDoc,
+	SearchResponse,
+	YoutubeSearchQuery,
+} from '@ashitaboliff/types/modules/video/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { postSyncPlaylistAction } from '@/domains/video/api/videoActions'
 import { useYoutubeSearchQuery } from '@/domains/video/hooks/useYoutubeSearchQuery'
-import type {
-	PlaylistDoc,
-	YoutubeSearchQuery,
-} from '@/domains/video/model/videoTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
@@ -16,9 +17,8 @@ import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa, formatDateSlash } from '@/shared/utils/dateFormat'
 import type { ApiError } from '@/types/response'
 
-interface Props {
-	readonly playlists: PlaylistDoc[]
-	readonly total: number
+type Props = {
+	readonly playlists: SearchResponse
 	readonly defaultQuery: YoutubeSearchQuery
 	readonly initialQuery: YoutubeSearchQuery
 	readonly extraSearchParams?: string
@@ -34,10 +34,8 @@ const perPageOptions = {
 
 const YoutubeManagement = ({
 	playlists,
-	total,
 	defaultQuery,
 	initialQuery,
-	extraSearchParams,
 	error,
 }: Props) => {
 	const router = useRouter()
@@ -48,13 +46,12 @@ const YoutubeManagement = ({
 	const { query, updateQuery, isPending } = useYoutubeSearchQuery({
 		defaultQuery,
 		initialQuery,
-		extraSearchParams,
 	})
 
 	const totalPages = useMemo(() => {
 		if (query.videoPerPage <= 0) return 1
-		return Math.max(1, Math.ceil(total / query.videoPerPage) || 1)
-	}, [query.videoPerPage, total])
+		return Math.max(1, Math.ceil(playlists.total / query.videoPerPage) || 1)
+	}, [query.videoPerPage, playlists.total])
 
 	const handleFetchPlaylist = useCallback(async () => {
 		actionFeedback.clearFeedback()
@@ -74,8 +71,8 @@ const YoutubeManagement = ({
 	}, [])
 
 	const lastUpdatedText =
-		playlists.length > 0 && playlists[0].updatedAt
-			? formatDateSlash(playlists[0].updatedAt)
+		playlists.items.length > 0 && playlists.items[0].updatedAt
+			? formatDateSlash(playlists.items[0].updatedAt)
 			: '不明'
 
 	const isBusy = isLoading || isPending
@@ -84,7 +81,7 @@ const YoutubeManagement = ({
 	const pagination = {
 		currentPage: query.page,
 		totalPages: totalPages,
-		totalCount: total,
+		totalCount: playlists.total,
 		onPageChange: (page: number) => updateQuery({ page }),
 	}
 
@@ -124,10 +121,9 @@ const YoutubeManagement = ({
 				</div>
 				<GenericTable<PlaylistDoc>
 					headers={headers}
-					data={playlists}
+					data={playlists.items as PlaylistDoc[]}
 					isLoading={isPending}
 					emptyDataMessage="プレイリストが見つかりませんでした。"
-					loadingMessage="プレイリストを読み込み中です..."
 					onRowClick={(playlist) => setDetailPlaylist(playlist)}
 					itemKeyExtractor={(playlist) => playlist.playlistId}
 					rowClassName="cursor-pointer"

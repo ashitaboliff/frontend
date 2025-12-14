@@ -1,145 +1,92 @@
 'use server'
 
-import { revalidateTag } from 'next/cache'
 import {
-	mapRawPlaylistDocs,
-	mapRawPlaylistItem,
-	mapRawVideo,
-	mapRawVideos,
-	type RawPlaylistDoc,
-	type RawPlaylistItem,
-	type RawVideo,
-} from '@/domains/video/api/dto'
-import {
-	getSyncPlaylistErrorMessage,
-	getVideoErrorMessage,
-} from '@/domains/video/api/videoErrorMessages'
+	PlaylistDetailSchema,
+	SearchResponseSchema,
+	VideoDetailSchema,
+	YoutubeSearchQuerySchema,
+} from '@ashitaboliff/types/modules/video/schema'
 import type {
-	PlaylistDoc,
-	PlaylistItem,
-	Video,
+	PlaylistDetail,
+	SearchResponse,
+	VideoDetail,
 	YoutubeSearchQuery,
-} from '@/domains/video/model/videoTypes'
-import { apiGet, apiPost } from '@/shared/lib/api/crud'
-import { mapSuccess, okResponse } from '@/shared/lib/api/helper'
+} from '@ashitaboliff/types/modules/video/types'
+import { revalidateTag } from 'next/cache'
+import { getSyncPlaylistErrorMessage } from '@/domains/video/api/videoErrorMessages'
+import { apiPost } from '@/shared/lib/api/crud'
+import { okResponse, withFallbackMessage } from '@/shared/lib/api/helper'
+import { apiGet } from '@/shared/lib/api/v2/crud'
 import { recordJoinSorted } from '@/shared/utils/cacheTag'
 import type { ApiResponse } from '@/types/response'
 
-export const searchVideoAction = async (
+export const searchYoutubeAction = async (
 	query: YoutubeSearchQuery,
-): Promise<ApiResponse<{ items: Video[]; total: number }>> => {
-	const res = await apiGet<{ items: RawVideo[]; total: number }>(
-		'/video/search',
-		{
-			searchParams: {
-				liveOrBand: query.liveOrBand,
-				bandName: query.bandName,
-				liveName: query.liveName,
-				sort: query.sort,
-				page: query.page.toString(),
-				videoPerPage: query.videoPerPage.toString(),
-			},
-			next: {
-				revalidate: 60 * 60,
-				tags: ['videos', `video-search-${recordJoinSorted(query)}`],
-			},
+): Promise<ApiResponse<SearchResponse>> => {
+	const res = await apiGet('/video/search', {
+		searchParams: {
+			liveOrBand: query.liveOrBand,
+			bandName: query.bandName,
+			liveName: query.liveName,
+			sort: query.sort,
+			page: query.page.toString(),
+			videoPerPage: query.videoPerPage.toString(),
 		},
-	)
-
-	return mapSuccess(
-		res,
-		(raw) => ({
-			items: mapRawVideos(raw.items),
-			total: raw.total,
-		}),
-		'検索に失敗しました。',
-	)
-}
-
-export const searchPlaylistAction = async (
-	query: YoutubeSearchQuery,
-): Promise<ApiResponse<{ items: PlaylistDoc[]; total: number }>> => {
-	const res = await apiGet<{ items: RawPlaylistDoc[]; total: number }>(
-		'/video/search',
-		{
-			searchParams: {
-				liveOrBand: query.liveOrBand,
-				bandName: query.bandName,
-				liveName: query.liveName,
-				sort: query.sort,
-				page: query.page.toString(),
-				videoPerPage: query.videoPerPage.toString(),
-			},
-			next: {
-				revalidate: 60 * 60,
-				tags: ['videos', `playlist-search-${recordJoinSorted(query)}`],
-			},
+		next: {
+			revalidate: 60 * 60,
+			tags: ['videos', `video-search-${recordJoinSorted(query)}`],
 		},
-	)
+		schemas: {
+			searchParams: YoutubeSearchQuerySchema,
+			response: SearchResponseSchema,
+		},
+	})
 
-	return mapSuccess(
-		res,
-		(raw) => ({
-			items: mapRawPlaylistDocs(raw.items),
-			total: raw.total,
-		}),
-		'検索に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '検索に失敗しました。')
+	}
+
+	return okResponse(res.data)
 }
 
 export const getVideoByIdAction = async (
 	videoId: string,
-): Promise<ApiResponse<Video>> => {
-	const res = await apiGet<RawVideo>(`/video/videos/${videoId}`, {
+): Promise<ApiResponse<VideoDetail>> => {
+	const res = await apiGet(`/video/videos/${videoId}`, {
 		next: {
 			revalidate: 7 * 24 * 60 * 60,
 			tags: ['videos', `video-${videoId}`],
 		},
+		schemas: {
+			response: VideoDetailSchema,
+		},
 	})
 
-	return mapSuccess(res, mapRawVideo, '動画の取得に失敗しました。')
+	if (!res.ok) {
+		return withFallbackMessage(res, '動画の取得に失敗しました。')
+	}
+
+	return okResponse(res.data)
 }
 
 export const getPlaylistByIdAction = async (
 	playlistId: string,
-): Promise<ApiResponse<PlaylistItem>> => {
-	const res = await apiGet<RawPlaylistItem>(`/video/playlists/${playlistId}`, {
+): Promise<ApiResponse<PlaylistDetail>> => {
+	const res = await apiGet(`/video/playlists/${playlistId}`, {
 		next: {
 			revalidate: 7 * 24 * 60 * 60,
 			tags: ['videos', `playlist-${playlistId}`],
 		},
+		schemas: {
+			response: PlaylistDetailSchema,
+		},
 	})
 
-	return mapSuccess(
-		res,
-		mapRawPlaylistItem,
-		'プレイリストの取得に失敗しました。',
-	)
-}
-
-export const getPlaylistAction = async (): Promise<
-	ApiResponse<PlaylistDoc[]>
-> => {
-	const res = await apiGet<{ items: RawPlaylistDoc[]; total: number }>(
-		'/video/search',
-		{
-			searchParams: {
-				liveOrBand: 'live',
-				page: '1',
-				videoPerPage: '200',
-			},
-			next: { revalidate: 7 * 24 * 60 * 60, tags: ['videos'] },
-		},
-	)
-
 	if (!res.ok) {
-		return {
-			...res,
-			message: getVideoErrorMessage(res.status),
-		}
+		return withFallbackMessage(res, 'プレイリストの取得に失敗しました。')
 	}
 
-	return okResponse(mapRawPlaylistDocs(res.data.items))
+	return okResponse(res.data)
 }
 
 type PlaylistWebhook = {
@@ -173,7 +120,7 @@ export const postSyncPlaylistAction = async (): Promise<
 export const getYoutubeIds = async (
 	type: 'video' | 'playlist',
 ): Promise<string[]> => {
-	const response = await apiGet<string[]>('/video/ids', {
+	const response = await apiGet('/video/ids', {
 		searchParams: { type },
 		next: {
 			revalidate: 24 * 60 * 60,

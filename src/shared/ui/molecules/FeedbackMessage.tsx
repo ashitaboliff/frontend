@@ -11,7 +11,7 @@ export type MessageSource =
 	| null
 	| undefined
 
-interface FeedbackMessageProps {
+type FeedbackMessageProps = {
 	source?: MessageSource
 	defaultVariant?: MessageVariant
 	className?: string
@@ -73,7 +73,7 @@ const FeedbackMessage = ({
 					{source.message}
 				</p>
 				{details ? (
-					<p className="break-words text-xs opacity-80">{details}</p>
+					<p className="wrap-break-word text-xs opacity-80">{details}</p>
 				) : null}
 			</Message>
 		)
@@ -91,7 +91,7 @@ const FeedbackMessage = ({
 			>
 				{source.message}
 				{source.details ? (
-					<p className="break-words text-xs opacity-80">{source.details}</p>
+					<p className="wrap-break-word text-xs opacity-80">{source.details}</p>
 				) : null}
 			</Message>
 		)

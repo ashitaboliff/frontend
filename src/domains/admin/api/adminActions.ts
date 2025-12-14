@@ -1,5 +1,16 @@
 'use server'
 
+import {
+	PadLockCreateSchema,
+	PadLockSchema,
+} from '@ashitaboliff/types/modules/auth/schema'
+import type { PublicPadLock } from '@ashitaboliff/types/modules/auth/types'
+import {
+	UpdateUserRoleSchema,
+	UserListForAdminResponseSchema,
+	UserQuerySchema,
+} from '@ashitaboliff/types/modules/user/schema'
+import type { UserListForAdmin } from '@ashitaboliff/types/modules/user/types'
 import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import {
@@ -8,30 +19,21 @@ import {
 	getDeleteUserErrorMessage,
 	getUpdateUserRoleErrorMessage,
 } from '@/domains/admin/api/adminErrorMessages'
-import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/v2/crud'
 import {
 	createdResponse,
 	noContentResponse,
 	okResponse,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
+import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/v2/crud'
 import { type ApiResponse, StatusCode } from '@/types/response'
-import {
-	PadLockCreateSchema,
-	PadLockSchema,
-} from '@ashitaboliff/types/modules/auth/schema'
-import {
-	UpdateUserRoleSchema,
-	UserListForAdminResponseSchema,
-	UserQuerySchema,
-} from '@ashitaboliff/types/modules/user/schema'
-import type {
-	UserListForAdmin
-} from '@ashitaboliff/types/modules/user/types'
+
 type AdminUserQuery = z.infer<typeof UserQuerySchema>
 type UpdateUserRolePayload = z.input<typeof UpdateUserRoleSchema>
 
-export const getAllPadLocksAction = async () => {
+export const getAllPadLocksAction = async (): Promise<
+	ApiResponse<PublicPadLock[]>
+> => {
 	const res = await apiGet('/auth/admin/padlocks', {
 		next: { revalidate: 6 * 30 * 24 * 60 * 60, tags: ['padlocks'] },
 		schemas: { response: z.array(PadLockSchema) },
@@ -48,9 +50,7 @@ export const getUserDetailsListAction = async ({
 	page,
 	perPage,
 	sort,
-}: AdminUserQuery): Promise<
-	ApiResponse<UserListForAdmin>
-> => {
+}: AdminUserQuery): Promise<ApiResponse<UserListForAdmin>> => {
 	const res = await apiGet('/users/admin', {
 		searchParams: { page, perPage, sort },
 		next: {

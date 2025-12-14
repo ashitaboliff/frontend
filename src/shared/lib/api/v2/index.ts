@@ -1,6 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
+import type { ZodError, ZodTypeAny, z } from 'zod'
 import env from '@/shared/lib/env'
 import {
 	type ApiError,
@@ -9,7 +10,6 @@ import {
 	StatusCode,
 	type SuccessStatus,
 } from '@/types/response'
-import type { z, ZodError, ZodTypeAny } from 'zod'
 
 export type QueryValue =
 	| string
@@ -68,7 +68,9 @@ const appendSearchParams = (url: URL, params?: Record<string, QueryValue>) => {
 	Object.entries(params).forEach(([key, value]) => {
 		if (value === undefined || value === null) return
 		if (Array.isArray(value)) {
-			value.forEach((item) => url.searchParams.append(key, String(item)))
+			value.forEach((item) => {
+				url.searchParams.append(key, String(item))
+			})
 			return
 		}
 		url.searchParams.set(key, String(value))
@@ -194,22 +196,11 @@ export const apiRequest = async <
 >(
 	path: string,
 	options?: ApiClientOptions<TSearchSchema, TBodySchema> & {
-		schemas?: ApiRequestSchemas<
-			TSearchSchema,
-			TBodySchema,
-			TResponseSchema
-		>
+		schemas?: ApiRequestSchemas<TSearchSchema, TBodySchema, TResponseSchema>
 	},
 ): Promise<ApiResponse<TResponse>> => {
-	const {
-		searchParams,
-		headers,
-		body,
-		cache,
-		next,
-		schemas,
-		...rest
-	} = options ?? {}
+	const { searchParams, headers, body, cache, next, schemas, ...rest } =
+		options ?? {}
 
 	const searchSchema = schemas?.searchParams
 	const bodySchema = schemas?.body

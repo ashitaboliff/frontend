@@ -1,41 +1,30 @@
+import { AdminDeniedBookingQuerySchema } from '@ashitaboliff/types/modules/booking/schema/denied'
 import DeniedBookingPage from '@/app/admin/denied/_components'
 import { getDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
-import {
-	buildDeniedBookingQueryString,
-	DENIED_BOOKING_DEFAULT_QUERY,
-	parseDeniedBookingQuery,
-} from '@/domains/admin/query/deniedBookingQuery'
+import { DENIED_BOOKING_DEFAULT_QUERY } from '@/domains/admin/query/deniedBookingQuery'
 import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
 import { getCurrentJSTDateString } from '@/shared/utils'
 import type { ApiError } from '@/types/response'
+
+const safeSearchParamsSchema = AdminDeniedBookingQuerySchema.omit({
+	today: true,
+}).catch(() => ({
+	page: DENIED_BOOKING_DEFAULT_QUERY.page,
+	perPage: DENIED_BOOKING_DEFAULT_QUERY.perPage,
+	sort: DENIED_BOOKING_DEFAULT_QUERY.sort,
+}))
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
 const Page = async ({ searchParams }: Props) => {
-	const urlParams = new URLSearchParams()
-
-	for (const [key, value] of Object.entries(await searchParams)) {
-		if (typeof value === 'string') {
-			urlParams.set(key, value)
-		} else if (Array.isArray(value)) {
-			value.forEach((item) => {
-				urlParams.append(key, item)
-			})
-		}
-	}
-
-	const { query, extraSearchParams } = parseDeniedBookingQuery(
-		urlParams,
-		DENIED_BOOKING_DEFAULT_QUERY,
-	)
-
-	const searchParamsString = buildDeniedBookingQueryString(
-		query,
-		DENIED_BOOKING_DEFAULT_QUERY,
-		extraSearchParams,
-	)
+	const params = await searchParams
+	const query = safeSearchParamsSchema.parse({
+		page: params.page,
+		perPage: params.perPage,
+		sort: params.sort,
+	})
 
 	const today = getCurrentJSTDateString()
 
@@ -57,12 +46,11 @@ const Page = async ({ searchParams }: Props) => {
 
 	return (
 		<DeniedBookingPage
-			key={searchParamsString}
+			key={params.toString()}
 			deniedBookings={deniedBookings}
 			totalCount={totalCount}
 			defaultQuery={DENIED_BOOKING_DEFAULT_QUERY}
 			initialQuery={query}
-			extraSearchParams={extraSearchParams}
 			initialError={error}
 		/>
 	)

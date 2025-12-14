@@ -1,11 +1,6 @@
 import type { PadLock } from '@/domains/admin/model/adminTypes'
 import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
-import type {
-	AccountRole,
-	Part,
-	Role,
-	UserDetail,
-} from '@/domains/user/model/userTypes'
+import type { AccountRole, Part, Role } from '@/domains/user/model/userTypes'
 
 const toDate = (value: string | Date): Date =>
 	value instanceof Date ? value : new Date(value)

@@ -42,7 +42,6 @@ const BookingLogList = ({
 			renderCells={renderBookingCells}
 			onRowClick={onBookingItemClick}
 			itemKeyExtractor={(booking) => booking.id}
-			loadingMessage="予約履歴を読み込み中..."
 			emptyDataMessage="予約履歴はありません。"
 		/>
 	)
