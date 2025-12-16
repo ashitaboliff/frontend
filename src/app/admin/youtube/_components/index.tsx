@@ -6,7 +6,7 @@ import type {
 } from '@ashitaboliff/types/modules/video/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
-import type { AdminYoutubePage } from '@/domains/admin/model/adminTypes'
+import type { AdminYoutubePageParams } from '@/app/admin/youtube/schema'
 import { postSyncPlaylistAction } from '@/domains/video/api/videoActions'
 import { ADMIN_YOUTUBE_DEFAULT_PARAMS } from '@/domains/video/query/youtubeQuery'
 import { useFeedback } from '@/shared/hooks/useFeedback'
@@ -17,13 +17,11 @@ import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayo
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa, formatDateSlash } from '@/shared/utils/dateFormat'
 import type { QueryOptions } from '@/shared/utils/queryParams'
-import type { ApiError } from '@/types/response'
 
 type Props = {
 	readonly playlists: SearchResponse
-	readonly query: AdminYoutubePage
-	readonly extraSearchParams?: string
-	readonly error?: ApiError
+	readonly query: AdminYoutubePageParams
+	readonly headers: Array<{ key: string; label: string }>
 }
 
 const perPageOptions = {
@@ -33,18 +31,17 @@ const perPageOptions = {
 	'100件': 100,
 } as const
 
-const YoutubeManagement = ({ playlists, query, error }: Props) => {
-	console.log(query)
+const YoutubeManagement = ({ playlists, query, headers }: Props) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
 	const [isLoading, setIsLoading] = useState(false)
 	const [detailPlaylist, setDetailPlaylist] = useState<PlaylistDoc | null>(null)
 
-	const defaultQuery: QueryOptions<AdminYoutubePage> = {
+	const defaultQuery: QueryOptions<AdminYoutubePageParams> = {
 		defaultQuery: ADMIN_YOUTUBE_DEFAULT_PARAMS,
 	}
 
-	const { updateQuery, isPending } = useQueryUpdater<AdminYoutubePage>({
+	const { updateQuery, isPending } = useQueryUpdater<AdminYoutubePageParams>({
 		queryOptions: defaultQuery,
 		currentQuery: query,
 	})
@@ -76,8 +73,6 @@ const YoutubeManagement = ({ playlists, query, error }: Props) => {
 			? formatDateSlash(playlists.items[0].updatedAt)
 			: '不明'
 
-	const headers = [{ key: 'title', label: 'タイトル' }]
-
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
 			<h1 className="font-bold text-2xl">Youtube動画管理</h1>
@@ -95,7 +90,6 @@ const YoutubeManagement = ({ playlists, query, error }: Props) => {
 				</button>
 			</div>
 			<FeedbackMessage source={actionFeedback.feedback} />
-			<FeedbackMessage source={error} />
 
 			<PaginatedResourceLayout
 				perPage={{

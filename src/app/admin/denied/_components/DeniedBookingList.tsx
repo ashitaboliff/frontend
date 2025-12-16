@@ -1,38 +1,29 @@
 'use client'
 
+import type { DeniedBooking } from '@ashitaboliff/types/modules/booking/types'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
 import { TiDeleteOutline } from '@/shared/ui/icons'
-import type { MessageSource } from '@/shared/ui/molecules/FeedbackMessage'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 import { formatDateJa } from '@/shared/utils/dateFormat'
 
-interface Props {
+type Props = {
 	readonly deniedBookings: DeniedBooking[]
 	readonly onDeniedBookingItemClick: (deniedBooking: DeniedBooking) => void
 	readonly isLoading: boolean
-	readonly error: MessageSource
+	readonly headers: Array<{ key: string; label: string }>
 }
-
-const headers = [
-	{ key: 'status', label: '' },
-	{ key: 'date', label: '日付' },
-	{ key: 'time', label: '時間' },
-	{ key: 'reason', label: '禁止理由' },
-]
 
 const DeniedBookingList = ({
 	deniedBookings,
 	onDeniedBookingItemClick,
 	isLoading,
-	error,
+	headers,
 }: Props) => {
 	return (
 		<GenericTable<DeniedBooking>
 			headers={headers}
 			data={deniedBookings}
 			isLoading={isLoading}
-			error={error}
 			onRowClick={onDeniedBookingItemClick}
 			emptyDataMessage="予約禁止日はありません。"
 			itemKeyExtractor={(booking) => booking.id}

@@ -1,30 +1,23 @@
-import type {
-	PlaylistDoc,
-	SearchResponse,
-	YoutubeSearchQuery,
-} from '@ashitaboliff/types/modules/video/types'
+import type { YoutubeSearchQuery } from '@ashitaboliff/types/modules/video/types'
+import { Suspense } from 'react'
 import YoutubeManagement from '@/app/admin/youtube/_components'
-import { adminYoutubePageParams } from '@/domains/admin/model/adminSchema'
+import PageLayout from '@/app/admin/youtube/_components/PageLayout'
+import { AdminYoutubePageParamsSchema } from '@/app/admin/youtube/schema'
 import { searchYoutubeAction } from '@/domains/video/api/videoActions'
-import {
-	ADMIN_YOUTUBE_DEFAULT_PARAMS,
-	ADMIN_YOUTUBE_DEFAULT_QUERY,
-} from '@/domains/video/query/youtubeQuery'
+import { ADMIN_YOUTUBE_DEFAULT_QUERY } from '@/domains/video/query/youtubeQuery'
+import PaginatedErrorView from '@/shared/ui/organisms/PaginatedErrorView'
+import PaginatedTableSkeleton from '@/shared/ui/organisms/PaginatedTableSkeleton'
 import { logError } from '@/shared/utils/logger'
-import type { ApiError } from '@/types/response'
 
-const safeSearchParamsSchema = adminYoutubePageParams.catch(
-	() => ADMIN_YOUTUBE_DEFAULT_PARAMS,
-)
+const headers = [{ key: 'title', label: 'タイトル' }]
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-const Page = async ({ searchParams }: Props) => {
+const Content = async ({ searchParams }: Props) => {
 	const params = await searchParams
-
-	const query = safeSearchParamsSchema.parse({
+	const query = AdminYoutubePageParamsSchema.parse({
 		page: params.page,
 		videoPerPage: params.videoPerPage,
 	})
@@ -34,25 +27,38 @@ const Page = async ({ searchParams }: Props) => {
 		...query,
 	}
 
-	const result = await searchYoutubeAction(actionQuery)
+	const response = await searchYoutubeAction(actionQuery)
 
-	let error: ApiError | undefined
-	let playlists: SearchResponse = { items: [] as PlaylistDoc[], total: 0 }
-
-	if (result.ok) {
-		playlists = result.data
+	if (response.ok) {
+		return (
+			<YoutubeManagement
+				playlists={response.data}
+				query={query}
+				headers={headers}
+			/>
+		)
 	} else {
-		error = result
-		logError('Admin Youtube Page', 'Failed to fetch playlists', result)
+		logError(
+			'YoutubeManagementPage',
+			'Content',
+			'searchYoutubeAction',
+			response,
+		)
+		return <PaginatedErrorView error={response} link="/admin" showPagination />
 	}
+}
 
+const Loading = () => {
+	return <PaginatedTableSkeleton headers={headers} rows={8} showPagination />
+}
+
+const Page = async ({ searchParams }: Props) => {
 	return (
-		<YoutubeManagement
-			key={query.toString()}
-			playlists={playlists}
-			query={query}
-			error={error}
-		/>
+		<PageLayout>
+			<Suspense fallback={<Loading />}>
+				<Content searchParams={searchParams} />
+			</Suspense>
+		</PageLayout>
 	)
 }
 

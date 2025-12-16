@@ -1,18 +1,18 @@
 'use client'
 
 import type {
+	UserAccountRole,
 	UserForAdmin,
 	UserListForAdmin,
-	UserQuery,
 } from '@ashitaboliff/types/modules/user/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
+import type { AdminUserPageParams } from '@/app/admin/user/schema'
 import {
 	deleteUserAction,
 	updateUserRoleAction,
 } from '@/domains/admin/api/adminActions'
 import { AdminUserQueryOptions } from '@/domains/admin/query/adminUserQuery'
-import type { AccountRole } from '@/domains/user/model/userTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
@@ -27,17 +27,21 @@ const PER_PAGE_OPTIONS: Record<string, number> = {
 	'30件': 30,
 }
 
-const SORT_OPTIONS: Array<{ value: UserQuery['sort']; label: string }> = [
+const SORT_OPTIONS: Array<{
+	value: AdminUserPageParams['sort']
+	label: string
+}> = [
 	{ value: 'new', label: '新しい順' },
 	{ value: 'old', label: '古い順' },
 ]
 
 type Props = {
 	readonly users: UserListForAdmin
-	readonly query: UserQuery
+	readonly query: AdminUserPageParams
+	readonly headers: Array<{ key: string; label: string }>
 }
 
-const AdminUserPage = ({ users, query }: Props) => {
+const AdminUserPage = ({ users, query, headers }: Props) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
 	const [selectedUser, setSelectedUser] = useState<UserForAdmin | null>(null)
@@ -45,7 +49,7 @@ const AdminUserPage = ({ users, query }: Props) => {
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 	const [isActionLoading, setIsActionLoading] = useState(false)
 
-	const { updateQuery, isPending } = useQueryUpdater<UserQuery>({
+	const { updateQuery, isPending } = useQueryUpdater<AdminUserPageParams>({
 		queryOptions: AdminUserQueryOptions,
 		currentQuery: query,
 	})
@@ -88,7 +92,7 @@ const AdminUserPage = ({ users, query }: Props) => {
 	}, [actionFeedback, router, selectedUser])
 
 	const handleRoleChange = useCallback(
-		async (userId: string, role: AccountRole) => {
+		async (userId: string, role: UserAccountRole) => {
 			setIsActionLoading(true)
 			actionFeedback.clearFeedback()
 			try {
@@ -139,6 +143,7 @@ const AdminUserPage = ({ users, query }: Props) => {
 					users={users.users}
 					onUserItemClick={handleSelectUser}
 					isLoading={isPending}
+					headers={headers}
 				/>
 			</PaginatedResourceLayout>
 			<button

@@ -1,8 +1,6 @@
 import type { AdminDeniedBookingQuery } from '@ashitaboliff/types/modules/booking/types'
 import type { z } from 'zod'
 import {
-	type adminUserSortSchema,
-	type adminYoutubePageParams,
 	type deniedBookingFormSchema,
 	deniedBookingSortSchema,
 	type deniedBookingTypeSchema,
@@ -11,21 +9,7 @@ import {
 
 export type DeniedBookingQuery = Omit<AdminDeniedBookingQuery, 'today'>
 
-export interface PadLock {
-	id: string
-	name: string
-	createdAt: Date
-	updatedAt: Date
-	isDeleted: boolean
-}
-
-export type AdminYoutubePage = z.infer<typeof adminYoutubePageParams>
-
 export type PadLockFormValues = z.infer<typeof padLockFormSchema>
-
-export type AdminUserSort = z.infer<typeof adminUserSortSchema>
-
-export type DeniedBookingSort = z.infer<typeof deniedBookingSortSchema>
 
 export const DENIED_BOOKING_SORT_OPTIONS = deniedBookingSortSchema.options
 
@@ -40,6 +24,3 @@ export const DENIED_BOOKING_TYPE_OPTIONS = [
 	{ value: 'period', label: '期間禁止' },
 	{ value: 'regular', label: '定期禁止' },
 ] as const satisfies ReadonlyArray<{ value: DeniedBookingType; label: string }>
-
-export type DeniedBookingTypeOption =
-	(typeof DENIED_BOOKING_TYPE_OPTIONS)[number]

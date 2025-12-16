@@ -8,17 +8,15 @@ type Props = {
 	readonly users: UserForAdmin[]
 	readonly onUserItemClick: (user: UserForAdmin) => void
 	readonly isLoading: boolean
+	readonly headers: Array<{ key: string; label: string }>
 }
 
-const headers = [
-	{ key: 'lineName', label: 'LINE名' },
-	{ key: 'fullName', label: '本名' },
-	{ key: 'studentId', label: '学籍番号' },
-	{ key: 'studentStatus', label: '学籍状況' },
-	{ key: 'role', label: '役割' },
-]
-
-const UserManageList = ({ users, onUserItemClick, isLoading }: Props) => {
+const UserManageList = ({
+	users,
+	onUserItemClick,
+	isLoading,
+	headers,
+}: Props) => {
 	return (
 		<GenericTable<UserForAdmin>
 			headers={headers}

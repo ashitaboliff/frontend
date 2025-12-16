@@ -7,7 +7,7 @@ import { getAuthDetails } from '@/domains/auth/api/authActions'
 import type { AuthDetails } from '@/domains/auth/model/authTypes'
 import type { Session } from '@/types/session'
 
-export interface UseSessionResult {
+export type UseSessionResult = {
 	data: Session | null
 	status: 'loading' | 'authenticated' | 'unauthenticated'
 	error?: Error

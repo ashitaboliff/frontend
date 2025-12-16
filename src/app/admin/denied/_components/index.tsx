@@ -1,13 +1,16 @@
 'use client'
 
-import type { AdminDeniedSort } from '@ashitaboliff/types/modules/booking/types'
+import type {
+	AdminDeniedBookingResponse,
+	AdminDeniedSort,
+	DeniedBooking,
+} from '@ashitaboliff/types/modules/booking/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { useSWRConfig } from 'swr'
 import { deleteDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
 import type { DeniedBookingQuery } from '@/domains/admin/model/adminTypes'
 import { DeniedBookingQueryOptions } from '@/domains/admin/query/deniedBookingQuery'
-import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
 import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import useFlashMessage from '@/shared/hooks/useFlashMessage'
@@ -16,7 +19,6 @@ import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import FlashMessage from '@/shared/ui/molecules/FlashMessage'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import { logError } from '@/shared/utils/logger'
-import type { ApiError } from '@/types/response'
 import DeniedBookingDeleteDialog from './DeniedBookingDeleteDialog'
 import DeniedBookingDetailDialog from './DeniedBookingDetailDialog'
 import DeniedBookingList from './DeniedBookingList'
@@ -34,18 +36,12 @@ const SORT_OPTIONS: Array<{ value: AdminDeniedSort; label: string }> = [
 ]
 
 type Props = {
-	readonly deniedBookings: DeniedBooking[]
-	readonly totalCount: number
-	readonly initialQuery: DeniedBookingQuery
-	readonly initialError?: ApiError
+	readonly deniedBookings: AdminDeniedBookingResponse
+	readonly query: DeniedBookingQuery
+	readonly headers: Array<{ key: string; label: string }>
 }
 
-const DeniedBookingPage = ({
-	deniedBookings,
-	totalCount,
-	initialQuery,
-	initialError,
-}: Props) => {
+const DeniedBookingPage = ({ deniedBookings, query, headers }: Props) => {
 	const router = useRouter()
 	const globalFeedback = useFeedback()
 	const actionFeedback = useFeedback()
@@ -57,16 +53,15 @@ const DeniedBookingPage = ({
 	const [isActionLoading, setIsActionLoading] = useState(false)
 	const { mutate } = useSWRConfig()
 
-	const query = initialQuery
-
 	const { updateQuery, isPending } = useQueryUpdater<DeniedBookingQuery>({
 		queryOptions: DeniedBookingQueryOptions,
 		currentQuery: query,
 	})
 
 	const pageCount = useMemo(
-		() => Math.max(1, Math.ceil(totalCount / query.perPage) || 1),
-		[totalCount, query.perPage],
+		() =>
+			Math.max(1, Math.ceil(deniedBookings.totalCount / query.perPage) || 1),
+		[deniedBookings.totalCount, query.perPage],
 	)
 	const { type, message } = useFlashMessage({
 		key: 'admin/denied:flash',
@@ -145,7 +140,6 @@ const DeniedBookingPage = ({
 				>
 					予約禁止日を追加
 				</button>
-				<FeedbackMessage source={initialError} defaultVariant="error" />
 				<FeedbackMessage source={globalFeedback.feedback} />
 				<PaginatedResourceLayout
 					perPage={{
@@ -165,15 +159,15 @@ const DeniedBookingPage = ({
 					pagination={{
 						currentPage: query.page,
 						totalPages: pageCount,
-						totalCount,
+						totalCount: deniedBookings.totalCount,
 						onPageChange: (page) => updateQuery({ page }),
 					}}
 				>
 					<DeniedBookingList
-						deniedBookings={deniedBookings}
+						deniedBookings={deniedBookings.data}
 						onDeniedBookingItemClick={handleSelectBooking}
 						isLoading={isPending}
-						error={initialError}
+						headers={headers}
 					/>
 				</PaginatedResourceLayout>
 				<button

@@ -14,7 +14,7 @@ import FeedbackMessage, {
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateTimeJaWithUnits } from '@/shared/utils/dateFormat'
 
-interface Props {
+type Props = {
 	readonly open: boolean
 	readonly onClose: () => void
 	readonly selectedUser: UserDetail | null

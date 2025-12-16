@@ -1,54 +1,81 @@
+import { Suspense } from 'react'
 import DeniedBookingPage from '@/app/admin/denied/_components'
+import PageLayout from '@/app/admin/denied/_components/PageLayout'
+import { AdminDeniedPageParamsSchema } from '@/app/admin/denied/schema'
 import { getDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
-import { adminDeniedBookingQuerySchema } from '@/domains/admin/model/adminSchema'
-import { DENIED_BOOKING_DEFAULT_QUERY } from '@/domains/admin/query/deniedBookingQuery'
-import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
+import PaginatedErrorView from '@/shared/ui/organisms/PaginatedErrorView'
+import PaginatedTableSkeleton from '@/shared/ui/organisms/PaginatedTableSkeleton'
 import { getCurrentJSTDateString } from '@/shared/utils'
-import type { ApiError } from '@/types/response'
+import { logError } from '@/shared/utils/logger'
 
-const safeSearchParamsSchema = adminDeniedBookingQuerySchema.catch(
-	() => DENIED_BOOKING_DEFAULT_QUERY,
-)
+const headers = [
+	{ key: 'status', label: '' },
+	{ key: 'date', label: '日付' },
+	{ key: 'time', label: '時間' },
+	{ key: 'reason', label: '禁止理由' },
+]
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-const Page = async ({ searchParams }: Props) => {
+const Content = async ({ searchParams }: Props) => {
 	const params = await searchParams
-
-	const query = safeSearchParamsSchema.parse({
+	const query = AdminDeniedPageParamsSchema.parse({
 		page: params.page,
 		perPage: params.perPage,
 		sort: params.sort,
 	})
 
 	const today = getCurrentJSTDateString()
-
-	let deniedBookings: DeniedBooking[] = []
-	let totalCount = 0
-	let error: ApiError | undefined
-
 	const response = await getDeniedBookingAction({
 		...query,
 		today,
 	})
 
 	if (response.ok) {
-		deniedBookings = response.data.data
-		totalCount = response.data.totalCount
+		return (
+			<DeniedBookingPage
+				deniedBookings={response.data}
+				query={query}
+				headers={headers}
+			/>
+		)
 	} else {
-		error = response
+		logError('DeniedBookingPage', 'Content', 'getDeniedBookingAction', response)
+		return (
+			<PaginatedErrorView
+				error={response}
+				link="/admin"
+				perPageLabel="表示件数:"
+				showSort
+				sortOptionCount={3}
+				showPagination
+			/>
+		)
 	}
+}
 
+const Loading = () => {
 	return (
-		<DeniedBookingPage
-			key={query.toString()}
-			deniedBookings={deniedBookings}
-			totalCount={totalCount}
-			initialQuery={query}
-			initialError={error}
+		<PaginatedTableSkeleton
+			headers={headers}
+			rows={8}
+			perPageLabel="表示件数:"
+			showSort
+			sortOptionCount={3}
+			showPagination
 		/>
+	)
+}
+
+const Page = async ({ searchParams }: Props) => {
+	return (
+		<PageLayout>
+			<Suspense fallback={<Loading />}>
+				<Content searchParams={searchParams} />
+			</Suspense>
+		</PageLayout>
 	)
 }
 

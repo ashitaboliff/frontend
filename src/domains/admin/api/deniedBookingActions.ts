@@ -1,141 +1,31 @@
 'use server'
 
-import { eachDayOfInterval, getDay } from 'date-fns'
+import {
+	AdminDeniedBookingQuerySchema,
+	AdminDeniedBookingResponseSchema,
+} from '@ashitaboliff/types/modules/booking/schema/denied'
+import type {
+	AdminDeniedBookingResponse,
+	AdminDeniedSort,
+} from '@ashitaboliff/types/modules/booking/types'
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
 import {
 	getCreateDeniedBookingErrorMessage,
 	getDeleteDeniedBookingErrorMessage,
 } from '@/domains/admin/api/adminErrorMessages'
-import {
-	mapRawDeniedBookings,
-	type RawDeniedBooking,
-} from '@/domains/admin/api/dto'
-import type {
-	DeniedBookingFormValues,
-	DeniedBookingSort,
-} from '@/domains/admin/model/adminTypes'
+import type { DeniedBookingFormValues } from '@/domains/admin/model/adminTypes'
 import { revalidateBookingCalendarsForDate } from '@/domains/booking/api/bookingRevalidate'
-import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
-import { apiDelete, apiGet, apiPost } from '@/shared/lib/api/crud'
+import { apiDelete, apiPost } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
-	failure,
-	mapSuccess,
 	noContentResponse,
+	okResponse,
+	withFallbackMessage,
 } from '@/shared/lib/api/helper'
-import { toDateKey } from '@/shared/utils'
-import { type ApiResponse, StatusCode } from '@/types/response'
-
-type CreateDeniedBookingRequestBody = {
-	startDate: string | string[]
-	startTime: number
-	endTime?: number
-	description: string
-}
-
-const buildDeniedBookingRequestBody = (
-	values: DeniedBookingFormValues,
-):
-	| { success: true; payload: CreateDeniedBookingRequestBody }
-	| { success: false; error: ReturnType<typeof failure> } => {
-	const startTime = Number(values.startTime)
-	if (!Number.isFinite(startTime)) {
-		return {
-			success: false,
-			error: failure(StatusCode.BAD_REQUEST, '開始時間が不正です。'),
-		}
-	}
-
-	if (!(values.startDate instanceof Date)) {
-		return {
-			success: false,
-			error: failure(StatusCode.BAD_REQUEST, '開始日を入力してください。'),
-		}
-	}
-
-	if (values.type === 'single') {
-		return {
-			success: true,
-			payload: {
-				startDate: toDateKey(values.startDate),
-				startTime,
-				description: values.description,
-			},
-		}
-	}
-
-	const parsedEndTime = Number(values.endTime)
-	if (!Number.isFinite(parsedEndTime)) {
-		return {
-			success: false,
-			error: failure(StatusCode.BAD_REQUEST, '終了時間が不正です。'),
-		}
-	}
-
-	if (values.type === 'period') {
-		return {
-			success: true,
-			payload: {
-				startDate: toDateKey(values.startDate),
-				startTime,
-				endTime: parsedEndTime,
-				description: values.description,
-			},
-		}
-	}
-
-	if (!(values.endDate instanceof Date)) {
-		return {
-			success: false,
-			error: failure(StatusCode.BAD_REQUEST, '終了日を入力してください。'),
-		}
-	}
-
-	if (values.dayOfWeek === undefined) {
-		return {
-			success: false,
-			error: failure(StatusCode.BAD_REQUEST, '曜日を選択してください。'),
-		}
-	}
-
-	const targetDay = Number(values.dayOfWeek)
-	if (!Number.isInteger(targetDay) || targetDay < 0 || targetDay > 6) {
-		return {
-			success: false,
-			error: failure(StatusCode.BAD_REQUEST, '曜日の値が不正です。'),
-		}
-	}
-
-	const allDates = eachDayOfInterval({
-		start: values.startDate,
-		end: values.endDate,
-	})
-
-	const dates = allDates
-		.filter((date) => getDay(date) === targetDay)
-		.map((date) => toDateKey(date))
-
-	if (dates.length === 0) {
-		return {
-			success: false,
-			error: failure(
-				StatusCode.BAD_REQUEST,
-				'選択された期間に該当する曜日がありません。',
-			),
-		}
-	}
-
-	return {
-		success: true,
-		payload: {
-			startDate: dates,
-			startTime,
-			endTime: parsedEndTime,
-			description: values.description,
-		},
-	}
-}
+import { apiGet } from '@/shared/lib/api/v2/crud'
+import type { ApiResponse } from '@/types/response'
+import { buildDeniedBookingRequestBody } from './adminService'
 
 export const createDeniedBookingAction = async (
 	values: DeniedBookingFormValues,
@@ -177,13 +67,10 @@ export const getDeniedBookingAction = async ({
 }: {
 	page: number
 	perPage: number
-	sort: DeniedBookingSort
+	sort: AdminDeniedSort
 	today: string
-}): Promise<ApiResponse<{ data: DeniedBooking[]; totalCount: number }>> => {
-	const res = await apiGet<{
-		data: RawDeniedBooking[]
-		totalCount: number
-	}>('/booking/denied', {
+}): Promise<ApiResponse<AdminDeniedBookingResponse>> => {
+	const res = await apiGet('/booking/denied', {
 		searchParams: {
 			page,
 			perPage,
@@ -197,16 +84,17 @@ export const getDeniedBookingAction = async ({
 				'denied-bookings',
 			],
 		},
+		schemas: {
+			searchParams: AdminDeniedBookingQuerySchema,
+			response: AdminDeniedBookingResponseSchema,
+		},
 	})
 
-	return mapSuccess(
-		res,
-		(data) => ({
-			data: mapRawDeniedBookings(data.data),
-			totalCount: data.totalCount ?? 0,
-		}),
-		'予約禁止日の取得に失敗しました',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約禁止日の取得に失敗しました')
+	}
+
+	return okResponse(res.data)
 }
 
 export const deleteDeniedBookingAction = async ({

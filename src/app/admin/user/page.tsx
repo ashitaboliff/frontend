@@ -1,10 +1,19 @@
 import { Suspense } from 'react'
 import AdminUserPage from '@/app/admin/user/_components'
-import ErrorView from '@/app/admin/user/_components/ErrorView'
-import Loading from '@/app/admin/user/_components/Loading'
 import PageLayout from '@/app/admin/user/_components/PageLayout'
 import { AdminUserPageParamsSchema } from '@/app/admin/user/schema'
 import { getUserDetailsListAction } from '@/domains/admin/api/adminActions'
+import PaginatedErrorView from '@/shared/ui/organisms/PaginatedErrorView'
+import PaginatedTableSkeleton from '@/shared/ui/organisms/PaginatedTableSkeleton'
+import { logError } from '@/shared/utils/logger'
+
+const headers = [
+	{ key: 'lineName', label: 'LINE名' },
+	{ key: 'fullName', label: '本名' },
+	{ key: 'studentId', label: '学籍番号' },
+	{ key: 'studentStatus', label: '学籍状況' },
+	{ key: 'role', label: '役割' },
+]
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -29,10 +38,35 @@ const Content = async ({ searchParams }: Props) => {
 	})
 
 	if (response.ok) {
-		return <AdminUserPage users={response.data} query={query} />
+		return (
+			<AdminUserPage users={response.data} query={query} headers={headers} />
+		)
 	} else {
-		return <ErrorView error={response} />
+		logError('AdminUserPage', 'Content', 'getUserDetailsListAction', response)
+		return (
+			<PaginatedErrorView
+				error={response}
+				link="/admin"
+				perPageLabel="表示件数:"
+				showSort
+				sortOptionCount={2}
+				showPagination
+			/>
+		)
 	}
+}
+
+const Loading = () => {
+	return (
+		<PaginatedTableSkeleton
+			headers={headers}
+			rows={8}
+			perPageLabel="表示件数:"
+			showSort
+			sortOptionCount={2}
+			showPagination
+		/>
+	)
 }
 
 const Page = async ({ searchParams }: Props) => {

@@ -56,7 +56,7 @@ export const getUserDetailsListAction = async ({
 		searchParams: { page, perPage, sort },
 		next: {
 			revalidate: 7 * 24 * 60 * 60,
-			tags: ['users'],
+			tags: ['users', `users-page-${page}-perPage-${perPage}-sort-${sort}`],
 		},
 		schemas: {
 			searchParams: UserQuerySchema,
