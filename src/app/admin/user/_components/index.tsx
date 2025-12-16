@@ -15,7 +15,7 @@ import {
 import { AdminUserQueryOptions } from '@/domains/admin/query/adminUserQuery'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import { logError } from '@/shared/utils/logger'
 import UserDeleteConfirmPopup from './UserDeleteConfirmPopup'
 import UserDetailPopup from './UserDetailPopup'

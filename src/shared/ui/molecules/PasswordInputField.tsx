@@ -1,66 +1,97 @@
-import type { MouseEvent } from 'react'
+import { forwardRef, type InputHTMLAttributes, type MouseEvent } from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
+import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 import { MdVisibility, MdVisibilityOff } from '@/shared/ui/icons'
+import { classNames } from '@/shared/ui/utils/classNames'
+import { composeRefs } from '@/shared/ui/utils/refs'
+
+export type PasswordInputFieldProps = {
+	readonly label?: string
+	readonly labelId?: string
+	readonly register?: UseFormRegisterReturn
+	readonly errorMessage?: string
+	readonly wrapperClassName?: string
+	readonly showPassword: boolean
+	readonly onToggleVisibility: () => void
+	readonly onPressMouseDown?: (event: MouseEvent<HTMLButtonElement>) => void
+} & Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'children'>
 
 /**
- * パスワード入力フィールド
- * @param register react-hook-formのregister
- * @param showPassword パスワード表示の有無
- * @param handleClickShowPassword パスワード表示の切り替え関数、見えるほう
- * @param handleMouseDownPassword パスワード表示の切り替え関数、見えなくするほう
+ * パスワード入力フィールド。表示/非表示トグル付きで register と onChange を両立させる。
  */
-const PasswordInputField = ({
-	label,
-	labelId,
-	register,
-	showPassword,
-	handleClickShowPassword,
-	handleMouseDownPassword,
-	errorMessage,
-	className = '',
-}: {
-	label?: string
-	labelId?: string
-	register: UseFormRegisterReturn
-	showPassword: boolean
-	handleClickShowPassword: () => void
-	handleMouseDownPassword: (event: MouseEvent<HTMLButtonElement>) => void
-	errorMessage?: string
-	className?: string
-}) => {
-	return (
-		<div className="flex w-full flex-col">
-			{label && <LabelInputField label={label} labelId={labelId} />}
-			<div className="relative">
-				<input
-					id={labelId}
-					{...register}
-					className={`input w-full bg-white pr-10 ${className}`}
-					type={showPassword ? 'text' : 'password'}
-					placeholder="パスワード"
-					autoComplete="off"
-				/>
-				<button
-					type="button"
-					className="absolute inset-y-0 right-0 z-20 flex items-center px-2"
-					onClick={handleClickShowPassword}
-					onMouseDown={handleMouseDownPassword}
-				>
-					{showPassword ? (
-						<MdVisibilityOff className="text-xl" />
-					) : (
-						<MdVisibility className="text-xl" />
-					)}
-				</button>
-			</div>
-			{errorMessage && (
-				<div className="label">
-					<span className="label-text-alt text-error">{errorMessage}</span>
+const PasswordInputField = forwardRef<
+	HTMLInputElement,
+	PasswordInputFieldProps
+>(
+	(
+		{
+			label,
+			labelId,
+			register,
+			errorMessage,
+			className,
+			wrapperClassName,
+			showPassword,
+			onToggleVisibility,
+			onPressMouseDown,
+			onChange,
+			...rest
+		},
+		ref,
+	) => {
+		const {
+			onChange: registerOnChange,
+			ref: registerRef,
+			...registerRest
+		} = register ?? {}
+
+		const handleChange: React.ChangeEventHandler<HTMLInputElement> = (
+			event,
+		) => {
+			registerOnChange?.(event)
+			onChange?.(event)
+		}
+
+		const errorId = errorMessage
+			? `${labelId ?? rest.name ?? 'password'}-error`
+			: undefined
+
+		return (
+			<div className={classNames('flex w-full flex-col', wrapperClassName)}>
+				{label ? <LabelInputField label={label} labelId={labelId} /> : null}
+				<div className="relative">
+					<input
+						id={labelId}
+						{...registerRest}
+						className={classNames('input w-full bg-white pr-12', className)}
+						type={showPassword ? 'text' : 'password'}
+						autoComplete="new-password"
+						onChange={handleChange}
+						ref={composeRefs(ref, registerRef)}
+						aria-describedby={errorId}
+						{...rest}
+					/>
+					<button
+						type="button"
+						className="absolute inset-y-0 right-0 z-20 flex items-center px-2"
+						onClick={onToggleVisibility}
+						onMouseDown={onPressMouseDown}
+						aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
+					>
+						{showPassword ? (
+							<MdVisibilityOff className="text-xl" aria-hidden />
+						) : (
+							<MdVisibility className="text-xl" aria-hidden />
+						)}
+					</button>
 				</div>
-			)}
-		</div>
-	)
-}
+				<InputFieldError id={errorId} errorMessage={errorMessage} />
+			</div>
+		)
+	},
+)
+
+PasswordInputField.displayName = 'PasswordInputField'
 
 export default PasswordInputField

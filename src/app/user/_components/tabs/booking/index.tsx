@@ -7,7 +7,7 @@ import type { Booking } from '@/domains/booking/model/bookingTypes'
 import BookingDetailPopup from '@/domains/booking/ui/BookingDetailPopup'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import type { Session } from '@/types/session'
 import BookingLogList from './BookingLogList'
 

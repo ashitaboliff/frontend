@@ -8,16 +8,24 @@ import {
 } from '@/shared/hooks/useBrowserApis'
 import PublicEnv from '@/shared/lib/env/public'
 import { CiShare1, IoShareSocialSharp } from '@/shared/ui/icons'
+import { classNames } from '@/shared/ui/utils/classNames'
 
-type ShareButtonProps = {
+export type ShareButtonProps = {
 	url: string
 	title: string
 	text: string
 	isFullButton?: boolean
 	className?: string
 	isOnlyLine?: boolean
+	/** isFullButton=true 時に表示するラベル。未指定なら title を表示。 */
+	buttonLabel?: string
 }
 
+/**
+ * Web Share API / LINE 共有に対応したボタン。
+ * - isOnlyLine=true なら LINE 共有リンクのみを開く
+ * - Web Share 失敗時は LINE 共有にフォールバック
+ */
 const ShareButton = ({
 	url,
 	title,
@@ -25,13 +33,17 @@ const ShareButton = ({
 	isFullButton,
 	className,
 	isOnlyLine,
+	buttonLabel,
 }: ShareButtonProps) => {
 	const openWindow = useWindowOpen()
 	const navigatorShare = useNavigatorShare()
 	const alertUser = useWindowAlert()
 
 	const lineShareUrl = useMemo(() => {
-		return `https://social-plugins.line.me/lineit/share?url=${PublicEnv.NEXT_PUBLIC_APP_URL}${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
+		const encodedUrl = encodeURIComponent(
+			`${PublicEnv.NEXT_PUBLIC_APP_URL}${url}`,
+		)
+		return `https://social-plugins.line.me/lineit/share?url=${encodedUrl}&text=${encodeURIComponent(text)}`
 	}, [text, url])
 
 	const shareData = useMemo(
@@ -73,19 +85,25 @@ const ShareButton = ({
 		shareData,
 	])
 
-	const buttonClassName =
-		className ||
-		(isFullButton ? 'btn btn-outline w-full sm:w-auto' : 'btn btn-ghost')
+	const buttonClassName = classNames(
+		className,
+		isFullButton ? 'btn btn-outline w-full sm:w-auto' : 'btn btn-ghost',
+	)
 
 	return (
-		<button type="button" className={buttonClassName} onClick={handleShare}>
+		<button
+			type="button"
+			className={buttonClassName}
+			onClick={handleShare}
+			aria-label={isOnlyLine ? 'LINEで共有' : '共有する'}
+		>
 			{isFullButton ? (
 				<div className="flex items-center justify-center">
-					<CiShare1 size={15} />
-					<span className="ml-2">{title}</span>
+					<CiShare1 size={15} aria-hidden />
+					<span className="ml-2">{buttonLabel ?? title}</span>
 				</div>
 			) : (
-				<IoShareSocialSharp size={25} />
+				<IoShareSocialSharp size={25} aria-hidden />
 			)}
 		</button>
 	)

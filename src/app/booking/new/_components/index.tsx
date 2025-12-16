@@ -198,7 +198,7 @@ const BookingCreate = ({
 							register={register('bookingDate')}
 							type="date"
 							disabled
-							autocomplete="off"
+							autoComplete="off"
 						/>
 						<TextInputField
 							label="時間"
@@ -212,7 +212,7 @@ const BookingCreate = ({
 							register={register('registName')}
 							placeholder="バンド名"
 							errorMessage={errors.registName?.message}
-							autocomplete="off"
+							autoComplete="off"
 						/>
 						<TextInputField
 							type="text"
@@ -220,14 +220,14 @@ const BookingCreate = ({
 							register={register('name')}
 							placeholder="責任者名"
 							errorMessage={errors.name?.message}
-							autocomplete="off"
+							autoComplete="off"
 						/>
 						<PasswordInputField
 							label="パスワード"
 							register={register('password')}
 							showPassword={showPassword}
-							handleClickShowPassword={() => setShowPassword((prev) => !prev)}
-							handleMouseDownPassword={(e) => e.preventDefault()}
+							onToggleVisibility={() => setShowPassword((prev) => !prev)}
+							onPressMouseDown={(e) => e.preventDefault()}
 							errorMessage={errors.password?.message}
 						/>
 						{messageFeedback.feedback?.kind === 'error' && (

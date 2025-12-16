@@ -19,7 +19,7 @@ import type { Session } from '@/types/session'
 
 type GachaStep = 'select' | 'confirm' | 'pending' | 'result'
 
-interface Props {
+type Props = {
 	readonly session: Session
 	readonly gachaPlayCountToday: number
 	readonly onGachaPlayedSuccessfully: () => void
@@ -196,7 +196,7 @@ const GachaController = ({
 					<div className="flex w-full max-w-xl flex-col pt-20">
 						<GachaResult state={gachaResultState} />
 						<div className="relative">
-							<div className="fixed absolute bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
+							<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
 								<button
 									type="button"
 									className="btn btn-outline"

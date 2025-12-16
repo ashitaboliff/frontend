@@ -6,7 +6,7 @@ import type { Booking } from '@/domains/booking/model/bookingTypes'
 import BookingDetailPopup from '@/domains/booking/ui/BookingDetailPopup'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 
 interface Props {

@@ -3,13 +3,14 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { useMemo } from 'react'
 import { useCarousel } from '@/shared/hooks/useCarousel'
+import { classNames } from '@/shared/ui/utils/classNames'
 
 export type CarouselSlide = {
 	id: string
 	node: ReactNode
 }
 
-type CarouselProps = {
+export type CarouselProps = {
 	slides: CarouselSlide[]
 	autoPlay?: boolean
 	interval?: number
@@ -51,13 +52,12 @@ const Carousel = ({
 		onSlideChange,
 	})
 
-	const composedClassName = useMemo(() => {
-		return ['relative w-full overflow-hidden select-none', className]
-			.filter(Boolean)
-			.join(' ')
-	}, [className])
+	const composedClassName = useMemo(
+		() => classNames('relative w-full overflow-hidden select-none', className),
+		[className],
+	)
 
-	const composedStyle = useMemo(() => {
+	const composedStyle = useMemo<CSSProperties>(() => {
 		return {
 			touchAction: 'pan-y',
 			cursor: slides.length > 1 ? 'grab' : 'default',
@@ -73,6 +73,7 @@ const Carousel = ({
 		<div
 			className={composedClassName}
 			style={composedStyle}
+			aria-live="polite"
 			{...containerProps}
 		>
 			<div
@@ -86,6 +87,7 @@ const Carousel = ({
 					<fieldset
 						className="w-full shrink-0"
 						key={id}
+						aria-roledescription="slide"
 						aria-label={`${index + 1} / ${slides.length}`}
 					>
 						{node}

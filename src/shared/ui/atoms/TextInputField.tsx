@@ -1,104 +1,90 @@
-import type { ChangeEvent, ReactNode } from 'react'
+import {
+	type ChangeEvent,
+	forwardRef,
+	type InputHTMLAttributes,
+	type ReactNode,
+} from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
+import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
+import { classNames } from '@/shared/ui/utils/classNames'
+import { composeRefs } from '@/shared/ui/utils/refs'
+
+export type TextInputFieldProps = {
+	/** ラベルテキスト。未指定の場合はラベルを描画しません。 */
+	readonly label?: string
+	/** input の id。ラベル/エラーと紐付ける際に利用します。 */
+	readonly labelId?: string
+	/** ラベル横に表示する補足コンテンツ。 */
+	readonly infoDropdown?: ReactNode
+	/** react-hook-form の register 戻り値。 */
+	readonly register?: UseFormRegisterReturn
+	/** エラーメッセージ。表示と aria-describedby に使用します。 */
+	readonly errorMessage?: string
+	/** ラッパーのクラス名。 */
+	readonly wrapperClassName?: string
+} & Omit<InputHTMLAttributes<HTMLInputElement>, 'children'>
 
 /**
- * テキスト入力フィールド
- * @param register react-hook-formのregister
- * @param placeholder プレースホルダー
- * @param type 入力タイプ
- * @param label ラベル
- * @param infoDropdown ドロップダウンの情報
- * @param disabled フィールドの無効化
- * @param errorMessage エラーメッセージ
- * @param className クラス名
- * @param value 値
- * @param onChange 値の変更時の関数
- * @param defaultValue デフォルト値
+ * ラベルとエラー表示付きのテキスト入力。
+ * ネイティブ input 属性をそのまま渡せる。`register` と `onChange` を合成して両方実行。
  */
+const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
+	(
+		{
+			label,
+			labelId,
+			infoDropdown,
+			register,
+			errorMessage,
+			className,
+			wrapperClassName,
+			onChange,
+			type = 'text',
+			...rest
+		},
+		ref,
+	) => {
+		const {
+			onChange: registerOnChange,
+			ref: registerRef,
+			...registerRest
+		} = register ?? {}
 
-type TextInputFieldProps = {
-	name?: string
-	register?: UseFormRegisterReturn
-	placeholder?: string
-	type: string
-	label?: string
-	labelId?: string
-	infoDropdown?: ReactNode
-	disabled?: boolean
-	errorMessage?: string
-	className?: string
-	value?: string
-	onChange?: (e: ChangeEvent<HTMLInputElement>) => void
-	defaultValue?: string
-	autocomplete?: string
-	required?: boolean
-	maxLength?: number
-	inputMode?:
-		| 'none'
-		| 'text'
-		| 'tel'
-		| 'url'
-		| 'email'
-		| 'numeric'
-		| 'decimal'
-		| 'search'
-}
+		const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+			registerOnChange?.(event)
+			onChange?.(event)
+		}
 
-const TextInputField = ({
-	name,
-	register,
-	placeholder,
-	type,
-	label,
-	labelId,
-	infoDropdown,
-	disabled,
-	errorMessage,
-	className,
-	value,
-	onChange,
-	defaultValue,
-	autocomplete,
-	required,
-	maxLength,
-	inputMode,
-	...props
-}: TextInputFieldProps) => {
-	return (
-		<div className="flex w-full flex-col">
-			{label && (
-				<LabelInputField
-					label={label}
-					infoDropdown={infoDropdown}
-					labelId={labelId}
+		const errorId = errorMessage
+			? `${labelId ?? rest.name ?? 'input'}-error`
+			: undefined
+
+		return (
+			<div className={classNames('flex w-full flex-col', wrapperClassName)}>
+				{label ? (
+					<LabelInputField
+						label={label}
+						infoDropdown={infoDropdown}
+						labelId={labelId}
+					/>
+				) : null}
+				<input
+					id={labelId}
+					type={type}
+					className={classNames('input w-full bg-white pr-10', className)}
+					onChange={handleChange}
+					ref={composeRefs(ref, registerRef)}
+					aria-describedby={errorId}
+					{...registerRest}
+					{...rest}
 				/>
-			)}
-			<input
-				name={name}
-				type={type}
-				id={labelId}
-				placeholder={placeholder}
-				className={`input w-full bg-white pr-10 ${className}`}
-				disabled={disabled}
-				value={value}
-				onChange={onChange}
-				defaultValue={defaultValue}
-				required={required}
-				maxLength={maxLength}
-				inputMode={inputMode}
-				{...register}
-				{...props}
-				autoComplete={autocomplete}
-			/>
+				<InputFieldError id={errorId} errorMessage={errorMessage} />
+			</div>
+		)
+	},
+)
 
-			{errorMessage && (
-				<div className="label">
-					<span className="label-text-alt text-error">{errorMessage}</span>
-				</div>
-			)}
-		</div>
-	)
-}
+TextInputField.displayName = 'TextInputField'
 
 export default TextInputField

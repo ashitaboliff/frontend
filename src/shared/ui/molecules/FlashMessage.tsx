@@ -2,25 +2,33 @@
 
 import { type ReactNode, useEffect, useState } from 'react'
 import Message, { type MessageVariant } from '@/shared/ui/atoms/Message'
+import { classNames } from '@/shared/ui/utils/classNames'
 
 export type NoticeType = MessageVariant
 
-type Props = {
+export type FlashMessageProps = {
 	type?: NoticeType
 	children: ReactNode
 	className?: string
 	duration?: number
+	onClose?: () => void
+	closeable?: boolean
 }
 
 const ENTER_MS = 300
 const LEAVE_MS = 300
 
+/**
+ * 画面上部に一定時間だけ表示されるフラッシュメッセージ。
+ */
 const FlashMessage = ({
 	type = 'info',
 	children,
 	className,
 	duration = 2000,
-}: Props) => {
+	onClose,
+	closeable = false,
+}: FlashMessageProps) => {
 	const [inView, setInView] = useState(false) // true: 画面内、false: 画面外(上)
 	const [visible, setVisible] = useState(true) // コンポーネント自体の生存
 
@@ -32,7 +40,10 @@ const FlashMessage = ({
 			ENTER_MS + duration,
 		)
 		const hideTimer = window.setTimeout(
-			() => setVisible(false),
+			() => {
+				setVisible(false)
+				onClose?.()
+			},
 			ENTER_MS + duration + LEAVE_MS,
 		)
 
@@ -41,20 +52,39 @@ const FlashMessage = ({
 			clearTimeout(leaveTimer)
 			clearTimeout(hideTimer)
 		}
-	}, [duration])
+	}, [duration, onClose])
 
 	if (!visible) return null
 
 	return (
 		<div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center">
 			<div
-				className={`pointer-events-auto mt-4 transform will-change-transform ${inView ? 'translate-y-0 duration-350 ease-out' : '-translate-y-full duration-280 ease-in'}`}
+				className={classNames(
+					'pointer-events-auto mt-4 transform will-change-transform',
+					inView
+						? 'translate-y-0 duration-350 ease-out'
+						: '-translate-y-full duration-280 ease-in',
+				)}
 			>
-				<Message
-					variant={type}
-					className={`shadow-lg ${className ?? ''}`.trim()}
-				>
-					{children}
+				<Message variant={type} className={classNames('shadow-lg', className)}>
+					{closeable ? (
+						<div className="flex items-start gap-3">
+							<div className="flex-1">{children}</div>
+							<button
+								type="button"
+								className="btn btn-ghost btn-xs"
+								onClick={() => {
+									setVisible(false)
+									onClose?.()
+								}}
+								aria-label="閉じる"
+							>
+								✕
+							</button>
+						</div>
+					) : (
+						children
+					)}
 				</Message>
 			</div>
 		</div>

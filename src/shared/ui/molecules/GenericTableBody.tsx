@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react'
 import type { MessageSource } from '@/shared/ui/molecules/FeedbackMessage'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import { classNames } from '@/shared/ui/utils/classNames'
 
 type TableHeader = {
 	key: string
@@ -22,6 +23,7 @@ type GenericTableProps<T extends object> = {
 	emptyDataMessage?: string
 	itemKeyExtractor: (item: T) => string | number
 	colSpan?: number
+	ariaLabel?: string
 }
 
 const GenericTable = <T extends object>({
@@ -37,14 +39,30 @@ const GenericTable = <T extends object>({
 	emptyDataMessage = 'データはありません。',
 	itemKeyExtractor,
 	colSpan,
+	ariaLabel,
 }: GenericTableProps<T>) => {
 	const effectiveColSpan = colSpan ?? Math.max(headers.length, 1)
 
+	const handleRowKeyDown =
+		(item: T) => (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+			if (!onRowClick) return
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault()
+				onRowClick(item)
+			}
+		}
+
 	return (
 		<div
-			className={`w-full overflow-x-auto rounded-box border border-base-content/5 bg-white ${isLoading ? 'text-muted transition-colors' : ''}`}
+			className={classNames(
+				'w-full overflow-x-auto rounded-box border border-base-content/5 bg-white',
+				isLoading && 'text-muted transition-colors',
+			)}
 		>
-			<table className={`table ${tableClassName}`}>
+			<table
+				className={classNames('table', tableClassName)}
+				aria-label={ariaLabel}
+			>
 				<thead>
 					<tr>
 						{headers.map((header) => (
@@ -71,8 +89,14 @@ const GenericTable = <T extends object>({
 						data.map((item) => (
 							<tr
 								key={itemKeyExtractor(item)}
-								className={`${rowClassName} ${onRowClick ? clickableRowClassName : ''}`.trim()}
+								className={classNames(
+									rowClassName,
+									onRowClick && clickableRowClassName,
+								)}
 								onClick={onRowClick ? () => onRowClick(item) : undefined}
+								onKeyDown={handleRowKeyDown(item)}
+								role={onRowClick ? 'button' : undefined}
+								tabIndex={onRowClick ? 0 : undefined}
 							>
 								{renderCells(item)}
 							</tr>

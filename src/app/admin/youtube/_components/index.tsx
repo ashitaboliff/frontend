@@ -13,8 +13,8 @@ import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import Popup from '@/shared/ui/molecules/Popup'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import { formatDateJa, formatDateSlash } from '@/shared/utils/dateFormat'
 import type { QueryOptions } from '@/shared/utils/queryParams'
 
@@ -51,7 +51,7 @@ const YoutubeManagement = ({ playlists, query, headers }: Props) => {
 		return Math.max(1, Math.ceil(playlists.total / query.videoPerPage) || 1)
 	}, [query.videoPerPage, playlists.total, query])
 
-	const handleFetchPlaylist = useCallback(async () => {
+	const _handleFetchPlaylist = useCallback(async () => {
 		actionFeedback.clearFeedback()
 		setIsLoading(true)
 		const res = await postSyncPlaylistAction()
@@ -74,23 +74,8 @@ const YoutubeManagement = ({ playlists, query, headers }: Props) => {
 			: '不明'
 
 	return (
-		<div className="flex flex-col items-center justify-center gap-y-2">
-			<h1 className="font-bold text-2xl">Youtube動画管理</h1>
-			<p className="text-center text-sm">
-				このページではあしたぼホームページとYoutubeの非公開動画の同期・管理を行えます。
-			</p>
-			<div className="flex flex-row gap-x-2">
-				<button
-					type="button"
-					className="btn btn-primary"
-					onClick={handleFetchPlaylist}
-					disabled={isLoading}
-				>
-					{isLoading ? '処理中...' : 'Youtubeと同期'}
-				</button>
-			</div>
+		<>
 			<FeedbackMessage source={actionFeedback.feedback} />
-
 			<PaginatedResourceLayout
 				perPage={{
 					label: '表示件数:',
@@ -192,7 +177,7 @@ const YoutubeManagement = ({ playlists, query, headers }: Props) => {
 					</button>
 				</div>
 			</Popup>
-		</div>
+		</>
 	)
 }
 

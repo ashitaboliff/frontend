@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { MessageSource } from '@/shared/ui/molecules/FeedbackMessage'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
-import PaginatedResourceLayoutSkeleton from '@/shared/ui/molecules/PaginatedResourceLayoutSkeleton'
+import PaginatedResourceLayoutSkeleton from '@/shared/ui/organisms/PaginatedResourceLayoutSkeleton'
 
 type Props = {
 	readonly error: MessageSource

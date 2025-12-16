@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import HomePageHeader from '@/shared/ui/molecules/HomePageHeader'
+import HomePageHeader from '@/shared/ui/organisms/HomePageHeader'
 
 export const metadata = createMetaData({
 	title: 'ライブ映像ページ',

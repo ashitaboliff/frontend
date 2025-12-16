@@ -2,9 +2,12 @@ const lightBlue = '#3C87E0'
 const lightyellow = '#F0CB51'
 const lightred = '#E3646B'
 
+/**
+ * トップページで使用する装飾バー。
+ */
 const HomePageBar = () => {
 	return (
-		<div>
+		<div aria-hidden>
 			<svg
 				width="661"
 				height="158"
@@ -12,7 +15,7 @@ const HomePageBar = () => {
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
 				className="hidden md:block"
-				role="img"
+				role="presentation"
 			>
 				<title>ホームページ装飾バー（デスクトップ）</title>
 				<rect x="378" y="21" width="13" height="136" fill={lightyellow} />
@@ -60,7 +63,7 @@ const HomePageBar = () => {
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
 				className="md:hidden"
-				role="img"
+				role="presentation"
 			>
 				<title>ホームページ装飾バー（モバイル）</title>
 				<rect x="36" y="31" width="13" height="111" fill={lightyellow} />

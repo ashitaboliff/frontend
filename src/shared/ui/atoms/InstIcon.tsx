@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { type Part, PartMap } from '@/domains/user/model/userTypes'
 import {
 	GiGuitarBassHead as BassIcon,
@@ -7,11 +8,21 @@ import {
 	IoEllipsisHorizontalCircleSharp as OtherIcon,
 	MdPiano as PianoIcon,
 } from '@/shared/ui/icons'
+import { classNames } from '@/shared/ui/utils/classNames'
 
-const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
+export type InstIconProps = {
+	readonly part: Part[]
+	readonly size?: number
+	readonly className?: string
+}
+
+/**
+ * バンドパートを示すアイコン群。
+ */
+const InstIcon = ({ part, size, className }: InstIconProps) => {
 	const iconSize = size ?? 20
 
-	const icons = {
+	const icons: Record<Part, ReactNode> = {
 		VOCAL: <MicIcon size={iconSize} color="#000000" />,
 		BACKING_GUITAR: <GuitarIcon size={iconSize} color="#FF6F61" />,
 		LEAD_GUITAR: <GuitarIcon size={iconSize} color="#B22222" />,
@@ -23,23 +34,35 @@ const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
 
 	const sortedParts = Object.keys(icons).filter((key) =>
 		part.includes(key as Part),
-	)
+	) as Part[]
 
 	const gridColumnsClass = iconSize < 20 ? 'grid-cols-8' : 'grid-cols-4'
-	const buttonSizeClass = iconSize < 20 ? 'btn-xs' : 'btn-sm'
+	const badgeSizeClass = iconSize < 20 ? 'text-xs py-1' : 'text-sm py-1.5'
 
 	return (
-		<div className="flex flex-wrap justify-around">
+		<div className={classNames('flex flex-wrap justify-around', className)}>
 			<div
-				className={`grid w-full gap-1 md:flex md:flex-row ${gridColumnsClass}`}
+				className={classNames(
+					'grid w-full gap-1 md:flex md:flex-row',
+					gridColumnsClass,
+				)}
 			>
 				{sortedParts.map((p) => (
-					<div key={p} className="tooltip" data-tip={PartMap[p as Part]}>
-						<div
-							className={`btn btn-ghost no-animation btn-circle ${buttonSizeClass}`}
+					<div
+						key={p}
+						className="tooltip flex items-center justify-center"
+						data-tip={PartMap[p]}
+						role="img"
+						aria-label={PartMap[p]}
+					>
+						<span
+							className={classNames(
+								'inline-flex items-center justify-center',
+								badgeSizeClass,
+							)}
 						>
-							{icons[p as Part]}
-						</div>
+							{icons[p]}
+						</span>
 					</div>
 				))}
 			</div>

@@ -50,6 +50,12 @@ export const PartOptions: Record<PartEnum, Part> = {
 	その他: 'OTHER',
 }
 
+export const PartOptionList: Array<{ label: PartEnum; value: Part }> =
+	Object.entries(PartOptions).map(([label, value]) => ({
+		label: label as PartEnum,
+		value,
+	}))
+
 export const AccountRoleMap: Record<AccountRole, string> = {
 	ADMIN: '三役',
 	USER: 'ユーザ',

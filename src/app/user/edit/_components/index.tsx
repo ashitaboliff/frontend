@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useWatch } from 'react-hook-form'
 import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
 import { expectedYearMap } from '@/domains/user/model/profileSchema'
-import { PartOptions, type Profile } from '@/domains/user/model/userTypes'
+import { PartOptionList, type Profile } from '@/domains/user/model/userTypes'
 import Loading from '@/shared/ui/atoms/Loading'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
@@ -78,7 +78,7 @@ const ProfileEdit = ({ profile }: Props) => {
 				<MultiSelectField
 					name="part"
 					control={control}
-					options={PartOptions}
+					options={PartOptionList}
 					label="使用楽器(複数選択可)"
 					infoDropdown={
 						<>

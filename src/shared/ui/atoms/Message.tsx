@@ -5,18 +5,20 @@ import {
 	SuccessIcon,
 	WarningIcon,
 } from '@/shared/ui/icons'
+import { classNames } from '@/shared/ui/utils/classNames'
 
 export type MessageVariant = 'info' | 'success' | 'warning' | 'error'
 
-type MessageProps = {
-	variant?: MessageVariant
-	showIcon?: boolean
-	icon?: ReactNode
-	iconClassName?: string
-	title?: ReactNode
-	children?: ReactNode
-	className?: string
-	role?: 'alert' | 'status'
+export type MessageProps = {
+	readonly variant?: MessageVariant
+	readonly showIcon?: boolean
+	readonly icon?: ReactNode
+	readonly iconClassName?: string
+	readonly title?: ReactNode
+	readonly children?: ReactNode
+	readonly className?: string
+	readonly role?: 'alert' | 'status'
+	readonly 'aria-live'?: 'assertive' | 'polite'
 }
 
 const variantToClass: Record<MessageVariant, string> = {
@@ -33,6 +35,9 @@ const variantToIcon: Record<MessageVariant, ReactNode> = {
 	error: <ErrorIcon className="h-4 w-4" aria-hidden="true" />,
 }
 
+/**
+ * 状態メッセージの表示。variant に応じて色とデフォルトアイコンを切り替える。
+ */
 const Message = ({
 	variant = 'info',
 	showIcon = true,
@@ -42,23 +47,31 @@ const Message = ({
 	children,
 	className,
 	role,
+	'aria-live': ariaLive,
 }: MessageProps) => {
 	if (!children && !title) {
 		return null
 	}
 
+	const effectiveRole = role ?? (variant === 'error' ? 'alert' : 'status')
+	const live = ariaLive ?? (effectiveRole === 'alert' ? 'assertive' : 'polite')
+
 	return (
-		<div className={`relative ${className ?? ''}`.trim()}>
+		<div className={classNames('relative', className)}>
 			<div
 				className="pointer-events-none absolute inset-0 rounded-md bg-white"
 				aria-hidden="true"
 			/>
 			<div
-				className={`relative z-10 flex items-start gap-3 rounded-md border px-3 py-2 text-sm ${variantToClass[variant]}`.trim()}
-				role={role ?? (variant === 'error' ? 'alert' : 'status')}
+				className={classNames(
+					'relative z-10 flex items-start gap-3 rounded-md border px-3 py-2 text-sm',
+					variantToClass[variant],
+				)}
+				role={effectiveRole}
+				aria-live={live}
 			>
 				{showIcon ? (
-					<span className={`mt-0.5 ${iconClassName ?? ''}`.trim()}>
+					<span className={classNames('mt-0.5', iconClassName)}>
 						{icon ?? variantToIcon[variant]}
 					</span>
 				) : null}

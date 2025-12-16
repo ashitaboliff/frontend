@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import GenericTableSkeleton from '@/shared/ui/molecules/GenericTableSkeleton'
-import PaginatedResourceLayoutSkeleton from '@/shared/ui/molecules/PaginatedResourceLayoutSkeleton'
+import PaginatedResourceLayoutSkeleton from '@/shared/ui/organisms/PaginatedResourceLayoutSkeleton'
 
 type TableHeader = { key: string; label: ReactNode }
 

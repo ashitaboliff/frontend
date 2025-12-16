@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
+import { classNames } from '@/shared/ui/utils/classNames'
 
-type PaginatedResourceLayoutSkeletonProps = {
+export type PaginatedResourceLayoutSkeletonProps = {
 	children?: ReactNode
 	perPageLabel?: string
 	showSort?: boolean
@@ -21,11 +22,11 @@ const PaginatedResourceLayoutSkeleton = ({
 }: PaginatedResourceLayoutSkeletonProps) => {
 	const skeletonClass = isGhost ? 'bg-white border' : 'skeleton'
 	return (
-		<div className={className}>
+		<div className={classNames(className)} aria-busy="true">
 			<div className="ml-auto flex w-full flex-row items-center space-x-2 sm:w-1/2 md:w-1/3 lg:w-1/4">
 				<p className="whitespace-nowrap text-sm">{perPageLabel}</p>
 				<div
-					className={`${skeletonClass} h-12 w-full rounded-lg`}
+					className={classNames(skeletonClass, 'h-12 w-full rounded-lg')}
 					aria-hidden
 				/>
 			</div>
@@ -36,7 +37,7 @@ const PaginatedResourceLayoutSkeleton = ({
 						<div
 							/* biome-ignore lint: complexity/noArrayIndexKey */
 							key={index}
-							className={`join-item ${skeletonClass} h-10 w-18`}
+							className={classNames('join-item h-10 w-18', skeletonClass)}
 							aria-hidden
 						/>
 					))}
@@ -51,7 +52,7 @@ const PaginatedResourceLayoutSkeleton = ({
 						<div
 							/* biome-ignore lint: complexity/noArrayIndexKey */
 							key={index}
-							className={`${skeletonClass} join-item h-9 w-12`}
+							className={classNames('join-item h-9 w-12', skeletonClass)}
 							aria-hidden
 						/>
 					))}

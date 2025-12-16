@@ -9,7 +9,7 @@ import { useGachaPreview } from '@/domains/gacha/hooks/useGachaPreview'
 import type { GachaData, GachaSort } from '@/domains/gacha/model/gachaTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import type { Session } from '@/types/session'
 
 type GachaLogsKey = ['gacha-logs', string, number, number, GachaSort]

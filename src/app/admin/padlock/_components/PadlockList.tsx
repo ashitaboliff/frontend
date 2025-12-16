@@ -3,7 +3,7 @@
 import type { PublicPadLock as PadLock } from '@ashitaboliff/types/modules/auth/types'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import { formatDateTimeJaWithUnits } from '@/shared/utils/dateFormat'
 
 const PER_PAGE_OPTIONS_LABELS: Record<string, number> = {

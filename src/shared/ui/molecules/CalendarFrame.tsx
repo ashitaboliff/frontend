@@ -1,21 +1,22 @@
 import { type Key, type KeyboardEvent, memo, type ReactNode } from 'react'
+import { classNames } from '@/shared/ui/utils/classNames'
 import { formatMonthDay, formatWeekday } from '@/shared/utils/dateFormat'
 
-export interface CalendarCellRenderProps {
+export type CalendarCellRenderProps = {
 	date: string
 	dateIndex: number
 	time: string
 	timeIndex: number
 }
 
-export interface CalendarCellConfig {
+export type CalendarCellConfig = {
 	key?: Key
 	className?: string
 	onClick?: () => void
 	content: ReactNode
 }
 
-export interface CalendarFrameProps {
+export type CalendarFrameProps = {
 	dates: string[]
 	times: string[]
 	renderCell: (props: CalendarCellRenderProps) => CalendarCellConfig | null
@@ -57,9 +58,6 @@ const defaultTime = (time: string) => {
 		</p>
 	)
 }
-
-const mergeClassName = (base: string, custom?: string) =>
-	custom ? `${base} ${custom}`.trim() : base
 
 /**
  * セルの内容をレンダリングするカレンダーフレームコンポーネント
@@ -110,7 +108,7 @@ const CalendarFrame = ({
 							}
 
 							const { key, className, content, onClick } = result
-							const cellClass = mergeClassName(DEFAULT_CELL_CLASS, className)
+							const cellClass = classNames(DEFAULT_CELL_CLASS, className)
 
 							const handleKeyDown = (
 								event: KeyboardEvent<HTMLTableCellElement>,

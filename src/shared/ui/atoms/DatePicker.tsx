@@ -1,34 +1,55 @@
 'use client'
 
-import { useId } from 'react'
-import DatePicker from 'react-datepicker'
+import { useId, useMemo } from 'react'
+import DatePicker, {
+	type ReactDatePickerCustomHeaderProps,
+} from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { ja } from 'date-fns/locale'
 import { registerLocale } from 'react-datepicker'
-import CustomHeader from '@/shared/ui/atoms/DatePickerCustumHeader'
+import DatePickerCustomHeader from '@/shared/ui/atoms/DatePickerCustomHeader'
 import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 
 registerLocale('ja', ja)
 
-type DatePickerProps = {
+export type CustomDatePickerProps = {
 	label?: string
 	selectedDate: Date | null
 	onChange: (dates: Date | null) => void
 	minDate?: Date
 	errorMessage?: string
+	className?: string
+	inputClassName?: string
 }
 
+/**
+ * react-datepicker ラッパー。カスタムヘッダーとエラー表示付き。
+ */
 const CustomDatePicker = ({
 	label,
 	selectedDate,
 	onChange,
 	minDate,
 	errorMessage,
-}: DatePickerProps) => {
+	className,
+	inputClassName,
+}: CustomDatePickerProps) => {
 	const inputId = useId()
+	const errorId = errorMessage ? `${inputId}-error` : undefined
+
+	const headerRenderer = useMemo(
+		() => (props: ReactDatePickerCustomHeaderProps) => (
+			<DatePickerCustomHeader
+				{...props}
+				changeYear={(value: number) => props.changeYear(value)}
+				changeMonth={(value: number) => props.changeMonth(value)}
+			/>
+		),
+		[],
+	)
 
 	return (
-		<div className="flex w-full flex-col">
+		<div className={className ?? 'flex w-full flex-col'}>
 			{label && (
 				<label className="label" htmlFor={inputId}>
 					{label}
@@ -40,19 +61,14 @@ const CustomDatePicker = ({
 				onChange={onChange}
 				locale="ja"
 				withPortal
-				renderCustomHeader={(props) => (
-					<CustomHeader
-						{...props}
-						changeYear={(value: number) => props.changeYear(value)}
-						changeMonth={(value: number) => props.changeMonth(value)}
-					/>
-				)}
+				renderCustomHeader={headerRenderer}
 				minDate={minDate}
 				dateFormat="yyyy/MM/dd"
-				className="w-full rounded-md border border-base-300 bg-white p-2"
+				className={`w-full rounded-md border border-base-300 bg-white p-2 ${inputClassName ?? ''}`}
 				calendarClassName="bg-white"
+				aria-describedby={errorId}
 			/>
-			<InputFieldError errorMessage={errorMessage} />
+			<InputFieldError id={errorId} errorMessage={errorMessage} />
 		</div>
 	)
 }

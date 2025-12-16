@@ -1,15 +1,23 @@
 import { memo, useCallback, useMemo } from 'react'
+import { classNames } from '@/shared/ui/utils/classNames'
 
-type PaginationProps = {
+export type PaginationProps = {
 	currentPage: number
 	totalPages: number
 	onPageChange: (page: number) => void
+	maxMiddleItems?: number
+	className?: string
 }
 
-type PaginationItem = number | 'ellipsis-left' | 'ellipsis-right'
+export type PaginationItem = number | 'ellipsis-left' | 'ellipsis-right'
 
 const EDGE_ITEM_COUNT = 2
 
+/**
+ * 表示するページ番号の配列を生成する。
+ * - 両端 2 件は常に表示
+ * - 現在ページ周辺に maxMiddleItems を表示
+ */
 export const createPaginationItems = (
 	currentPage: number,
 	totalPages: number,
@@ -53,10 +61,12 @@ const Pagination = ({
 	currentPage,
 	totalPages,
 	onPageChange,
+	maxMiddleItems = 3,
+	className,
 }: PaginationProps) => {
 	const items = useMemo(
-		() => createPaginationItems(currentPage, totalPages),
-		[currentPage, totalPages],
+		() => createPaginationItems(currentPage, totalPages, maxMiddleItems),
+		[currentPage, maxMiddleItems, totalPages],
 	)
 
 	const handlePageClick = useCallback(
@@ -67,17 +77,23 @@ const Pagination = ({
 	)
 
 	return (
-		<div className="join mx-auto">
+		<nav
+			className={classNames('join mx-auto', className)}
+			aria-label="pagination"
+		>
 			{items.map((item) => {
 				if (typeof item === 'number') {
+					const isActive = currentPage === item
 					return (
 						<button
 							type="button"
 							key={item}
-							className={`join-item btn w-14 ${
-								currentPage === item ? 'btn-primary' : 'btn-outline'
-							}`}
+							className={classNames(
+								'join-item btn w-14',
+								isActive ? 'btn-primary' : 'btn-outline',
+							)}
 							onClick={handlePageClick(item)}
+							aria-current={isActive ? 'page' : undefined}
 						>
 							{item}
 						</button>
@@ -85,17 +101,16 @@ const Pagination = ({
 				}
 
 				return (
-					<button
-						type="button"
+					<span
 						key={item}
 						className="join-item btn btn-disabled w-12"
-						disabled
+						aria-hidden="true"
 					>
 						…
-					</button>
+					</span>
 				)
 			})}
-		</div>
+		</nav>
 	)
 }
 

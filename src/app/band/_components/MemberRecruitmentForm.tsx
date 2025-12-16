@@ -5,13 +5,15 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
-import { type Part, PartOptions } from '@/domains/user/model/userTypes'
+import { type Part, PartOptionList } from '@/domains/user/model/userTypes'
 import TextareaInputField from '@/shared/ui/atoms/TextareaInputField'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import MultiSelectField from '@/shared/ui/molecules/MultiSelectField'
 import { logError } from '@/shared/utils/logger'
 
 // import { createMemberRecruitmentAction } from './actions'
+
+const partValues = PartOptionList.map((p) => p.value) as [Part, ...Part[]]
 
 const memberRecruitmentSchema = zod.object({
 	bandName: zod
@@ -21,7 +23,7 @@ const memberRecruitmentSchema = zod.object({
 		.max(100, 'バンド名は100文字以内で入力してください'),
 	part: zod
 		.array(
-			zod.enum(Object.values(PartOptions) as [Part, ...Part[]], {
+			zod.enum(partValues, {
 				message: '不正なパートが選択されました',
 			}),
 		)
@@ -91,7 +93,7 @@ const MemberRecruitmentForm = () => {
 					name="part"
 					label="募集パート"
 					labelId="part-select"
-					options={PartOptions}
+					options={PartOptionList}
 					control={control}
 					errorMessage={errors.part?.message}
 				/>

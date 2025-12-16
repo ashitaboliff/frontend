@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { useSignedGachaImages } from '@/domains/gacha/hooks/useSignedGachaImages'
 import type { GachaData } from '@/domains/gacha/model/gachaTypes'
-import { ImageWithFallback } from '@/shared/ui/atoms/ImageWithFallback'
+import { Image } from '@/shared/ui/atoms/ImageWithFallback'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import type { FeedbackMessageType } from '@/types/feedback'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
@@ -68,14 +68,14 @@ const GachaLogList = ({
 						<button
 							type="button"
 							key={gachaItem.id}
-							className="aspect-[3/4] w-full animate-pulse rounded bg-base-200"
+							className="aspect-3/4 w-full animate-pulse rounded bg-base-200"
 							onClick={() => onGachaItemClick(gachaItem.gachaSrc)}
 							aria-label={`ガチャ画像プレビュー-${gachaItem.gachaSrc}`}
 						/>
 					)
 				}
 				return (
-					<ImageWithFallback
+					<Image
 						key={gachaItem.id}
 						src={signedSrc}
 						alt={`ガチャ画像プレビュー-${gachaItem.gachaSrc}`}

@@ -17,7 +17,7 @@ import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import FlashMessage from '@/shared/ui/molecules/FlashMessage'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import { logError } from '@/shared/utils/logger'
 import DeniedBookingDeleteDialog from './DeniedBookingDeleteDialog'
 import DeniedBookingDetailDialog from './DeniedBookingDetailDialog'
@@ -122,63 +122,51 @@ const DeniedBookingPage = ({ deniedBookings, query, headers }: Props) => {
 	return (
 		<>
 			{type && message && <FlashMessage type={type}>{message}</FlashMessage>}
-			<div className="flex flex-col items-center justify-center gap-y-3">
-				<div className="flex flex-col items-center gap-y-2 text-center">
-					<h1 className="font-bold text-2xl">予約禁止管理</h1>
-					<p className="text-sm">
-						このページでは予約禁止日の確認、追加が可能です。
-						<br />
-						いつか画像認識で一括追加とか出来ると格好いいよなぁ。
-						<br />
-						んじゃ！
-					</p>
-				</div>
-				<button
-					type="button"
-					className="btn btn-primary btn-outline btn-md"
-					onClick={() => router.push('/admin/denied/new')}
-				>
-					予約禁止日を追加
-				</button>
-				<FeedbackMessage source={globalFeedback.feedback} />
-				<PaginatedResourceLayout
-					perPage={{
-						label: '表示件数:',
-						name: 'deniedBookingsPerPage',
-						options: PER_PAGE_OPTIONS,
-						value: query.perPage,
-						onChange: (value) =>
-							updateQuery({ perPage: value, page: query.page }),
-					}}
-					sort={{
-						name: 'deniedbooking_sort_options',
-						options: SORT_OPTIONS,
-						value: query.sort,
-						onChange: (sort) => updateQuery({ sort }),
-					}}
-					pagination={{
-						currentPage: query.page,
-						totalPages: pageCount,
-						totalCount: deniedBookings.totalCount,
-						onPageChange: (page) => updateQuery({ page }),
-					}}
-				>
-					<DeniedBookingList
-						deniedBookings={deniedBookings.data}
-						onDeniedBookingItemClick={handleSelectBooking}
-						isLoading={isPending}
-						headers={headers}
-					/>
-				</PaginatedResourceLayout>
-				<button
-					type="button"
-					className="btn btn-outline"
-					onClick={() => router.push('/admin')}
-					disabled={isPending}
-				>
-					戻る
-				</button>
-			</div>
+			<button
+				type="button"
+				className="btn btn-primary btn-outline btn-md"
+				onClick={() => router.push('/admin/denied/new')}
+			>
+				予約禁止日を追加
+			</button>
+			<FeedbackMessage source={globalFeedback.feedback} />
+			<PaginatedResourceLayout
+				perPage={{
+					label: '表示件数:',
+					name: 'deniedBookingsPerPage',
+					options: PER_PAGE_OPTIONS,
+					value: query.perPage,
+					onChange: (value) =>
+						updateQuery({ perPage: value, page: query.page }),
+				}}
+				sort={{
+					name: 'deniedbooking_sort_options',
+					options: SORT_OPTIONS,
+					value: query.sort,
+					onChange: (sort) => updateQuery({ sort }),
+				}}
+				pagination={{
+					currentPage: query.page,
+					totalPages: pageCount,
+					totalCount: deniedBookings.totalCount,
+					onPageChange: (page) => updateQuery({ page }),
+				}}
+			>
+				<DeniedBookingList
+					deniedBookings={deniedBookings.data}
+					onDeniedBookingItemClick={handleSelectBooking}
+					isLoading={isPending}
+					headers={headers}
+				/>
+			</PaginatedResourceLayout>
+			<button
+				type="button"
+				className="btn btn-outline"
+				onClick={() => router.push('/admin')}
+				disabled={isPending}
+			>
+				戻る
+			</button>
 
 			<DeniedBookingDetailDialog
 				open={isDetailOpen}

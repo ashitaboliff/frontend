@@ -1,23 +1,26 @@
 import type { ReactNode } from 'react'
+import { classNames } from '@/shared/ui/utils/classNames'
 
 type GenericTableSkeletonProps = {
 	headers: Array<{ key: string; label: ReactNode }>
 	rows?: number
 	showHeader?: boolean
 	className?: string
+	tableClassName?: string
 }
 
 const GenericTableSkeleton = ({
 	headers,
 	rows = 5,
 	showHeader = true,
-	className = 'table-sm w-full',
+	className = 'w-full overflow-x-auto rounded-box border border-base-content/5 bg-white',
+	tableClassName = 'table-sm w-full',
 }: GenericTableSkeletonProps) => {
 	const colCount = Math.max(headers.length, 1)
 
 	return (
-		<div className="w-full overflow-x-auto rounded-box border border-base-content/5 bg-white">
-			<table className={`table ${className}`}>
+		<div className={classNames(className)} aria-busy="true">
+			<table className={classNames('table', tableClassName)}>
 				{showHeader ? (
 					<thead>
 						<tr>

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
 import { useDragSwipe } from '@/shared/lib/gesture'
-import { ImageWithFallback } from '@/shared/ui/atoms/ImageWithFallback'
+import { Image } from '@/shared/ui/atoms/ImageWithFallback'
 import Popup from '@/shared/ui/molecules/Popup'
 
 export type PackSelectionPayload = {
@@ -16,7 +16,7 @@ export type PackSelectionPayload = {
 	} | null
 }
 
-interface GachaSelectPopupProps {
+type Props = {
 	readonly open: boolean
 	readonly onClose: () => void
 	readonly carouselPackData: CarouselPackDataItem[]
@@ -36,7 +36,7 @@ const GachaSelectPopup = ({
 	gachaPlayCountToday,
 	maxPlayCount,
 	onPackSelect,
-}: GachaSelectPopupProps) => {
+}: Props) => {
 	return (
 		<Popup
 			id="gacha-select-popup"
@@ -72,7 +72,7 @@ const GachaSelectPopup = ({
 	)
 }
 
-interface CarouselProps {
+type CarouselProps = {
 	onPackSelect: (payload: PackSelectionPayload) => void
 	carouselPackData: CarouselPackDataItem[]
 }
@@ -192,7 +192,7 @@ const GachaSelectCarousel = ({
 				<button
 					type="button"
 					onClick={handleClick}
-					className="relative flex flex-col items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-base-content/50 focus-visible:outline-offset-4"
+					className="relative flex flex-col items-center focus-visible:outline-2 focus-visible:outline-base-content/50 focus-visible:outline-offset-4"
 					ref={(node) => {
 						if (isActive) {
 							activeCardRef.current = node
@@ -205,7 +205,7 @@ const GachaSelectCarousel = ({
 					}
 				>
 					{pack.signedPackImageUrl ? (
-						<ImageWithFallback
+						<Image
 							src={pack.signedPackImageUrl}
 							alt={`${pack.version} pack`}
 							width={IMAGE_WIDTH}
@@ -217,7 +217,7 @@ const GachaSelectCarousel = ({
 							fallback="/version1.webp"
 						/>
 					) : (
-						<div className="flex h-[400px] w-[250px] flex-col items-center justify-center rounded-lg bg-base-200">
+						<div className="flex h-100 w-[250px] flex-col items-center justify-center rounded-lg bg-base-200">
 							<p className="text-error-content text-sm">画像表示エラー</p>
 							<p className="mt-1 text-error-content/70 text-xs">
 								{pack.version}
@@ -225,7 +225,7 @@ const GachaSelectCarousel = ({
 						</div>
 					)}
 					{isActive && (
-						<div className="gacha-yoyo-scale -translate-x-1/2 pointer-events-none absolute bottom-3 left-1/2 flex w-[80%] justify-center rounded-full bg-rainbow-45 px-4 py-2 ring-2 ring-white/50">
+						<div className="gacha-yoyo-scale -translate-x-1/2 pointer-events-none absolute bottom-3 left-1/2 flex w-4/5 justify-center rounded-full bg-rainbow-45 px-4 py-2 ring-2 ring-white/50">
 							<span className="text-center font-black text-lg text-white tracking-wide">
 								このパックを引く
 							</span>
@@ -237,7 +237,7 @@ const GachaSelectCarousel = ({
 	}
 
 	return (
-		<div className="relative flex h-[500px] w-full select-none items-center justify-center overflow-hidden">
+		<div className="relative flex h-125 w-full select-none items-center justify-center overflow-hidden">
 			<div
 				className="relative flex h-full w-full items-center justify-center"
 				style={{ touchAction: 'pan-y' }}

@@ -2,8 +2,9 @@
 
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
+import { classNames } from '@/shared/ui/utils/classNames'
 
-type FullscreenOverlayProps = {
+export type FullscreenOverlayProps = {
 	readonly children: ReactNode
 	readonly className?: string
 }
@@ -32,11 +33,17 @@ const useBodyScrollLock = () => {
 	}, [])
 }
 
+/**
+ * 背景スクロールを抑止しつつ全画面を覆うオーバーレイ。
+ */
 const FullscreenOverlay = ({ children, className }: FullscreenOverlayProps) => {
 	useBodyScrollLock()
 	return (
 		<div
-			className={`fixed inset-0 z-30 flex flex-col bg-white ${className ?? ''}`}
+			className={classNames(
+				'fixed inset-0 z-30 flex flex-col bg-white',
+				className,
+			)}
 			role="dialog"
 			aria-modal="true"
 		>

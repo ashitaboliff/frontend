@@ -4,12 +4,12 @@ import gsap from 'gsap'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
 import type { PackSelectionPayload } from '@/domains/gacha/ui/GachaSelectPopup'
-import { ImageWithFallback } from '@/shared/ui/atoms/ImageWithFallback'
+import { Image } from '@/shared/ui/atoms/ImageWithFallback'
 import { TbArrowBackUp } from '@/shared/ui/icons'
 
 type PackRect = PackSelectionPayload['rect']
 
-interface GachaConfirmProps {
+type GachaConfirmProps = {
 	readonly pack: CarouselPackDataItem
 	readonly packRect: PackRect
 	readonly onConfirm: (rect: PackRect) => void
@@ -75,7 +75,7 @@ const GachaConfirm = ({
 	return (
 		<>
 			<button type="button" ref={animatedPackRef} onClick={handleConfirmClick}>
-				<ImageWithFallback
+				<Image
 					src={pack.signedPackImageUrl}
 					fallback="/version1.webp"
 					alt={`${pack.version} pack`}
@@ -84,11 +84,11 @@ const GachaConfirm = ({
 					className="h-full w-full object-contain drop-shadow-[0_25px_25px_rgba(0,0,0,0.75)]"
 				/>
 				{animationDone && (
-					<div className="gacha-stripe-overlay -translate-x-1/2 fixed absolute top-[12.7%] left-1/2 z-40 h-2 w-full" />
+					<div className="gacha-stripe-overlay -translate-x-1/2 absolute top-[12.7%] left-1/2 z-40 h-2 w-full" />
 				)}
 			</button>
 			<div className="relative">
-				<div className="fixed absolute bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
+				<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
 					<button
 						type="button"
 						className="btn btn-outline btn-circle"

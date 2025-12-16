@@ -63,16 +63,14 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 		useState<CreatedScheduleSummary | null>(null)
 	const messageFeedback = useFeedback()
 
-	const mentionOptions = useMemo(() => {
-		return Object.entries(initialUsers).reduce<Record<string, string>>(
-			(acc, [id, name]) => {
-				const label = name ? `${name} (${id.slice(0, 4)})` : id
-				acc[label] = id
-				return acc
-			},
-			{},
-		)
-	}, [initialUsers])
+	const mentionOptions = useMemo(
+		() =>
+			Object.entries(initialUsers).map(([id, name]) => ({
+				label: name ? `${name} (${id.slice(0, 4)})` : id,
+				value: id,
+			})),
+		[initialUsers],
+	)
 
 	const userNameById = useMemo(() => initialUsers, [initialUsers])
 

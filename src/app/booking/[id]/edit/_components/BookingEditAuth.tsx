@@ -101,8 +101,8 @@ const BookingEditAuthForm = ({
 					label="パスワード"
 					register={register('password')}
 					showPassword={showPassword}
-					handleClickShowPassword={togglePassword}
-					handleMouseDownPassword={(event) => event.preventDefault()}
+					onToggleVisibility={togglePassword}
+					onPressMouseDown={(event) => event.preventDefault()}
 					errorMessage={errors.password?.message}
 				/>
 				<div className="flex w-full flex-col gap-2">

@@ -4,22 +4,24 @@ import type { ReactNode } from 'react'
 import Pagination from '@/shared/ui/atoms/Pagination'
 import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
 import SelectField from '@/shared/ui/atoms/SelectField'
+import { classNames } from '@/shared/ui/utils/classNames'
 
-type SortOption<T extends string> = {
+export type SortOption<T extends string> = {
 	readonly value: T
 	readonly label: string
 }
 
-type PerPageControlProps = {
+export type PerPageControlProps = {
 	label: string
 	name: string
 	options: Record<string, number>
 	value: number
 	onChange: (value: number) => void
 	className?: string
+	placeholder?: string
 }
 
-type SortControlProps<T extends string> = {
+export type SortControlProps<T extends string> = {
 	name: string
 	options: SortOption<T>[]
 	value: T
@@ -27,28 +29,34 @@ type SortControlProps<T extends string> = {
 	className?: string
 }
 
-type PaginationControlProps = {
+export type PaginationControlProps = {
 	currentPage: number
 	totalPages: number
 	totalCount: number
 	onPageChange: (page: number) => void
 	showWhenSinglePage?: boolean
+	className?: string
 }
 
-type PaginatedResourceLayoutProps<T extends string> = {
+export type PaginatedResourceLayoutProps<T extends string> = {
 	children: ReactNode
 	perPage: PerPageControlProps
 	sort?: SortControlProps<T>
 	pagination?: PaginationControlProps
 	className?: string
+	topSlot?: ReactNode
 }
 
+/**
+ * ページネーション + 件数/ソートをまとめて配置するレイアウト。
+ */
 const PaginatedResourceLayout = <T extends string>({
 	children,
 	perPage,
 	sort,
 	pagination,
 	className = 'flex flex-col justify-center space-y-4 w-full',
+	topSlot,
 }: PaginatedResourceLayoutProps<T>) => {
 	const shouldShowPagination = (() => {
 		if (!pagination) return false
@@ -59,7 +67,8 @@ const PaginatedResourceLayout = <T extends string>({
 	})()
 
 	return (
-		<div className={className}>
+		<div className={classNames(className)}>
+			{topSlot}
 			<div className="ml-auto flex w-full flex-row items-center space-x-2 sm:w-1/2 md:w-1/3 lg:w-1/4">
 				<p className="whitespace-nowrap text-sm">{perPage.label}</p>
 				<SelectField<number>
@@ -68,6 +77,7 @@ const PaginatedResourceLayout = <T extends string>({
 					value={perPage.value}
 					onChange={(event) => perPage.onChange(Number(event.target.value))}
 					className={perPage.className || 'h-12'}
+					placeholderOptionLabel={perPage.placeholder ?? '表示件数'}
 				/>
 			</div>
 			{sort ? (
@@ -87,6 +97,7 @@ const PaginatedResourceLayout = <T extends string>({
 					currentPage={pagination.currentPage}
 					totalPages={pagination.totalPages}
 					onPageChange={pagination.onPageChange}
+					className={pagination.className}
 				/>
 			) : null}
 		</div>

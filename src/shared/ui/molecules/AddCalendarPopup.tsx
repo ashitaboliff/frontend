@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useId } from 'react'
+import { useCallback, useId, useMemo } from 'react'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
 import type { Booking } from '@/domains/booking/model/bookingTypes'
 import {
@@ -11,35 +11,35 @@ import { FaApple, FaYahoo, SiGooglecalendar } from '@/shared/ui/icons'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateTimeCompact } from '@/shared/utils/dateFormat'
 
-const AddCalendarPopup = ({
-	bookingDetail,
-	isPopupOpen,
-	setIsPopupOpen,
-}: {
+export type AddCalendarPopupProps = {
 	bookingDetail: Omit<
 		Booking,
 		'userId' | 'createdAt' | 'updatedAt' | 'isDeleted'
 	>
 	isPopupOpen: boolean
 	setIsPopupOpen: (arg: boolean) => void
-}) => {
+}
+
+/**
+ * 予約を各カレンダーアプリに追加するためのポップアップ。
+ */
+const AddCalendarPopup = ({
+	bookingDetail,
+	isPopupOpen,
+	setIsPopupOpen,
+}: AddCalendarPopupProps) => {
 	const openWindow = useWindowOpen()
 	const navigate = useLocationNavigate()
-	const bookingDate = BOOKING_TIME_LIST[bookingDetail.bookingTime]
-		.split('~')
-		.map(
-			(time) =>
-				new Date(
-					new Date(bookingDetail.bookingDate).setHours(
-						...(time.split(':').map(Number) as [
-							number,
-							number,
-							number,
-							number,
-						]),
-					),
-				),
-		)
+	const bookingDate = useMemo(
+		() =>
+			BOOKING_TIME_LIST[bookingDetail.bookingTime].split('~').map((time) => {
+				const date = new Date(bookingDetail.bookingDate)
+				const [h, m] = time.split(':').map(Number)
+				date.setHours(h, m, 0, 0)
+				return date
+			}),
+		[bookingDetail.bookingDate, bookingDetail.bookingTime],
+	)
 
 	const startCompact = formatDateTimeCompact(bookingDate[0])
 	const endCompact = formatDateTimeCompact(bookingDate[1])
