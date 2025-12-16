@@ -1,51 +1,47 @@
-import { UserQuerySchema } from '@ashitaboliff/types/modules/user/schema'
-import type { UserForAdmin } from '@ashitaboliff/types/modules/user/types'
+import { Suspense } from 'react'
 import AdminUserPage from '@/app/admin/user/_components'
+import ErrorView from '@/app/admin/user/_components/ErrorView'
+import Loading from '@/app/admin/user/_components/Loading'
+import PageLayout from '@/app/admin/user/_components/PageLayout'
+import { AdminUserPageParamsSchema } from '@/app/admin/user/schema'
 import { getUserDetailsListAction } from '@/domains/admin/api/adminActions'
-import { ADMIN_USER_DEFAULT_QUERY } from '@/domains/admin/query/adminUserQuery'
-import type { ApiError } from '@/types/response'
-
-const safeSearchParamsSchema = UserQuerySchema.catch(() => ({
-	page: ADMIN_USER_DEFAULT_QUERY.page,
-	perPage: ADMIN_USER_DEFAULT_QUERY.perPage,
-	sort: ADMIN_USER_DEFAULT_QUERY.sort,
-}))
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-const Page = async ({ searchParams }: Props) => {
+const Content = async ({ searchParams }: Props) => {
 	const params = await searchParams
-	const query = safeSearchParamsSchema.parse({
+	const parsed = AdminUserPageParamsSchema.safeParse({
 		page: params.page,
 		perPage: params.perPage,
 		sort: params.sort,
 	})
 
-	let users: UserForAdmin[] = []
-	let totalCount = 0
-	let error: ApiError | undefined
+	const query = parsed.success
+		? parsed.data
+		: AdminUserPageParamsSchema.parse({})
 
 	const response = await getUserDetailsListAction({
 		page: query.page,
 		perPage: query.perPage,
 		sort: query.sort,
 	})
-	if (response.ok) {
-		users = response.data.users
-		totalCount = response.data.totalCount
-	} else {
-		error = response
-	}
 
+	if (response.ok) {
+		return <AdminUserPage users={response.data} query={query} />
+	} else {
+		return <ErrorView error={response} />
+	}
+}
+
+const Page = async ({ searchParams }: Props) => {
 	return (
-		<AdminUserPage
-			key={params.toString()}
-			users={{ users, totalCount }}
-			initialQuery={query}
-			initialError={error}
-		/>
+		<PageLayout>
+			<Suspense fallback={<Loading />}>
+				<Content searchParams={searchParams} />
+			</Suspense>
+		</PageLayout>
 	)
 }
 

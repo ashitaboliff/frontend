@@ -118,17 +118,14 @@ export const CardAnimation = ({
 	const sizeVariations = [-10, 0, 10, 0]
 
 	return (
-		<div
-			className="relative h-[25rem] w-[18.75rem]"
-			style={{ perspective: '1000px' }}
-		>
+		<div className="relative h-100 w-75" style={{ perspective: '1000px' }}>
 			<div
 				ref={effectContainerRef}
 				className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
 			/>
 			<div
 				ref={cardRef}
-				className="hover-3d transform-style-3d relative h-[25rem] w-[18.75rem]"
+				className="hover-3d transform-style-3d relative h-100 w-75"
 			>
 				<div className="backface-hidden absolute h-full w-full overflow-hidden rounded-lg">
 					<ImgWithFallback
@@ -143,7 +140,7 @@ export const CardAnimation = ({
 					/* biome-ignore lint: complexity/noArrayIndexKey */
 					<div key={`hover-3d-cell-${index}`} tabIndex={-1} />
 				))}
-				<div className="backface-hidden rotateY-180 !scale-100 absolute h-full w-full overflow-hidden rounded-lg">
+				<div className="backface-hidden rotateY-180 absolute h-full w-full scale-100! overflow-hidden rounded-lg">
 					<img
 						src="/backimage.webp"
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-うら面`}

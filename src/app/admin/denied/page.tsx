@@ -1,18 +1,14 @@
-import { AdminDeniedBookingQuerySchema } from '@ashitaboliff/types/modules/booking/schema/denied'
 import DeniedBookingPage from '@/app/admin/denied/_components'
 import { getDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
+import { adminDeniedBookingQuerySchema } from '@/domains/admin/model/adminSchema'
 import { DENIED_BOOKING_DEFAULT_QUERY } from '@/domains/admin/query/deniedBookingQuery'
 import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
 import { getCurrentJSTDateString } from '@/shared/utils'
 import type { ApiError } from '@/types/response'
 
-const safeSearchParamsSchema = AdminDeniedBookingQuerySchema.omit({
-	today: true,
-}).catch(() => ({
-	page: DENIED_BOOKING_DEFAULT_QUERY.page,
-	perPage: DENIED_BOOKING_DEFAULT_QUERY.perPage,
-	sort: DENIED_BOOKING_DEFAULT_QUERY.sort,
-}))
+const safeSearchParamsSchema = adminDeniedBookingQuerySchema.catch(
+	() => DENIED_BOOKING_DEFAULT_QUERY,
+)
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -20,6 +16,7 @@ type Props = {
 
 const Page = async ({ searchParams }: Props) => {
 	const params = await searchParams
+
 	const query = safeSearchParamsSchema.parse({
 		page: params.page,
 		perPage: params.perPage,
@@ -46,10 +43,9 @@ const Page = async ({ searchParams }: Props) => {
 
 	return (
 		<DeniedBookingPage
-			key={params.toString()}
+			key={query.toString()}
 			deniedBookings={deniedBookings}
 			totalCount={totalCount}
-			defaultQuery={DENIED_BOOKING_DEFAULT_QUERY}
 			initialQuery={query}
 			initialError={error}
 		/>

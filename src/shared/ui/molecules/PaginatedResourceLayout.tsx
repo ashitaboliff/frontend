@@ -5,12 +5,12 @@ import Pagination from '@/shared/ui/atoms/Pagination'
 import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
 import SelectField from '@/shared/ui/atoms/SelectField'
 
-interface SortOption<T extends string> {
+type SortOption<T extends string> = {
 	readonly value: T
 	readonly label: string
 }
 
-interface PerPageControlProps {
+type PerPageControlProps = {
 	label: string
 	name: string
 	options: Record<string, number>
@@ -19,7 +19,7 @@ interface PerPageControlProps {
 	className?: string
 }
 
-interface SortControlProps<T extends string> {
+type SortControlProps<T extends string> = {
 	name: string
 	options: SortOption<T>[]
 	value: T
@@ -27,7 +27,7 @@ interface SortControlProps<T extends string> {
 	className?: string
 }
 
-interface PaginationControlProps {
+type PaginationControlProps = {
 	currentPage: number
 	totalPages: number
 	totalCount: number
@@ -35,7 +35,7 @@ interface PaginationControlProps {
 	showWhenSinglePage?: boolean
 }
 
-interface PaginatedResourceLayoutProps<T extends string> {
+type PaginatedResourceLayoutProps<T extends string> = {
 	children: ReactNode
 	perPage: PerPageControlProps
 	sort?: SortControlProps<T>
@@ -67,7 +67,7 @@ const PaginatedResourceLayout = <T extends string>({
 					options={perPage.options}
 					value={perPage.value}
 					onChange={(event) => perPage.onChange(Number(event.target.value))}
-					className={perPage.className}
+					className={perPage.className || 'h-12'}
 				/>
 			</div>
 			{sort ? (

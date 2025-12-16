@@ -1,19 +1,17 @@
 'use client'
 
+import type { AdminDeniedSort } from '@ashitaboliff/types/modules/booking/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { useSWRConfig } from 'swr'
 import { deleteDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
-import type { DeniedBookingSort } from '@/domains/admin/model/adminTypes'
-import {
-	createDeniedBookingQueryOptions,
-	type DeniedBookingQuery,
-} from '@/domains/admin/query/deniedBookingQuery'
+import type { DeniedBookingQuery } from '@/domains/admin/model/adminTypes'
+import { DeniedBookingQueryOptions } from '@/domains/admin/query/deniedBookingQuery'
 import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
 import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import useFlashMessage from '@/shared/hooks/useFlashMessage'
-import { useQueryState } from '@/shared/hooks/useQueryState'
+import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import FlashMessage from '@/shared/ui/molecules/FlashMessage'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
@@ -29,7 +27,7 @@ const PER_PAGE_OPTIONS: Record<string, number> = {
 	'30件': 30,
 }
 
-const SORT_OPTIONS: Array<{ value: DeniedBookingSort; label: string }> = [
+const SORT_OPTIONS: Array<{ value: AdminDeniedSort; label: string }> = [
 	{ value: 'relativeCurrent', label: '関連度順' },
 	{ value: 'new', label: '新しい順' },
 	{ value: 'old', label: '古い順' },
@@ -38,18 +36,14 @@ const SORT_OPTIONS: Array<{ value: DeniedBookingSort; label: string }> = [
 type Props = {
 	readonly deniedBookings: DeniedBooking[]
 	readonly totalCount: number
-	readonly defaultQuery: DeniedBookingQuery
 	readonly initialQuery: DeniedBookingQuery
-	readonly extraSearchParams?: string
 	readonly initialError?: ApiError
 }
 
 const DeniedBookingPage = ({
 	deniedBookings,
 	totalCount,
-	defaultQuery,
 	initialQuery,
-	extraSearchParams,
 	initialError,
 }: Props) => {
 	const router = useRouter()
@@ -63,10 +57,11 @@ const DeniedBookingPage = ({
 	const [isActionLoading, setIsActionLoading] = useState(false)
 	const { mutate } = useSWRConfig()
 
-	const { query, updateQuery, isPending } = useQueryState<DeniedBookingQuery>({
-		queryOptions: createDeniedBookingQueryOptions(defaultQuery),
-		initialQuery,
-		extraSearchParams,
+	const query = initialQuery
+
+	const { updateQuery, isPending } = useQueryUpdater<DeniedBookingQuery>({
+		queryOptions: DeniedBookingQueryOptions,
+		currentQuery: query,
 	})
 
 	const pageCount = useMemo(
@@ -159,7 +154,7 @@ const DeniedBookingPage = ({
 						options: PER_PAGE_OPTIONS,
 						value: query.perPage,
 						onChange: (value) =>
-							updateQuery({ perPage: value, page: defaultQuery.page }),
+							updateQuery({ perPage: value, page: query.page }),
 					}}
 					sort={{
 						name: 'deniedbooking_sort_options',

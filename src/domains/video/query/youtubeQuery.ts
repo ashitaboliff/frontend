@@ -1,75 +1,10 @@
 import type { YoutubeSearchQuery } from '@ashitaboliff/types/modules/video/types'
 import { buildQueryString, type QueryOptions } from '@/shared/utils/queryParams'
 
-const clampPositiveInt = (value: string[], fallback: number, max?: number) => {
-	if (value.length === 0) return fallback
-	const parsed = Number(value[value.length - 1])
-	if (!Number.isFinite(parsed) || parsed <= 0) return fallback
-	if (max !== undefined && parsed > max) return max
-	return Math.floor(parsed)
-}
-
-const LIVE_OR_BAND_VALUES = new Set<YoutubeSearchQuery['liveOrBand']>([
-	'live',
-	'band',
-])
-
-const SORT_VALUES = new Set<YoutubeSearchQuery['sort']>(['new', 'old'])
-
-const YOUTUBE_QUERY_DEFINITIONS = {
-	liveOrBand: {
-		parse: ({
-			values,
-			defaultValue,
-		}: {
-			values: string[]
-			defaultValue: YoutubeSearchQuery['liveOrBand']
-		}) => {
-			const latest = values[values.length - 1]
-			return LIVE_OR_BAND_VALUES.has(latest as YoutubeSearchQuery['liveOrBand'])
-				? (latest as YoutubeSearchQuery['liveOrBand'])
-				: defaultValue
-		},
-	},
-	sort: {
-		parse: ({
-			values,
-			defaultValue,
-		}: {
-			values: string[]
-			defaultValue: YoutubeSearchQuery['sort']
-		}) => {
-			const latest = values[values.length - 1]
-			return SORT_VALUES.has(latest as YoutubeSearchQuery['sort'])
-				? (latest as YoutubeSearchQuery['sort'])
-				: defaultValue
-		},
-	},
-	page: {
-		parse: ({
-			values,
-			defaultValue,
-		}: {
-			values: string[]
-			defaultValue: number
-		}) => clampPositiveInt(values, defaultValue),
-	},
-	videoPerPage: {
-		parse: ({
-			values,
-			defaultValue,
-		}: {
-			values: string[]
-			defaultValue: number
-		}) => clampPositiveInt(values, defaultValue, 200),
-	},
-} satisfies QueryOptions<YoutubeSearchQuery>['definitions']
-
 export const createYoutubeQueryOptions = (
 	defaultQuery: YoutubeSearchQuery,
 ): QueryOptions<YoutubeSearchQuery> => ({
 	defaultQuery,
-	definitions: YOUTUBE_QUERY_DEFINITIONS,
 })
 
 export const VIDEO_PAGE_DEFAULT_QUERY: YoutubeSearchQuery = {
@@ -81,6 +16,11 @@ export const VIDEO_PAGE_DEFAULT_QUERY: YoutubeSearchQuery = {
 	videoPerPage: 15,
 }
 
+export const ADMIN_YOUTUBE_DEFAULT_PARAMS = {
+	page: 1,
+	videoPerPage: 20,
+} as const
+
 export const ADMIN_YOUTUBE_DEFAULT_QUERY: YoutubeSearchQuery = {
 	liveOrBand: 'live',
 	bandName: '',
@@ -88,7 +28,7 @@ export const ADMIN_YOUTUBE_DEFAULT_QUERY: YoutubeSearchQuery = {
 	sort: 'new',
 	page: 1,
 	videoPerPage: 20,
-}
+} as const
 
 export const buildYoutubeQueryString = (
 	query: YoutubeSearchQuery,

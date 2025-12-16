@@ -14,10 +14,9 @@ import {
 import { AdminUserQueryOptions } from '@/domains/admin/query/adminUserQuery'
 import type { AccountRole } from '@/domains/user/model/userTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
-import { useQueryState } from '@/shared/hooks/useQueryState'
+import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import { logError } from '@/shared/utils/logger'
-import type { ApiError } from '@/types/response'
 import UserDeleteConfirmPopup from './UserDeleteConfirmPopup'
 import UserDetailPopup from './UserDetailPopup'
 import UserManageList from './UserManageList'
@@ -35,11 +34,10 @@ const SORT_OPTIONS: Array<{ value: UserQuery['sort']; label: string }> = [
 
 type Props = {
 	readonly users: UserListForAdmin
-	readonly initialQuery: UserQuery
-	readonly initialError?: ApiError
+	readonly query: UserQuery
 }
 
-const AdminUserPage = ({ users, initialQuery, initialError }: Props) => {
+const AdminUserPage = ({ users, query }: Props) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
 	const [selectedUser, setSelectedUser] = useState<UserForAdmin | null>(null)
@@ -47,9 +45,9 @@ const AdminUserPage = ({ users, initialQuery, initialError }: Props) => {
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 	const [isActionLoading, setIsActionLoading] = useState(false)
 
-	const { query, updateQuery, isPending } = useQueryState<UserQuery>({
+	const { updateQuery, isPending } = useQueryUpdater<UserQuery>({
 		queryOptions: AdminUserQueryOptions,
-		initialQuery,
+		currentQuery: query,
 	})
 
 	const pageCount = useMemo(
@@ -116,52 +114,40 @@ const AdminUserPage = ({ users, initialQuery, initialError }: Props) => {
 
 	return (
 		<>
-			<div className="flex flex-col items-center justify-center gap-y-3">
-				<h1 className="font-bold text-2xl">ユーザ管理</h1>
-				<p className="text-sm">
-					このページでは登録ユーザの確認、削除、三役権限の追加が可能です。
-					<br />
-					見知らぬユーザやサイト上での不審な動きのあるユーザを削除可能ですが、基本的にそんなことしないでください。
-					<br />
-					また、三役権限の追加もむやみに行わないでください。大いなる責任が伴います。お前らを信用しています。
-				</p>
-				<PaginatedResourceLayout
-					perPage={{
-						label: '表示件数:',
-						name: 'usersPerPage',
-						options: PER_PAGE_OPTIONS,
-						value: query.perPage,
-						onChange: (value) => updateQuery({ perPage: value, page: 1 }),
-					}}
-					sort={{
-						name: 'user_sort_options',
-						options: SORT_OPTIONS,
-						value: query.sort,
-						onChange: (sort) => updateQuery({ sort }),
-					}}
-					pagination={{
-						currentPage: query.page,
-						totalPages: pageCount,
-						totalCount: users.totalCount,
-						onPageChange: (page) => updateQuery({ page }),
-					}}
-				>
-					<UserManageList
-						users={users.users}
-						onUserItemClick={handleSelectUser}
-						isLoading={isPending}
-						error={initialError}
-					/>
-				</PaginatedResourceLayout>
-				<button
-					type="button"
-					className="btn btn-outline"
-					onClick={() => router.push('/admin')}
-				>
-					戻る
-				</button>
-			</div>
-
+			<PaginatedResourceLayout
+				perPage={{
+					label: '表示件数:',
+					name: 'usersPerPage',
+					options: PER_PAGE_OPTIONS,
+					value: query.perPage,
+					onChange: (value) => updateQuery({ perPage: value, page: 1 }),
+				}}
+				sort={{
+					name: 'user_sort_options',
+					options: SORT_OPTIONS,
+					value: query.sort,
+					onChange: (sort) => updateQuery({ sort }),
+				}}
+				pagination={{
+					currentPage: query.page,
+					totalPages: pageCount,
+					totalCount: users.totalCount,
+					onPageChange: (page) => updateQuery({ page }),
+				}}
+			>
+				<UserManageList
+					users={users.users}
+					onUserItemClick={handleSelectUser}
+					isLoading={isPending}
+				/>
+			</PaginatedResourceLayout>
+			<button
+				type="button"
+				className="btn btn-outline"
+				onClick={() => router.push('/admin')}
+			>
+				戻る
+			</button>
 			<UserDetailPopup
 				open={isDetailOpen}
 				onClose={() => setIsDetailOpen(false)}

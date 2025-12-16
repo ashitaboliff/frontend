@@ -2,14 +2,12 @@
 
 import type { UserForAdmin } from '@ashitaboliff/types/modules/user/types'
 import { AccountRoleMap, RoleMap } from '@/domains/user/model/userTypes'
-import type { MessageSource } from '@/shared/ui/molecules/FeedbackMessage'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 
-interface Props {
+type Props = {
 	readonly users: UserForAdmin[]
 	readonly onUserItemClick: (user: UserForAdmin) => void
 	readonly isLoading: boolean
-	readonly error: MessageSource
 }
 
 const headers = [
@@ -20,18 +18,12 @@ const headers = [
 	{ key: 'role', label: '役割' },
 ]
 
-const UserManageList = ({
-	users,
-	onUserItemClick,
-	isLoading,
-	error,
-}: Props) => {
+const UserManageList = ({ users, onUserItemClick, isLoading }: Props) => {
 	return (
 		<GenericTable<UserForAdmin>
 			headers={headers}
 			data={users}
 			isLoading={isLoading}
-			error={error}
 			emptyDataMessage="ユーザー情報はありません。"
 			onRowClick={onUserItemClick}
 			itemKeyExtractor={(user) => user.id}

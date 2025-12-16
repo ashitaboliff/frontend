@@ -1,4 +1,9 @@
 import { z } from 'zod'
+import { DENIED_BOOKING_DEFAULT_QUERY } from '@/domains/admin/query/deniedBookingQuery'
+import { ADMIN_YOUTUBE_DEFAULT_PARAMS } from '@/domains/video/query/youtubeQuery'
+
+const lastOrUndefined = (value: unknown) =>
+	Array.isArray(value) ? value.at(-1) : value
 
 export const padLockFormSchema = z.object({
 	name: z
@@ -11,11 +16,67 @@ export const padLockFormSchema = z.object({
 		.regex(/^[0-9]{4}$/u, 'パスワードは4桁の数字で入力してください'),
 })
 
+export const adminYoutubePageSchema: z.ZodType<{
+	page: number
+	videoPerPage: number
+}> = z.object({
+	page: z.preprocess(
+		lastOrUndefined,
+		z.coerce
+			.number()
+			.int()
+			.positive()
+			.default(ADMIN_YOUTUBE_DEFAULT_PARAMS.page),
+	),
+	videoPerPage: z.preprocess(
+		lastOrUndefined,
+		z.coerce
+			.number()
+			.int()
+			.min(1)
+			.max(100)
+			.default(ADMIN_YOUTUBE_DEFAULT_PARAMS.videoPerPage),
+	),
+})
+
+// 既存利用との互換名
+export const adminYoutubePageParams = adminYoutubePageSchema
+
 export const adminUserSortSchema = z.enum(['new', 'old'])
 
 export const deniedBookingSortSchema = z.enum(['new', 'old', 'relativeCurrent'])
 
 export const deniedBookingTypeSchema = z.enum(['single', 'period', 'regular'])
+
+type DeniedBookingSortType = (typeof deniedBookingSortSchema.options)[number]
+
+export const adminDeniedBookingQuerySchema: z.ZodType<{
+	sort: DeniedBookingSortType
+	page: number
+	perPage: number
+}> = z.object({
+	sort: z.preprocess(
+		lastOrUndefined,
+		deniedBookingSortSchema.default(DENIED_BOOKING_DEFAULT_QUERY.sort),
+	),
+	page: z.preprocess(
+		lastOrUndefined,
+		z.coerce
+			.number()
+			.int()
+			.positive()
+			.default(DENIED_BOOKING_DEFAULT_QUERY.page),
+	),
+	perPage: z.preprocess(
+		lastOrUndefined,
+		z.coerce
+			.number()
+			.int()
+			.min(1)
+			.max(100)
+			.default(DENIED_BOOKING_DEFAULT_QUERY.perPage),
+	),
+})
 
 export const deniedBookingFormSchema = z
 	.object({

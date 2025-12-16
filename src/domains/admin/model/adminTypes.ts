@@ -1,11 +1,15 @@
+import type { AdminDeniedBookingQuery } from '@ashitaboliff/types/modules/booking/types'
 import type { z } from 'zod'
 import {
 	type adminUserSortSchema,
+	type adminYoutubePageParams,
 	type deniedBookingFormSchema,
 	deniedBookingSortSchema,
 	type deniedBookingTypeSchema,
 	type padLockFormSchema,
 } from './adminSchema'
+
+export type DeniedBookingQuery = Omit<AdminDeniedBookingQuery, 'today'>
 
 export interface PadLock {
 	id: string
@@ -14,6 +18,8 @@ export interface PadLock {
 	updatedAt: Date
 	isDeleted: boolean
 }
+
+export type AdminYoutubePage = z.infer<typeof adminYoutubePageParams>
 
 export type PadLockFormValues = z.infer<typeof padLockFormSchema>
 

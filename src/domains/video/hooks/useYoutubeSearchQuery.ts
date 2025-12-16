@@ -3,7 +3,7 @@
 import type { YoutubeSearchQuery } from '@ashitaboliff/types/modules/video/types'
 import { useMemo } from 'react'
 import { createYoutubeQueryOptions } from '@/domains/video/query/youtubeQuery'
-import { useQueryState } from '@/shared/hooks/useQueryState'
+import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
 
 type UseYoutubeSearchQueryArgs = {
 	defaultQuery: YoutubeSearchQuery
@@ -19,10 +19,12 @@ export const useYoutubeSearchQuery = ({
 		[defaultQuery],
 	)
 
-	const { query, updateQuery, isPending, hasCustomQuery } =
-		useQueryState<YoutubeSearchQuery>({
+	const query = initialQuery
+
+	const { updateQuery, isPending, hasCustomQuery } =
+		useQueryUpdater<YoutubeSearchQuery>({
 			queryOptions,
-			initialQuery,
+			currentQuery: query,
 		})
 
 	return {

@@ -1,22 +1,21 @@
-import { YoutubeSearchQuerySchema } from '@ashitaboliff/types/modules/video/schema'
 import type {
 	PlaylistDoc,
 	SearchResponse,
+	YoutubeSearchQuery,
 } from '@ashitaboliff/types/modules/video/types'
 import YoutubeManagement from '@/app/admin/youtube/_components'
+import { adminYoutubePageParams } from '@/domains/admin/model/adminSchema'
 import { searchYoutubeAction } from '@/domains/video/api/videoActions'
-import { ADMIN_YOUTUBE_DEFAULT_QUERY } from '@/domains/video/query/youtubeQuery'
+import {
+	ADMIN_YOUTUBE_DEFAULT_PARAMS,
+	ADMIN_YOUTUBE_DEFAULT_QUERY,
+} from '@/domains/video/query/youtubeQuery'
 import { logError } from '@/shared/utils/logger'
 import type { ApiError } from '@/types/response'
 
-const safeSearchParamsSchema = YoutubeSearchQuerySchema.catch(() => ({
-	liveOrBand: ADMIN_YOUTUBE_DEFAULT_QUERY.liveOrBand,
-	bandName: ADMIN_YOUTUBE_DEFAULT_QUERY.bandName,
-	liveName: ADMIN_YOUTUBE_DEFAULT_QUERY.liveName,
-	sort: ADMIN_YOUTUBE_DEFAULT_QUERY.sort,
-	page: ADMIN_YOUTUBE_DEFAULT_QUERY.page,
-	videoPerPage: ADMIN_YOUTUBE_DEFAULT_QUERY.videoPerPage,
-}))
+const safeSearchParamsSchema = adminYoutubePageParams.catch(
+	() => ADMIN_YOUTUBE_DEFAULT_PARAMS,
+)
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -24,16 +23,18 @@ type Props = {
 
 const Page = async ({ searchParams }: Props) => {
 	const params = await searchParams
+
 	const query = safeSearchParamsSchema.parse({
-		liveOrBand: params.liveOrBand,
-		bandName: params.bandName,
-		liveName: params.liveName,
-		sort: params.sort,
 		page: params.page,
 		videoPerPage: params.videoPerPage,
 	})
 
-	const result = await searchYoutubeAction(query)
+	const actionQuery: YoutubeSearchQuery = {
+		...ADMIN_YOUTUBE_DEFAULT_QUERY,
+		...query,
+	}
+
+	const result = await searchYoutubeAction(actionQuery)
 
 	let error: ApiError | undefined
 	let playlists: SearchResponse = { items: [] as PlaylistDoc[], total: 0 }
@@ -47,10 +48,9 @@ const Page = async ({ searchParams }: Props) => {
 
 	return (
 		<YoutubeManagement
-			key={params.toString()}
+			key={query.toString()}
 			playlists={playlists}
-			defaultQuery={ADMIN_YOUTUBE_DEFAULT_QUERY}
-			initialQuery={query}
+			query={query}
 			error={error}
 		/>
 	)

@@ -74,7 +74,7 @@ const Pagination = ({
 						<button
 							type="button"
 							key={item}
-							className={`join-item btn ${
+							className={`join-item btn w-14 ${
 								currentPage === item ? 'btn-primary' : 'btn-outline'
 							}`}
 							onClick={handlePageClick(item)}
@@ -88,7 +88,7 @@ const Pagination = ({
 					<button
 						type="button"
 						key={item}
-						className="join-item btn btn-disabled"
+						className="join-item btn btn-disabled w-12"
 						disabled
 					>
 						…

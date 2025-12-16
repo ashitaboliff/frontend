@@ -3,24 +3,25 @@
 import type {
 	PlaylistDoc,
 	SearchResponse,
-	YoutubeSearchQuery,
 } from '@ashitaboliff/types/modules/video/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
+import type { AdminYoutubePage } from '@/domains/admin/model/adminTypes'
 import { postSyncPlaylistAction } from '@/domains/video/api/videoActions'
-import { useYoutubeSearchQuery } from '@/domains/video/hooks/useYoutubeSearchQuery'
+import { ADMIN_YOUTUBE_DEFAULT_PARAMS } from '@/domains/video/query/youtubeQuery'
 import { useFeedback } from '@/shared/hooks/useFeedback'
+import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa, formatDateSlash } from '@/shared/utils/dateFormat'
+import type { QueryOptions } from '@/shared/utils/queryParams'
 import type { ApiError } from '@/types/response'
 
 type Props = {
 	readonly playlists: SearchResponse
-	readonly defaultQuery: YoutubeSearchQuery
-	readonly initialQuery: YoutubeSearchQuery
+	readonly query: AdminYoutubePage
 	readonly extraSearchParams?: string
 	readonly error?: ApiError
 }
@@ -32,26 +33,26 @@ const perPageOptions = {
 	'100件': 100,
 } as const
 
-const YoutubeManagement = ({
-	playlists,
-	defaultQuery,
-	initialQuery,
-	error,
-}: Props) => {
+const YoutubeManagement = ({ playlists, query, error }: Props) => {
+	console.log(query)
 	const router = useRouter()
 	const actionFeedback = useFeedback()
 	const [isLoading, setIsLoading] = useState(false)
 	const [detailPlaylist, setDetailPlaylist] = useState<PlaylistDoc | null>(null)
 
-	const { query, updateQuery, isPending } = useYoutubeSearchQuery({
-		defaultQuery,
-		initialQuery,
+	const defaultQuery: QueryOptions<AdminYoutubePage> = {
+		defaultQuery: ADMIN_YOUTUBE_DEFAULT_PARAMS,
+	}
+
+	const { updateQuery, isPending } = useQueryUpdater<AdminYoutubePage>({
+		queryOptions: defaultQuery,
+		currentQuery: query,
 	})
 
 	const totalPages = useMemo(() => {
 		if (query.videoPerPage <= 0) return 1
 		return Math.max(1, Math.ceil(playlists.total / query.videoPerPage) || 1)
-	}, [query.videoPerPage, playlists.total])
+	}, [query.videoPerPage, playlists.total, query])
 
 	const handleFetchPlaylist = useCallback(async () => {
 		actionFeedback.clearFeedback()
@@ -75,15 +76,7 @@ const YoutubeManagement = ({
 			? formatDateSlash(playlists.items[0].updatedAt)
 			: '不明'
 
-	const isBusy = isLoading || isPending
 	const headers = [{ key: 'title', label: 'タイトル' }]
-
-	const pagination = {
-		currentPage: query.page,
-		totalPages: totalPages,
-		totalCount: playlists.total,
-		onPageChange: (page: number) => updateQuery({ page }),
-	}
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
@@ -112,9 +105,12 @@ const YoutubeManagement = ({
 					value: query.videoPerPage,
 					onChange: (value) => updateQuery({ videoPerPage: value, page: 1 }),
 				}}
-				pagination={
-					totalPages > 1 ? pagination : { ...pagination, totalPages: 1 }
-				}
+				pagination={{
+					currentPage: query.page,
+					totalPages,
+					totalCount: playlists.total,
+					onPageChange: (page) => updateQuery({ page }),
+				}}
 			>
 				<div className="flex flex-col gap-y-2 sm:flex-row sm:items-center sm:justify-between">
 					<div className="text-sm">更新日: {lastUpdatedText}</div>
@@ -139,7 +135,7 @@ const YoutubeManagement = ({
 					type="button"
 					className="btn btn-outline"
 					onClick={() => router.push('/admin')}
-					disabled={isBusy}
+					disabled={isLoading}
 				>
 					戻る
 				</button>

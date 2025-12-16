@@ -10,7 +10,11 @@ import {
 	UserListForAdminResponseSchema,
 	UserQuerySchema,
 } from '@ashitaboliff/types/modules/user/schema'
-import type { UserListForAdmin } from '@ashitaboliff/types/modules/user/types'
+import type {
+	UserAccountRole,
+	UserListForAdmin,
+	UserQuery,
+} from '@ashitaboliff/types/modules/user/types'
 import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import {
@@ -27,9 +31,6 @@ import {
 } from '@/shared/lib/api/helper'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/v2/crud'
 import { type ApiResponse, StatusCode } from '@/types/response'
-
-type AdminUserQuery = z.infer<typeof UserQuerySchema>
-type UpdateUserRolePayload = z.input<typeof UpdateUserRoleSchema>
 
 export const getAllPadLocksAction = async (): Promise<
 	ApiResponse<PublicPadLock[]>
@@ -50,7 +51,7 @@ export const getUserDetailsListAction = async ({
 	page,
 	perPage,
 	sort,
-}: AdminUserQuery): Promise<ApiResponse<UserListForAdmin>> => {
+}: UserQuery): Promise<ApiResponse<UserListForAdmin>> => {
 	const res = await apiGet('/users/admin', {
 		searchParams: { page, perPage, sort },
 		next: {
@@ -96,7 +97,7 @@ export const updateUserRoleAction = async ({
 	role,
 }: {
 	id: string
-	role: UpdateUserRolePayload['role']
+	role: UserAccountRole
 }): Promise<ApiResponse<null>> => {
 	const res = await apiPut(`/users/${id}/role`, {
 		body: { role },

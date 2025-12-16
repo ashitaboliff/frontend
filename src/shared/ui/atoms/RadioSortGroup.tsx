@@ -1,9 +1,9 @@
-interface SortOption<T extends string> {
+type SortOption<T extends string> = {
 	readonly value: T
 	readonly label: string
 }
 
-interface RadioSortGroupProps<T extends string> {
+type RadioSortGroupProps<T extends string> = {
 	readonly name: string
 	readonly options: SortOption<T>[]
 	readonly currentSort: T
@@ -19,7 +19,7 @@ const RadioSortGroup = <T extends string>({
 	currentSort,
 	onSortChange,
 	className = '',
-	buttonClassName = 'btn-outline checked:btn-accent',
+	buttonClassName = 'btn-outline checked:btn-accent w-18',
 	size = 'sm',
 }: RadioSortGroupProps<T>) => {
 	return (
@@ -27,7 +27,7 @@ const RadioSortGroup = <T extends string>({
 			{options.map((option) => (
 				<input
 					key={option.value}
-					className={`join-item btn btn-${size} ${buttonClassName}`}
+					className={`join-item btn text-nowrap btn-${size} ${buttonClassName}`}
 					type="radio"
 					name={name}
 					aria-label={option.label}
