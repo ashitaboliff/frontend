@@ -8,7 +8,7 @@ import {
 
 export type MessageVariant = 'info' | 'success' | 'warning' | 'error'
 
-interface MessageProps {
+type MessageProps = {
 	variant?: MessageVariant
 	showIcon?: boolean
 	icon?: ReactNode

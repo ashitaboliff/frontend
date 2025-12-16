@@ -2,6 +2,16 @@
 
 import { getMonth, getYear } from 'date-fns'
 
+type Props = {
+	date: Date
+	changeYear: (value: number) => void
+	changeMonth: (value: number) => void
+	decreaseMonth: () => void
+	increaseMonth: () => void
+	prevMonthButtonDisabled: boolean
+	nextMonthButtonDisabled: boolean
+}
+
 const CustomHeader = ({
 	date,
 	changeYear,
@@ -10,15 +20,7 @@ const CustomHeader = ({
 	increaseMonth,
 	prevMonthButtonDisabled,
 	nextMonthButtonDisabled,
-}: {
-	date: Date
-	changeYear: (value: number) => void
-	changeMonth: (value: number) => void
-	decreaseMonth: () => void
-	increaseMonth: () => void
-	prevMonthButtonDisabled: boolean
-	nextMonthButtonDisabled: boolean
-}) => {
+}: Props) => {
 	const years = []
 	const currentYear = getYear(new Date())
 	for (let i = currentYear - 10; i <= currentYear + 10; i++) {

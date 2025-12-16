@@ -2,7 +2,6 @@ import type { AdminDeniedBookingQuery } from '@ashitaboliff/types/modules/bookin
 import type { z } from 'zod'
 import {
 	type deniedBookingFormSchema,
-	deniedBookingSortSchema,
 	type deniedBookingTypeSchema,
 	type padLockFormSchema,
 } from './adminSchema'
@@ -10,8 +9,6 @@ import {
 export type DeniedBookingQuery = Omit<AdminDeniedBookingQuery, 'today'>
 
 export type PadLockFormValues = z.infer<typeof padLockFormSchema>
-
-export const DENIED_BOOKING_SORT_OPTIONS = deniedBookingSortSchema.options
 
 export type DeniedBookingType = z.infer<typeof deniedBookingTypeSchema>
 

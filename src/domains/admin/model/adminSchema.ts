@@ -11,8 +11,6 @@ export const padLockFormSchema = z.object({
 		.regex(/^[0-9]{4}$/u, 'パスワードは4桁の数字で入力してください'),
 })
 
-export const deniedBookingSortSchema = z.enum(['new', 'old', 'relativeCurrent'])
-
 export const deniedBookingTypeSchema = z.enum(['single', 'period', 'regular'])
 
 export const deniedBookingFormSchema = z

@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 
-interface FullscreenOverlayProps {
+type FullscreenOverlayProps = {
 	readonly children: ReactNode
 	readonly className?: string
 }

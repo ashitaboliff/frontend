@@ -4,12 +4,12 @@ import type { CSSProperties, ReactNode } from 'react'
 import { useMemo } from 'react'
 import { useCarousel } from '@/shared/hooks/useCarousel'
 
-export interface CarouselSlide {
+export type CarouselSlide = {
 	id: string
 	node: ReactNode
 }
 
-interface CarouselProps {
+type CarouselProps = {
 	slides: CarouselSlide[]
 	autoPlay?: boolean
 	interval?: number
@@ -84,7 +84,7 @@ const Carousel = ({
 			>
 				{slides.map(({ id, node }, index) => (
 					<fieldset
-						className="w-full flex-shrink-0"
+						className="w-full shrink-0"
 						key={id}
 						aria-label={`${index + 1} / ${slides.length}`}
 					>

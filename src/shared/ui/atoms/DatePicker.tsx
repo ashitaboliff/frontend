@@ -10,19 +10,21 @@ import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 
 registerLocale('ja', ja)
 
+type DatePickerProps = {
+	label?: string
+	selectedDate: Date | null
+	onChange: (dates: Date | null) => void
+	minDate?: Date
+	errorMessage?: string
+}
+
 const CustomDatePicker = ({
 	label,
 	selectedDate,
 	onChange,
 	minDate,
 	errorMessage,
-}: {
-	label?: string
-	selectedDate: Date | null
-	onChange: (dates: Date | null) => void
-	minDate?: Date
-	errorMessage?: string
-}) => {
+}: DatePickerProps) => {
 	const inputId = useId()
 
 	return (

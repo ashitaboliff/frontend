@@ -8,13 +8,13 @@ import {
 	useState,
 } from 'react'
 
-interface TabProps {
+type TabProps = {
 	label: ReactNode
 	children: ReactNode
 	value?: string
 }
 
-interface TabsProps {
+type TabsProps = {
 	children: ReactNode
 	value?: string
 	onChange?: (value: string) => void
