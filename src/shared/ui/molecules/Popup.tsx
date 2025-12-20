@@ -122,7 +122,7 @@ const Popup = ({
 				className={classNames(
 					'modal-box relative mx-auto overflow-y-auto overflow-x-hidden bg-base-100',
 					maxWClass,
-					noPadding && 'paddingless',
+					noPadding && 'px-0! py-2!',
 					className,
 				)}
 				style={maxWStyle}

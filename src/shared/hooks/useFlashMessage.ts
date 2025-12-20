@@ -2,7 +2,7 @@
 
 import type { NoticeType } from '@/shared/ui/molecules/FlashMessage'
 
-interface Option {
+type Option = {
 	readonly key: string
 }
 

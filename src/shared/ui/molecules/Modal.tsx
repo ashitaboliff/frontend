@@ -58,18 +58,14 @@ const Modal = ({
 				onClose={() => setOpen(false)}
 				className={modalClass}
 			>
-				<div className="flex flex-col gap-4">
-					{children}
-					<div className="flex justify-center">
-						<button
-							type="button"
-							className="btn btn-outline"
-							onClick={() => setOpen(false)}
-						>
-							閉じる
-						</button>
-					</div>
-				</div>
+				{children}
+				<button
+					type="button"
+					className="btn btn-ghost mt-4 w-full"
+					onClick={() => setOpen(false)}
+				>
+					閉じる
+				</button>
 			</Popup>
 		</>
 	)

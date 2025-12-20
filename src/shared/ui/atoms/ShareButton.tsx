@@ -10,7 +10,7 @@ import PublicEnv from '@/shared/lib/env/public'
 import { CiShare1, IoShareSocialSharp } from '@/shared/ui/icons'
 import { classNames } from '@/shared/ui/utils/classNames'
 
-export type ShareButtonProps = {
+type ShareButtonProps = {
 	url: string
 	title: string
 	text: string

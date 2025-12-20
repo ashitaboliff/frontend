@@ -68,13 +68,11 @@ const Footer = () => {
 	return (
 		<footer className="footer mt-8 flex flex-col items-center bg-white">
 			<nav className="relative mx-auto w-full max-w-screen-lg justify-center px-4 py-8 pb-0 md:p-8">
-				<div className="absolute mt-36 flex w-full justify-center md:mt-8">
-					<HomePageBar />
-				</div>
+				<HomePageBar className="absolute mt-36 flex w-full justify-center md:mt-8" />
 				<ul className="z-10 grid grid-cols-2 gap-4 bg-white/80 p-4 md:grid-cols-4">
 					{list.map(({ title, list }) => (
 						<li key={title} className="text-center">
-							<h2 className="border-tetiary-light border-l-4 pl-2 font-bold text-base text-neutral-content">
+							<h2 className="border-tertiary-light border-l-4 pl-2 font-bold text-base text-neutral-content">
 								{title}
 							</h2>
 							{list.map(({ url, title }) =>

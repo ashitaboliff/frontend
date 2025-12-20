@@ -1,7 +1,7 @@
 'use client'
 
 import type { ZodError, ZodTypeAny, z } from 'zod'
-import env from '@/shared/lib/env'
+import PublicEnv from '@/shared/lib/env/public'
 import {
 	type ApiError,
 	type ApiResponse,
@@ -45,7 +45,7 @@ const buildApiUrl = (
 		? path
 		: `/api${path.startsWith('/') ? path : `/${path}`}`
 
-	const url = new URL(normalizedPath, env.NEXT_PUBLIC_APP_URL)
+	const url = new URL(normalizedPath, PublicEnv.NEXT_PUBLIC_APP_URL)
 	appendSearchParams(url, searchParams)
 	return url.toString()
 }

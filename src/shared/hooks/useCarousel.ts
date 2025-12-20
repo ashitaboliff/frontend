@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDragSwipe } from '@/shared/lib/gesture'
 
-interface UseCarouselOptions {
+type UseCarouselOptions = {
 	size: number
 	autoPlay?: boolean
 	interval?: number
@@ -10,7 +10,7 @@ interface UseCarouselOptions {
 	onSlideChange?: (index: number) => void
 }
 
-interface UseCarouselResult {
+type UseCarouselResult = {
 	activeIndex: number
 	dragOffset: number
 	next: () => void

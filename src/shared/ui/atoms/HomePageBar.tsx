@@ -5,9 +5,13 @@ const lightred = '#E3646B'
 /**
  * トップページで使用する装飾バー。
  */
-const HomePageBar = () => {
+const HomePageBar = ({ className }: { className?: string }) => {
 	return (
-		<div aria-hidden>
+		<figure aria-hidden className={className}>
+			<figcaption className="sr-only">
+				ページの装飾バー、カラーコード#3C87E0, #F0CB51,
+				#E3646Bを使用してSVGで表現されている
+			</figcaption>
 			<svg
 				width="661"
 				height="158"
@@ -86,7 +90,7 @@ const HomePageBar = () => {
 				<rect x="306" y="13" width="13" height="129" fill={lightred} />
 				<rect x="324" y="13" width="13" height="129" fill={lightBlue} />
 			</svg>
-		</div>
+		</figure>
 	)
 }
 

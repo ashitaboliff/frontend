@@ -1,13 +1,13 @@
 import { useMemo, useReducer } from 'react'
 
-export interface UsePagedResourceOptions<S> {
+export type UsePagedResourceOptions<S> = {
 	initialPage?: number
 	initialPerPage: number
 	initialSort: S
 	initialTotalCount?: number
 }
 
-interface PagedState<S> {
+type PagedState<S> = {
 	page: number
 	perPage: number
 	sort: S
