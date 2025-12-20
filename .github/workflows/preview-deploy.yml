@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: read
       pull-requests: write
       deployments: write
     concurrency:
@@ -40,6 +41,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
+        env: 
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy Preview
         id: vercel

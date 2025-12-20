@@ -1,16 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
-import BookingDetailBox from '@/domains/booking/ui/BookingDetailBox'
+import BookingDetailCard from '@/domains/booking/ui/BookingDetailCard'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import { useBookingEdit } from './BookingEditContext'
 
-interface Props {
-	booking: Booking
-	flashMessage?: string | null
-}
-
-const BookingEditSuccess = ({ booking, flashMessage }: Props) => {
+const BookingEditSuccess = () => {
+	const { booking, flashMessage } = useBookingEdit()
 	return (
 		<div className="mx-auto max-w-md">
 			<FeedbackMessage
@@ -19,13 +15,8 @@ const BookingEditSuccess = ({ booking, flashMessage }: Props) => {
 					message: flashMessage ?? '予約を編集しました。',
 				}}
 			/>
-			<BookingDetailBox
-				bookingDate={booking.bookingDate}
-				bookingTime={booking.bookingTime}
-				registName={booking.registName}
-				name={booking.name}
-			/>
-			<Link href={'/booking'} className="btn btn-outline mt-4 w-full max-w-md">
+			<BookingDetailCard booking={booking} />
+			<Link href="/booking" className="btn btn-outline mt-4 w-full max-w-md">
 				コマ表に戻る
 			</Link>
 		</div>

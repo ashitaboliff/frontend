@@ -1,6 +1,11 @@
 'use client'
 
+import type {
+	PublicBooking as Booking,
+	BookingResponse,
+} from '@ashitaboliff/types/modules/booking/types'
 import { addDays } from 'date-fns'
+import { useMemo } from 'react'
 import type { UseFormSetValue } from 'react-hook-form'
 import {
 	ABLE_BOOKING_DAYS,
@@ -8,7 +13,6 @@ import {
 	DENIED_BOOKING,
 } from '@/domains/booking/constants/bookingConstants'
 import type { BookingEditFormValues } from '@/domains/booking/model/bookingSchema'
-import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
 import {
 	AvailableCell,
 	BookingInfoCell,
@@ -17,31 +21,27 @@ import {
 import CalendarFrame from '@/shared/ui/molecules/CalendarFrame'
 import { DateToDayISOstring } from '@/shared/utils'
 
+export type BookingEditCalendarSelection = {
+	original: Pick<Booking, 'bookingDate' | 'bookingTime'>
+	selected: Pick<Booking, 'bookingDate' | 'bookingTime'>
+}
+
 type Props = {
-	readonly bookingResponse: BookingResponse
-	readonly actualBookingDate: string
-	readonly actualBookingTime: number
-	readonly bookingDate: string
-	readonly bookingTime: number
+	readonly data: BookingResponse
+	readonly calendarSelection: BookingEditCalendarSelection
 	readonly setCalendarOpen: (calendarOpen: boolean) => void
 	readonly setValue: UseFormSetValue<BookingEditFormValues>
 	readonly className?: string
 }
 
-const EditCalendarCellClass =
-	'w-10 h-11 sm:w-full sm:h-16 flex flex-col justify-center items-center text-center break-words overflow-hidden py-1'
-
 const BookingEditCalendar = ({
-	bookingResponse,
-	actualBookingDate,
-	actualBookingTime,
-	bookingDate,
-	bookingTime,
+	data,
+	calendarSelection,
 	setCalendarOpen,
 	setValue,
 	className,
 }: Props) => {
-	const dateList = Object.keys(bookingResponse)
+	const dateList = useMemo(() => Object.keys(data), [data])
 
 	const handleSelect = (date: string, timeIndex: number) => {
 		setValue('bookingDate', date)
@@ -58,17 +58,16 @@ const BookingEditCalendar = ({
 		<CalendarFrame
 			dates={dateList}
 			times={BOOKING_TIME_LIST}
-			containerClassName={
-				className ? `flex justify-center ${className}` : 'flex justify-center'
-			}
-			cornerCellClassName="border border-base-200 w-10 sm:w-14 md:w-16"
-			headerCellClassName="border border-base-200 p-0 sm:p-2 w-10 h-9 sm:w-14 sm:h-12 md:w-16 md:h-14"
-			timeCellClassName="border border-base-200 p-0 sm:p-2 w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 break-words"
+			size="sm"
+			tableClassName={className}
 			renderCell={({ date, timeIndex }) => {
-				const booking = bookingResponse[date]?.[timeIndex]
-				const isSelected = date === bookingDate && timeIndex === bookingTime
+				const booking = data[date]?.[timeIndex]
+				const isSelected =
+					date === calendarSelection.selected.bookingDate &&
+					timeIndex === calendarSelection.selected.bookingTime
 				const isOriginalBooking =
-					date === actualBookingDate && timeIndex === actualBookingTime
+					date === calendarSelection.original.bookingDate &&
+					timeIndex === calendarSelection.original.bookingTime
 				const withinRange =
 					date >= bookingAbleMinDate && date <= bookingAbleMaxDate
 
@@ -86,7 +85,7 @@ const BookingEditCalendar = ({
 						onClick: withinRange
 							? () => handleSelect(date, timeIndex)
 							: undefined,
-						content: <AvailableCell className={EditCalendarCellClass} />,
+						content: <AvailableCell />,
 					}
 				}
 
@@ -94,7 +93,7 @@ const BookingEditCalendar = ({
 					return {
 						key,
 						className,
-						content: <DeniedCell className={EditCalendarCellClass} />,
+						content: <DeniedCell />,
 					}
 				}
 
@@ -109,7 +108,6 @@ const BookingEditCalendar = ({
 							<BookingInfoCell
 								registName={booking.registName}
 								name={booking.name}
-								className={EditCalendarCellClass}
 							/>
 						),
 					}
@@ -118,7 +116,7 @@ const BookingEditCalendar = ({
 				return {
 					key,
 					className,
-					content: <DeniedCell className={EditCalendarCellClass} />,
+					content: <DeniedCell />,
 				}
 			}}
 		/>

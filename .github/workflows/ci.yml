@@ -15,6 +15,9 @@ jobs:
   frontend:
     name: Frontend Checks
     runs-on: ubuntu-latest
+    permissions: 
+      contents: read
+      packages: read
     concurrency:
       group: frontend-ci-${{ github.ref }}-${{ matrix.command }}
       cancel-in-progress: true
@@ -33,6 +36,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
+        env: 
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

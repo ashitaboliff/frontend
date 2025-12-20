@@ -1,31 +1,33 @@
 import type { Metadata, ResolvingMetadata } from 'next'
+import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import BookingDetail from '@/app/booking/[id]/_components'
 import { getBookingByIdAction } from '@/domains/booking/api/bookingActions'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
+import Loading from '@/domains/booking/ui/BookingDetailLoading'
 import { createMetaData } from '@/shared/hooks/useMetaData'
+import { formatDateJa } from '@/shared/utils/dateFormat'
+import { logError } from '@/shared/utils/logger'
 
-type PageParams = Promise<{ id: string }>
-type PageProps = { params: PageParams }
+type Props = { params: Promise<{ id: string }> }
 
 export async function generateMetadata(
-	{ params }: { params: PageParams },
+	{ params }: Props,
 	_parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { id } = await params
-	const bookingDetailRes = await getBookingByIdAction(id)
+	const res = await getBookingByIdAction(id)
 
-	const bookingDetail = bookingDetailRes.ok ? bookingDetailRes.data : null
+	const bookingDetail = res.ok ? res.data : null
 
-	let title = `予約詳細 ${id} | あしたぼホームページ`
+	let title = `予約詳細 ${id}`
 	let description = `コマ表の予約詳細 (${id}) です。`
 
 	if (bookingDetail) {
-		const bookingData = bookingDetail
-		title = bookingData.registName
-			? `${bookingData.registName}の予約 | あしたぼホームページ`
-			: `予約詳細 ${id} | あしたぼホームページ`
-		description = `コマ表の予約 (${bookingData.registName || id}、${bookingData.bookingDate} ${BOOKING_TIME_LIST[bookingData.bookingTime] || ''}) の詳細です。`
+		title = bookingDetail.registName
+			? `${bookingDetail.registName}の予約詳細`
+			: `予約詳細 ${id}`
+		description = `コマ表の予約 (登録名:${bookingDetail.registName || id} ${formatDateJa(bookingDetail.bookingDate)} ${BOOKING_TIME_LIST[Number(bookingDetail.bookingTime)] || ''}) の詳細です。`
 	}
 
 	return createMetaData({
@@ -35,14 +37,25 @@ export async function generateMetadata(
 	})
 }
 
-const Page = async ({ params }: PageProps) => {
+const Content = async ({ id }: { id: string }) => {
+	const res = await getBookingByIdAction(id)
+	if (!res.ok || !res.data) {
+		logError(
+			`[Booking Detail Page] Failed to fetch booking detail. status: ${res.status}`,
+		)
+		return notFound()
+	}
+	return <BookingDetail booking={res.data} />
+}
+
+const Page = async ({ params }: Props) => {
 	const { id } = await params
 
-	const bookingDetail = await getBookingByIdAction(id)
-	if (!bookingDetail.ok || !bookingDetail.data) {
-		return <BookingDetailNotFound />
-	}
-	return <BookingDetail bookingDetail={bookingDetail.data} />
+	return (
+		<Suspense fallback={<Loading />}>
+			<Content id={id} />
+		</Suspense>
+	)
 }
 
 export default Page

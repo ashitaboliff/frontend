@@ -1,13 +1,14 @@
 'use client'
 
+import type { BookingResponse } from '@ashitaboliff/types/modules/booking/types'
 import { addDays } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 import {
 	ABLE_BOOKING_DAYS,
+	BOOKING_TIME_LIST,
 	DENIED_BOOKING,
 } from '@/domains/booking/constants/bookingConstants'
-import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
 import {
 	AvailableCell,
 	BookingInfoCell,
@@ -17,19 +18,18 @@ import CalendarFrame from '@/shared/ui/molecules/CalendarFrame'
 import { DateToDayISOstring, toDateKey } from '@/shared/utils'
 
 /**
- * これは予約カレンダーを描画するためだけのコンポーネント
- * @param booking_date
+ * 予約カレンダーを描画するコンポーネント
+ * @param data
  * @returns
  */
 type Props = {
-	readonly bookingDate: BookingResponse
-	readonly timeList: string[]
-	readonly className?: string
+	readonly data: BookingResponse
+	readonly isLoading: boolean
 }
 
-const BookingCalendar = ({ bookingDate, timeList, className }: Props) => {
+const BookingCalendar = ({ data, isLoading }: Props) => {
 	const router = useRouter()
-	const dateList = useMemo(() => Object.keys(bookingDate), [bookingDate])
+	const dateList = useMemo(() => Object.keys(data), [data])
 	const bookingAbleMaxDate = DateToDayISOstring(
 		addDays(new Date(), ABLE_BOOKING_DAYS),
 	)
@@ -38,20 +38,15 @@ const BookingCalendar = ({ bookingDate, timeList, className }: Props) => {
 	return (
 		<CalendarFrame
 			dates={dateList}
-			times={timeList}
-			containerClassName={
-				className ? `flex justify-center ${className}` : 'flex justify-center'
-			}
+			times={BOOKING_TIME_LIST}
+			tableClassName={isLoading ? 'opacity-30' : undefined}
 			renderCell={({ date, timeIndex }) => {
-				const booking = bookingDate[date]?.[timeIndex]
-				const baseClass = 'border border-base-200 p-0'
+				const booking = data[date]?.[timeIndex]
 				const cellKey = `booking-${date}-${timeIndex}`
 
 				const withinRange =
 					date >= bookingAbleMinDate && date <= bookingAbleMaxDate
-				const disabledClass = withinRange
-					? baseClass
-					: `${baseClass} bg-base-300`
+				const disabledClass = withinRange ? undefined : 'bg-base-300'
 
 				const navigateToNewBooking = () =>
 					router.push(`/booking/new?date=${toDateKey(date)}&time=${timeIndex}`)

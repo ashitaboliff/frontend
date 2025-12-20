@@ -1,3 +1,4 @@
+import type { BookingResponse } from '@ashitaboliff/types/modules/booking/types'
 import { addDays, subDays } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
 import useSWR, { type SWRConfiguration, type SWRResponse } from 'swr'
@@ -10,7 +11,6 @@ import {
 	BOOKING_VIEW_MIN_OFFSET_DAYS,
 	BOOKING_VIEW_RANGE_DAYS,
 } from '../constants/bookingConstants'
-import type { BookingResponse } from '../model/bookingTypes'
 
 type BookingWeekNavigationOptions = {
 	initialDate: Date

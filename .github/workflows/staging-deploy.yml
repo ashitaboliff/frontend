@@ -3,11 +3,14 @@ name: Deploy (dev)
 on:
   push:
     branches:
-      - dev
+      - test # 今preview環境作れないから一旦無効化
 
 jobs:
   Deploy:
     runs-on: ubuntu-latest
+    permissions: 
+      contents: read
+      packages: read
     concurrency:
       group: frontend-dev-${{ github.ref }}
       cancel-in-progress: true
@@ -23,6 +26,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
+        env: 
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

@@ -10,11 +10,12 @@ import {
 	rarityAnimations,
 } from '@/domains/gacha/ui/animations/rarityAnimations'
 import Sparkle from '@/domains/gacha/ui/effects/Sparkle'
+import Hover3D, { Hover3DCells } from '@/shared/ui/atoms/Hover3D'
 import Img from '@/shared/ui/atoms/ImageWithFallback'
 
 gsap.registerPlugin(useGSAP)
 
-interface CardProps {
+type CardProps = {
 	frontImageSignedUrl: string
 	rarity: RarityType
 	delay?: number
@@ -123,9 +124,10 @@ export const CardAnimation = ({
 				ref={effectContainerRef}
 				className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
 			/>
-			<div
+			<Hover3D
 				ref={cardRef}
-				className="hover-3d transform-style-3d relative h-100 w-75"
+				className="transform-style-3d relative h-100 w-75"
+				noRenderCells={true}
 			>
 				<div className="backface-hidden absolute h-full w-full overflow-hidden rounded-lg">
 					<Img
@@ -136,10 +138,7 @@ export const CardAnimation = ({
 						decoding="auto"
 					/>
 				</div>
-				{Array.from({ length: 8 }).map((_, index) => (
-					/* biome-ignore lint: complexity/noArrayIndexKey */
-					<div key={`hover-3d-cell-${index}`} tabIndex={-1} />
-				))}
+				<Hover3DCells />
 				<div className="backface-hidden rotateY-180 absolute h-full w-full scale-100! overflow-hidden rounded-lg">
 					<img
 						src="/backimage.webp"
@@ -149,7 +148,7 @@ export const CardAnimation = ({
 						decoding="auto"
 					/>
 				</div>
-			</div>
+			</Hover3D>
 
 			{['SUPER_RARE', 'SS_RARE', 'ULTRA_RARE', 'SECRET_RARE'].includes(
 				rarity,

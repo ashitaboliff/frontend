@@ -1,5 +1,10 @@
 'use server'
 
+import { PublicBookingSchema } from '@ashitaboliff/types/modules/booking/schema/booking'
+import type {
+	BookingResponse,
+	PublicBooking,
+} from '@ashitaboliff/types/modules/booking/types'
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
 import {
@@ -10,17 +15,12 @@ import {
 } from '@/domains/booking/api/bookingErrorMessages'
 import { revalidateBookingCalendarsForDate } from '@/domains/booking/api/bookingRevalidate'
 import {
-	mapRawBooking,
 	mapRawBookingList,
 	mapRawBookingResponse,
 	type RawBookingData,
 	type RawBookingResponse,
 } from '@/domains/booking/api/dto'
 import { BOOKING_CALENDAR_TAG } from '@/domains/booking/constants/bookingConstants'
-import type {
-	Booking,
-	BookingResponse,
-} from '@/domains/booking/model/bookingTypes'
 import { buildBookingCalendarTag } from '@/domains/booking/utils/calendarCache'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import {
@@ -29,8 +29,11 @@ import {
 	mapSuccess,
 	noContentResponse,
 	okResponse,
+	withFallbackMessage,
 } from '@/shared/lib/api/helper'
+import { apiGet as apiGetV2 } from '@/shared/lib/api/v2/crud'
 import { toDateKey } from '@/shared/utils'
+import { logError } from '@/shared/utils/logger'
 import { type ApiResponse, StatusCode } from '@/types/response'
 
 type BookingPayload = {
@@ -67,7 +70,7 @@ export const getBookingByDateAction = async ({
 }
 
 export const getAllBookingAction = async (): Promise<
-	ApiResponse<Booking[]>
+	ApiResponse<PublicBooking[]>
 > => {
 	const res = await apiGet<RawBookingData[]>('/booking/logs', {
 		next: { revalidate: 60 * 60, tags: ['booking'] },
@@ -82,15 +85,26 @@ export const getAllBookingAction = async (): Promise<
 
 export const getBookingByIdAction = async (
 	bookingId: string,
-): Promise<ApiResponse<Booking>> => {
-	const res = await apiGet<RawBookingData>(`/booking/${bookingId}`, {
-		next: {
-			revalidate: 7 * 24 * 60 * 60,
-			tags: [`booking-detail-${bookingId}`],
-		},
-	})
+): Promise<ApiResponse<PublicBooking>> => {
+	try {
+		const res = await apiGetV2(`/booking/${bookingId}`, {
+			next: {
+				revalidate: 7 * 24 * 60 * 60,
+				tags: [`booking-detail-${bookingId}`],
+			},
+			schemas: {
+				response: PublicBookingSchema,
+			},
+		})
 
-	return mapSuccess(res, mapRawBooking, '予約詳細の取得に失敗しました。')
+		if (!res.ok) {
+			return withFallbackMessage(res, '予約詳細の取得に失敗しました。')
+		}
+		return okResponse(res.data)
+	} catch (error) {
+		logError('getBookingByIdAction error', error)
+		throw error
+	}
 }
 
 export const getBookingByUserIdAction = async ({
@@ -103,7 +117,7 @@ export const getBookingByUserIdAction = async ({
 	page: number
 	perPage: number
 	sort: 'new' | 'old'
-}): Promise<ApiResponse<{ bookings: Booking[]; totalCount: number }>> => {
+}): Promise<ApiResponse<{ bookings: PublicBooking[]; totalCount: number }>> => {
 	const res = await apiGet<{
 		bookings: RawBookingData[]
 		totalCount: number

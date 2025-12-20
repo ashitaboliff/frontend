@@ -2,16 +2,18 @@
 
 import { addDays } from 'date-fns'
 import { useMemo } from 'react'
+import useSWR, { mutate } from 'swr'
 import BookingCalendar from '@/app/booking/_components/BookingCalendar'
 import {
+	bookingRangeFetcher,
+	buildBookingRangeKey,
+	buildEmptyBookingResponse,
+} from '@/domains/booking/api/bookingFetcher'
+import {
 	BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
-	BOOKING_TIME_LIST,
 	BOOKING_VIEW_RANGE_DAYS,
 } from '@/domains/booking/constants/bookingConstants'
-import {
-	useBookingCalendarData,
-	useBookingWeekNavigation,
-} from '@/domains/booking/hooks/bookingHooks'
+import { useBookingWeekNavigation } from '@/domains/booking/hooks/bookingHooks'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
@@ -41,24 +43,34 @@ const BookingMainPage = () => {
 	})
 
 	const errorFeedback = useFeedback()
+	const key = useMemo(
+		() => buildBookingRangeKey(viewDate, viewRangeDays),
+		[viewDate, viewRangeDays],
+	)
 
-	const {
-		data: bookingData,
-		isLoading,
-		mutate,
-	} = useBookingCalendarData({
-		viewDate,
-		viewRangeDays,
-		config: {
-			onError: (err: ApiError) => {
-				errorFeedback.showApiError(err)
-			},
-		},
-	})
+	const emptyBookingData = useMemo(
+		() => buildEmptyBookingResponse(viewDate, viewRangeDays),
+		[viewDate, viewRangeDays],
+	)
 
 	const handleRetry = async () => {
 		errorFeedback.clearFeedback()
-		await mutate()
+		await mutate(key)
+	}
+
+	const Content = () => {
+		const { data, isValidating } = useSWR(key, bookingRangeFetcher, {
+			revalidateOnFocus: false,
+			keepPreviousData: true,
+			onError: (err: ApiError) => {
+				errorFeedback.showApiError(err)
+			},
+			suspense: true,
+			fallbackData: emptyBookingData,
+		})
+
+		const isInitialLoading = data === emptyBookingData && isValidating
+		return <BookingCalendar data={data} isLoading={isInitialLoading} />
 	}
 
 	return (
@@ -79,7 +91,7 @@ const BookingMainPage = () => {
 				</div>
 			)}
 			<div className="flex flex-col justify-center space-x-2">
-				<div className="m-auto mb-4 flex items-center justify-between">
+				<div className="mx-auto my-2 flex items-center justify-between">
 					<button
 						type="button"
 						className="btn btn-outline"
@@ -111,17 +123,7 @@ const BookingMainPage = () => {
 						{'>'}
 					</button>
 				</div>
-				{!bookingData ? (
-					<div className="flex justify-center">
-						<div className="skeleton h-[466px] w-[360px] sm:h-[578px] sm:w-[520px]"></div>
-					</div>
-				) : (
-					<BookingCalendar
-						bookingDate={bookingData}
-						timeList={BOOKING_TIME_LIST}
-						className={isLoading ? 'opacity-30' : undefined}
-					/>
-				)}
+				<Content />
 			</div>
 		</>
 	)

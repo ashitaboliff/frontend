@@ -4,8 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { useSWRConfig } from 'swr'
 import { deleteBookingAction } from '@/domains/booking/api/bookingActions'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
-import BookingDetailBox from '@/domains/booking/ui/BookingDetailBox'
+import BookingDetailCard from '@/domains/booking/ui/BookingDetailCard'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { Ads } from '@/shared/ui/ads'
@@ -14,30 +13,17 @@ import Popup from '@/shared/ui/molecules/Popup'
 import { toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
 import { StatusCode } from '@/types/response'
-import type { Session } from '@/types/session'
+import { useBookingEdit } from './BookingEditContext'
 
-interface Props {
-	readonly booking: Booking
-	readonly session: Session
-	readonly onEditStart: () => void
-	readonly onRequireAuth: (message: string) => void
-	readonly ensureAccessToken: () => string | null
-}
-
-const BookingEditSummary = ({
-	booking,
-	session,
-	onEditStart,
-	onRequireAuth,
-	ensureAccessToken,
-}: Props) => {
+const BookingEditSummary = () => {
 	const router = useRouter()
 	const { mutate } = useSWRConfig()
 	const deleteFeedback = useFeedback()
-	const [flashMessage, setFlashMessage] = useState<string | null>(null)
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 	const [isDeleting, setIsDeleting] = useState(false)
 	const deletePopupId = useId()
+	const { booking, session, startEdit, ensureAccessToken, requireAuth } =
+		useBookingEdit()
 
 	const isOwner = booking.userId === session.user.id
 
@@ -64,7 +50,7 @@ const BookingEditSummary = ({
 				router.push('/booking')
 			} else {
 				if (response.status === StatusCode.FORBIDDEN) {
-					onRequireAuth(
+					requireAuth(
 						'予約の操作トークンが無効になりました。再度認証してください。',
 					)
 				}
@@ -83,26 +69,14 @@ const BookingEditSummary = ({
 
 	return (
 		<div className="mx-auto max-w-md">
-			<BookingDetailBox
-				bookingDate={booking.bookingDate}
-				bookingTime={booking.bookingTime}
-				registName={booking.registName}
-				name={booking.name}
-			/>
-			{flashMessage && (
-				<FeedbackMessage
-					source={{ kind: 'success', message: flashMessage }}
-					className="w-full space-y-4 text-center"
-				/>
-			)}
+			<BookingDetailCard booking={booking} />
 			<Ads placement="MenuDisplay" />
 			<div className="flex w-full flex-row justify-center gap-2">
 				<button
 					type="button"
 					className="btn btn-primary flex-1"
 					onClick={() => {
-						setFlashMessage(null)
-						onEditStart()
+						startEdit()
 					}}
 				>
 					予約を編集

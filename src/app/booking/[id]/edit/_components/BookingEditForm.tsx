@@ -9,45 +9,29 @@ import {
 	type BookingEditFormValues,
 	bookingEditSchema,
 } from '@/domains/booking/model/bookingSchema'
-import type {
-	Booking,
-	BookingResponse,
-} from '@/domains/booking/model/bookingTypes'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { getCurrentJSTDateString, toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
 import { StatusCode } from '@/types/response'
-import type { Session } from '@/types/session'
 import BookingEditCalendarPopup from './BookingEditCalendarPopup'
+import { useBookingEdit } from './BookingEditContext'
 import BookingEditFormFields from './BookingEditFormFields'
-
-interface Props {
-	readonly bookingDetail: Booking
-	readonly session: Session
-	readonly onCancel: () => void
-	readonly onSuccess: (updatedBooking: Booking) => void
-	readonly initialBookingResponse: BookingResponse | null
-	readonly initialViewDay: Date
-	readonly onRequireAuth: (message: string) => void
-	readonly ensureAccessToken: () => string | null
-}
 
 const today = getCurrentJSTDateString()
 
-const BookingEditForm = ({
-	bookingDetail,
-	session,
-	onCancel,
-	onSuccess,
-	initialBookingResponse,
-	initialViewDay,
-	onRequireAuth,
-	ensureAccessToken,
-}: Props) => {
+const BookingEditForm = () => {
 	const { mutate } = useSWRConfig()
 	const [calendarOpen, setCalendarOpen] = useState(false)
 	const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading'>('idle')
+	const {
+		booking,
+		session,
+		ensureAccessToken,
+		completeEdit,
+		requireAuth,
+		cancelEdit,
+	} = useBookingEdit()
 
 	const submissionFeedback = useFeedback()
 	const {
@@ -60,10 +44,10 @@ const BookingEditForm = ({
 		mode: 'onBlur',
 		resolver: zodResolver(bookingEditSchema),
 		defaultValues: {
-			bookingDate: bookingDetail.bookingDate,
-			bookingTime: bookingDetail.bookingTime,
-			registName: bookingDetail.registName,
-			name: bookingDetail.name,
+			bookingDate: booking.bookingDate,
+			bookingTime: booking.bookingTime,
+			registName: booking.registName,
+			name: booking.name,
 		},
 	})
 
@@ -75,7 +59,7 @@ const BookingEditForm = ({
 			: Number(watchedBookingTime ?? 0)
 
 	const onSubmit = async (data: BookingEditFormValues) => {
-		const isOwner = bookingDetail.userId === session.user.id
+		const isOwner = booking.userId === session.user.id
 		setSubmitStatus('loading')
 		submissionFeedback.clearFeedback()
 		const tokenInvalidMessage =
@@ -88,7 +72,7 @@ const BookingEditForm = ({
 				return
 			}
 			const response = await updateBookingAction({
-				bookingId: bookingDetail.id,
+				bookingId: booking.id,
 				userId: session.user.id,
 				booking: {
 					bookingDate: toDateKey(data.bookingDate),
@@ -104,22 +88,22 @@ const BookingEditForm = ({
 			if (response.ok) {
 				await mutateBookingCalendarsForDate(mutate, data.bookingDate)
 				setCalendarOpen(false)
-				onSuccess({
-					id: bookingDetail.id,
-					userId: bookingDetail.userId,
+				completeEdit({
+					id: booking.id,
+					userId: booking.userId,
 					bookingDate: data.bookingDate,
 					bookingTime: Number(data.bookingTime),
 					registName: data.registName,
 					name: data.name,
-					createdAt: bookingDetail.createdAt,
-					updatedAt: new Date(),
+					createdAt: booking.createdAt,
+					updatedAt: new Date().toISOString(),
 					isDeleted: false,
 				})
 				setSubmitStatus('idle')
 				return
 			} else {
 				if (response.status === StatusCode.FORBIDDEN) {
-					onRequireAuth(tokenInvalidMessage)
+					requireAuth(tokenInvalidMessage)
 				}
 			}
 			submissionFeedback.showApiError(response)
@@ -148,7 +132,7 @@ const BookingEditForm = ({
 				errors={errors}
 				isSubmitting={isSubmitting}
 				isLoading={submitStatus === 'loading'}
-				onCancel={onCancel}
+				onCancel={cancelEdit}
 				onOpenCalendar={() => setCalendarOpen(true)}
 				onSubmit={handleSubmit(onSubmit)}
 				errorFeedback={errorFeedback}
@@ -158,12 +142,13 @@ const BookingEditForm = ({
 			<BookingEditCalendarPopup
 				open={calendarOpen}
 				onClose={() => setCalendarOpen(false)}
-				initialViewDay={initialViewDay}
-				initialBookingResponse={initialBookingResponse}
-				actualBookingDate={toDateKey(bookingDetail.bookingDate)}
-				actualBookingTime={bookingDetail.bookingTime}
-				bookingDate={bookingDate}
-				bookingTime={bookingTimeIndex}
+				calendarSelection={{
+					original: booking,
+					selected: {
+						bookingDate: toDateKey(bookingDate),
+						bookingTime: bookingTimeIndex,
+					},
+				}}
 				setValue={setValue}
 			/>
 		</>

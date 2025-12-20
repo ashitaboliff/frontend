@@ -4,39 +4,25 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import {
-	authBookingAction,
-	type BookingAccessGrant,
-} from '@/domains/booking/api/bookingActions'
+import { authBookingAction } from '@/domains/booking/api/bookingActions'
 import {
 	type BookingAuthFormValues,
 	bookingAuthSchema,
 } from '@/domains/booking/model/bookingSchema'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
-import BookingDetailBox from '@/domains/booking/ui/BookingDetailBox'
+import BookingDetailCard from '@/domains/booking/ui/BookingDetailCard'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { Ads } from '@/shared/ui/ads'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import PasswordInputField from '@/shared/ui/molecules/PasswordInputField'
 import { logError } from '@/shared/utils/logger'
-import type { Session } from '@/types/session'
+import { useBookingEdit } from './BookingEditContext'
 
-interface Props {
-	readonly session: Session
-	readonly bookingDetail: Booking
-	readonly onSuccess: (grant: BookingAccessGrant) => void
-	readonly initialError?: string | null
-}
-
-const BookingEditAuthForm = ({
-	session,
-	bookingDetail,
-	onSuccess,
-	initialError,
-}: Props) => {
+const BookingEditAuthForm = () => {
 	const router = useRouter()
 	const [showPassword, setShowPassword] = useState(false)
 	const feedback = useFeedback()
+	const { booking, session, handleAuthSuccess, authPromptMessage } =
+		useBookingEdit()
 
 	const {
 		register,
@@ -50,10 +36,10 @@ const BookingEditAuthForm = ({
 	const { showError } = feedback
 
 	useEffect(() => {
-		if (initialError) {
-			showError(initialError, { code: 403 })
+		if (authPromptMessage) {
+			showError(authPromptMessage, { code: 403 })
 		}
-	}, [initialError, showError])
+	}, [authPromptMessage, showError])
 
 	const togglePassword = () => setShowPassword((prev) => !prev)
 
@@ -62,12 +48,12 @@ const BookingEditAuthForm = ({
 		try {
 			const response = await authBookingAction({
 				userId: session.user.id,
-				bookingId: bookingDetail.id,
+				bookingId: booking.id,
 				password: data.password,
 			})
 
 			if (response.ok) {
-				onSuccess(response.data)
+				handleAuthSuccess(response.data)
 			} else {
 				feedback.showApiError(response)
 			}
@@ -85,12 +71,7 @@ const BookingEditAuthForm = ({
 
 	return (
 		<div className="mx-auto max-w-md">
-			<BookingDetailBox
-				bookingDate={bookingDetail.bookingDate}
-				bookingTime={bookingDetail.bookingTime}
-				registName={bookingDetail.registName}
-				name={bookingDetail.name}
-			/>
+			<BookingDetailCard booking={booking} />
 			<Ads placement="MenuDisplay" />
 			<form
 				onSubmit={handleSubmit(onSubmit)}
@@ -116,7 +97,7 @@ const BookingEditAuthForm = ({
 					<button
 						type="button"
 						className="btn btn-ghost w-full"
-						onClick={() => router.push(`/booking/${bookingDetail.id}`)}
+						onClick={() => router.push(`/booking/${booking.id}`)}
 					>
 						戻る
 					</button>

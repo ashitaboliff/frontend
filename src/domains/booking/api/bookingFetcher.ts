@@ -1,10 +1,41 @@
+import {
+	BookingResponseSchema,
+	GetBookingQuerySchema,
+} from '@ashitaboliff/types/modules/booking/schema/booking'
+import type {
+	BookingRange,
+	BookingResponse,
+} from '@ashitaboliff/types/modules/booking/types'
 import { addDays } from 'date-fns'
-import { getBookingByDateAction } from '@/domains/booking/api/bookingActions'
-import { BOOKING_CALENDAR_SWR_KEY } from '@/domains/booking/constants/bookingConstants'
-import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
+import {
+	BOOKING_CALENDAR_SWR_KEY,
+	BOOKING_TIME_LIST,
+} from '@/domains/booking/constants/bookingConstants'
+import { bffGet } from '@/shared/lib/api/bff'
 import { toDateKey } from '@/shared/utils'
+import type { ApiResponse } from '@/types/response'
 
 type BookingRangeKey = [typeof BOOKING_CALENDAR_SWR_KEY, string, string]
+
+export const buildEmptyBookingResponse = (
+	viewDate: Date,
+	viewRangeDays: number,
+): BookingResponse => {
+	const dates = Array.from({ length: viewRangeDays }, (_, offset) =>
+		toDateKey(addDays(viewDate, offset)),
+	)
+
+	const createEmptySlots = () =>
+		BOOKING_TIME_LIST.reduce<Record<number, null>>((slots, _, index) => {
+			slots[index] = null
+			return slots
+		}, {})
+
+	return dates.reduce<BookingResponse>((acc, date) => {
+		acc[date] = createEmptySlots()
+		return acc
+	}, {})
+}
 
 export const buildBookingRangeKey = (
 	viewDate: Date,
@@ -17,14 +48,29 @@ export const buildBookingRangeKey = (
 
 export const bookingRangeFetcher = async ([
 	cacheKey,
-	startDate,
-	endDate,
-]: BookingRangeKey): Promise<BookingResponse | null> => {
+	start,
+	end,
+]: BookingRangeKey): Promise<BookingResponse> => {
 	if (cacheKey !== BOOKING_CALENDAR_SWR_KEY) {
 		throw new Error('Invalid cache key for booking calendar fetcher')
 	}
 
-	const res = await getBookingByDateAction({ startDate, endDate })
+	const getBookingCalender = async ({
+		start,
+		end,
+	}: BookingRange): Promise<ApiResponse<BookingResponse>> => {
+		const res = await bffGet('/booking', {
+			searchParams: { start, end },
+			schemas: {
+				searchParams: GetBookingQuerySchema,
+				response: BookingResponseSchema,
+			},
+		})
+
+		return res
+	}
+
+	const res = await getBookingCalender({ start, end })
 	if (res.ok) {
 		return res.data
 	}

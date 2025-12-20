@@ -89,8 +89,9 @@
 	--color-primary-dark: #1e5821;
 	--color-secondary-light: #e3646b;
 	--color-secondary-dark: #a22130;
-	--color-tetiary-light: #f0cb51;
-	--color-tetiary-dark: #b39019;
+	--color-tertiary: #e6b422;
+	--color-tertiary-light: #f0cb51;
+	--color-tertiary-dark: #b39019;
   --color-bg-white: #FFFFFF;
 	--color-accent-purple: #9b59b6;
 	--color-accent-glay: #e6e6e6;
@@ -98,6 +99,7 @@
 	--color-other-outlook: #0072c6;
 	--color-other-yahoo: #720e9e;
 	--color-other-ios: #000000;
+	--color-other-twitter: #1da1f2;
 
 	--breakpoint-sm: 620px;
 	--breakpoint-md: 768px;
@@ -125,6 +127,56 @@
 
 .rotateY-180 {
 	transform: rotateY(180deg);
+};
+
+.bg-rainbow-bars-soft {
+	--stripe-blue: color-mix(in srgb, var(--color-info) 38%, transparent);
+	--stripe-yellow: color-mix(in srgb, var(--color-tertiary-light) 34%, transparent);
+	--stripe-red: color-mix(in srgb, var(--color-secondary-light) 34%, transparent);
+	background-color: #fffdf8;
+	background-image: repeating-linear-gradient(
+		100deg,
+		var(--stripe-blue) 0 14px,
+		var(--stripe-yellow) 14px 26px,
+		var(--stripe-red) 26px 36px,
+		var(--stripe-blue) 36px 48px,
+		var(--stripe-yellow) 48px 60px,
+		var(--stripe-red) 60px 70px
+	);
+	background-size: 70px 120%;
+};
+
+.bg-error-bars-soft {
+	--stripe-dark: color-mix(in srgb, var(--color-secondary-dark) 50%, transparent);
+	--stripe-normal: color-mix(in srgb, var(--color-secondary) 50%, transparent);
+	--stripe-light: color-mix(in srgb, var(--color-secondary-light) 50%, transparent);
+	background-color: #fffdf8;
+	background-image: repeating-linear-gradient(
+		100deg,
+		var(--stripe-dark) 0 14px,
+		var(--stripe-normal) 14px 26px,
+		var(--stripe-light) 26px 36px,
+		var(--stripe-dark) 36px 48px,
+		var(--stripe-normal) 48px 60px,
+		var(--stripe-light) 60px 70px
+	);
+	background-size: 70px 120%;
+};
+
+.bg-pattern-diagonal-stripes {
+	--pattern-fg: color-mix(in srgb, currentColor 12%, transparent);
+	background-image: repeating-linear-gradient(
+		315deg,
+		var(--pattern-fg) 0,
+		var(--pattern-fg) 1px,
+		transparent 0,
+		transparent 50%
+	);
+	background-size: 10px 10px;
+};
+
+.pattern-fg-tertiary {
+	--pattern-fg: color-mix(in srgb, var(--color-tertiary) 24%, transparent);
 };
 
 .sparkle-gold {
@@ -180,6 +232,47 @@
 	border-color: rgba(255, 223, 186, 0.7); /* 衝撃波の色 */
 	transform: translate(-50%, -50%); /* 中央揃え */
 	opacity: 0;
+	pointer-events: none;
+}
+
+/* Hover3D disable override: keep layout, remove 3D interactions */
+.hover-3d[data-disabled='true'] {
+	display: inline-grid; /* daisyUI defaultを維持して外形サイズを合わせる */
+	perspective: 75rem;
+	--transform: 0, 0;
+	--shine: 100% 100%;
+	--shadow: 0rem 0rem 0rem;
+	filter: none;
+	transition: none;
+}
+
+.hover-3d[data-disabled='true'] > :first-child {
+	transform: none;
+	scale: 1;
+	filter: none;
+	outline: 0;
+	transition: none;
+}
+
+.hover-3d[data-disabled='true'] > :first-child::before {
+	opacity: 0;
+	transition: none;
+}
+
+.hover-3d[data-disabled='true']:hover {
+	--transform: 0, 0;
+	--shine: 100% 100%;
+	--shadow: 0rem 0rem 0rem;
+}
+
+.hover-3d[data-disabled='true']:hover > :first-child {
+	scale: 1;
+	transform: none;
+	outline-color: transparent;
+}
+
+.hover-3d[data-disabled='true'] > :nth-child(n + 2) {
+	display: none;
 	pointer-events: none;
 }
 
@@ -275,22 +368,13 @@
 	box-shadow: 0 0 12px 3px currentColor;
 }
 
-.aspect-gacha {
-	aspect-ratio: 3 / 4;
-}
-.aspect-gacha-pack {
-	aspect-ratio: 10 / 19;
-}
-.paddingless {
-	padding: 0;
-}
-
 .btn.btn-twitter {
-	background-color: #1da1f2; /* Twitter Blue */
+	background-color: var(--color-other-twitter); /* Twitter Blue */
 	color: var(--color-bg-white);
 	border: none;
 	background-image: none;
 }
+
 .btn.btn-instagram {
 	color: var(--color-bg-white);
 	border: none;

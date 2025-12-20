@@ -17,20 +17,15 @@ type PadlockListProps = {
 	readonly perPage: number
 	readonly onPerPageChange: (perPage: number) => void
 	readonly onSelect: (padLock: PadLock) => void
+	readonly headers: Array<{ key: string; label: string }>
 }
-
-const headers = [
-	{ key: 'status', label: '' },
-	{ key: 'name', label: '管理名' },
-	{ key: 'created', label: '作成日' },
-	{ key: 'updated', label: '更新日' },
-]
 
 const PadlockList = ({
 	padLocks,
 	perPage,
 	onPerPageChange,
 	onSelect,
+	headers,
 }: PadlockListProps) => {
 	return (
 		<PaginatedResourceLayout

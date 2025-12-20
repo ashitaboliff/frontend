@@ -10,7 +10,7 @@ import { MdOutlineEditCalendar } from '@/shared/ui/icons'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import type { FeedbackMessageType } from '@/types/feedback'
 
-interface Props {
+type Props = {
 	readonly register: UseFormRegister<BookingEditFormValues>
 	readonly errors: FieldErrors<BookingEditFormValues>
 	readonly isSubmitting: boolean
