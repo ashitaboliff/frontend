@@ -4,7 +4,7 @@ import {
 	BOOKING_VIEW_MAX_OFFSET_DAYS,
 	BOOKING_VIEW_MIN_OFFSET_DAYS,
 	BOOKING_VIEW_RANGE_DAYS,
-} from '../constants'
+} from './constants'
 
 type BookingWeekNavigationOptions = {
 	initialDate: Date

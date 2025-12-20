@@ -13,9 +13,12 @@ import {
 } from '@/domains/booking/constants'
 import { bffGet } from '@/shared/lib/api/bff'
 import { toDateKey } from '@/shared/utils'
-import type { ApiResponse } from '@/types/response'
 
-type BookingRangeKey = [typeof BOOKING_CALENDAR_SWR_KEY, string, string]
+type BookingRangeKey = [
+	typeof BOOKING_CALENDAR_SWR_KEY,
+	BookingRange['start'],
+	BookingRange['end'],
+]
 
 export const buildEmptyBookingResponse = (
 	viewDate: Date,
@@ -55,22 +58,13 @@ export const bookingRangeFetcher = async ([
 		throw new Error('Invalid cache key for booking calendar fetcher')
 	}
 
-	const getBookingCalender = async ({
-		start,
-		end,
-	}: BookingRange): Promise<ApiResponse<BookingResponse>> => {
-		const res = await bffGet('/booking', {
-			searchParams: { start, end },
-			schemas: {
-				searchParams: GetBookingQuerySchema,
-				response: BookingResponseSchema,
-			},
-		})
-
-		return res
-	}
-
-	const res = await getBookingCalender({ start, end })
+	const res = await bffGet('/booking', {
+		searchParams: { start, end },
+		schemas: {
+			searchParams: GetBookingQuerySchema,
+			response: BookingResponseSchema,
+		},
+	})
 	if (res.ok) {
 		return res.data
 	}
