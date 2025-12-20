@@ -1,7 +1,7 @@
 'use client'
 
 import type { DeniedBooking } from '@ashitaboliff/types/modules/booking/types'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import Popup from '@/shared/ui/molecules/Popup'
 import {
 	formatDateJa,

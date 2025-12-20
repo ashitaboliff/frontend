@@ -1,16 +1,16 @@
 'use client'
 
+import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
 import { useState } from 'react'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import BookingDetailPopup from '@/domains/booking/ui/BookingDetailPopup'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 
-interface Props {
-	readonly bookingLog: Booking[]
+type Props = {
+	readonly booking: PublicBooking[]
 }
 
 const LOGS_PER_PAGE_OPTIONS: Record<string, number> = {
@@ -28,20 +28,20 @@ const headers = [
 	{ key: 'owner', label: '責任者' },
 ]
 
-const BookingLogs = ({ bookingLog }: Props) => {
+const BookingLogs = ({ booking }: Props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [logsPerPage, setLogsPerPage] = useState(10)
-	const [popupData, setPopupData] = useState<Booking | null>(
-		bookingLog?.[0] ?? null,
+	const [popupData, setPopupData] = useState<PublicBooking | null>(
+		booking?.[0] ?? null,
 	)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 
-	const totalLogs = bookingLog?.length ?? 0
+	const totalLogs = booking?.length ?? 0
 	const pageMax = Math.max(1, Math.ceil(totalLogs / logsPerPage) || 1)
 
 	const indexOfLastLog = currentPage * logsPerPage
 	const indexOfFirstLog = indexOfLastLog - logsPerPage
-	const currentLogs = bookingLog?.slice(indexOfFirstLog, indexOfLastLog) ?? []
+	const currentLogs = booking?.slice(indexOfFirstLog, indexOfLastLog) ?? []
 
 	return (
 		<div className="container mx-auto px-2 py-8 sm:px-4">
@@ -67,7 +67,7 @@ const BookingLogs = ({ bookingLog }: Props) => {
 					onPageChange: setCurrentPage,
 				}}
 			>
-				<GenericTable<Booking>
+				<GenericTable<PublicBooking>
 					headers={headers}
 					data={currentLogs}
 					isLoading={false}

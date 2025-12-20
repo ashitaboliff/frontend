@@ -31,15 +31,7 @@ export const bookingEditSchema = zod.object({
 	name: zod.string().min(1, '責任者名を入力してください'),
 })
 
-export const bookingEditCalendarSchema = zod.object({
-	bookingDate: zod.string().min(1, '予約日を入力してください'),
-	bookingTime: zod.number(),
-})
-
 export type BookingAuthFormValues = zod.infer<typeof bookingAuthSchema>
 export type BookingCreateFormValues = zod.infer<typeof bookingCreateSchema>
 export type BookingCreateFormInput = zod.input<typeof bookingCreateSchema>
 export type BookingEditFormValues = zod.infer<typeof bookingEditSchema>
-export type BookingEditCalendarValues = zod.infer<
-	typeof bookingEditCalendarSchema
->

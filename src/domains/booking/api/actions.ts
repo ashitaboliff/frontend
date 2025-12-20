@@ -1,8 +1,20 @@
 'use server'
 
-import { PublicBookingSchema } from '@ashitaboliff/types/modules/booking/schema/booking'
+import {
+	BookingAccessTokenResponseSchema,
+	BookingByUserResponseSchema,
+	BookingCreateResponseSchema,
+	BookingCreateSchema,
+	BookingDeleteSchema,
+	BookingIdsSchema,
+	BookingPasswordSchema,
+	BookingUpdateSchema,
+	BookingUserQuerySchema,
+	PublicBookingSchema,
+} from '@ashitaboliff/types/modules/booking/schema/booking'
 import type {
-	BookingResponse,
+	BookingAccessTokenResponse,
+	BookingByUserResponse,
 	PublicBooking,
 } from '@ashitaboliff/types/modules/booking/types'
 import { revalidateTag } from 'next/cache'
@@ -13,81 +25,45 @@ import {
 	getDeleteBookingErrorMessage,
 	getUpdateBookingErrorMessage,
 } from '@/domains/booking/api/bookingErrorMessages'
-import { revalidateBookingCalendarsForDate } from '@/domains/booking/api/bookingRevalidate'
-import {
-	mapRawBookingList,
-	mapRawBookingResponse,
-	type RawBookingData,
-	type RawBookingResponse,
-} from '@/domains/booking/api/dto'
-import { BOOKING_CALENDAR_TAG } from '@/domains/booking/constants/bookingConstants'
-import { buildBookingCalendarTag } from '@/domains/booking/utils/calendarCache'
-import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
 	failure,
-	mapSuccess,
 	noContentResponse,
 	okResponse,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
-import { apiGet as apiGetV2 } from '@/shared/lib/api/v2/crud'
+import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/v2/crud'
 import { toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
 import { type ApiResponse, StatusCode } from '@/types/response'
 
-type BookingPayload = {
-	bookingDate: string
-	bookingTime: number
-	registName: string
-	name: string
-	isDeleted?: boolean
-}
-
-export const getBookingByDateAction = async ({
-	startDate,
-	endDate,
-}: {
-	startDate: string
-	endDate: string
-}): Promise<ApiResponse<BookingResponse>> => {
-	const res = await apiGet<RawBookingResponse>('/booking', {
-		searchParams: {
-			start: startDate,
-			end: endDate,
-		},
-		next: {
-			revalidate: 60 * 60,
-			tags: [BOOKING_CALENDAR_TAG, buildBookingCalendarTag(startDate, endDate)],
-		},
-	})
-
-	return mapSuccess(
-		res,
-		mapRawBookingResponse,
-		'予約一覧の取得に失敗しました。',
-	)
-}
+type BookingPayload = Pick<
+	PublicBooking,
+	'bookingDate' | 'bookingTime' | 'registName' | 'name'
+>
 
 export const getAllBookingAction = async (): Promise<
 	ApiResponse<PublicBooking[]>
 > => {
-	const res = await apiGet<RawBookingData[]>('/booking/logs', {
+	const res = await apiGet('/booking/logs', {
 		next: { revalidate: 60 * 60, tags: ['booking'] },
+		schemas: {
+			response: PublicBookingSchema.array(),
+		},
 	})
 
-	return mapSuccess(
-		res,
-		(data) => mapRawBookingList(data),
-		'予約履歴の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, '予約一覧の取得に失敗しました。')
+	}
+
+	return okResponse(res.data)
 }
 
 export const getBookingByIdAction = async (
 	bookingId: string,
 ): Promise<ApiResponse<PublicBooking>> => {
 	try {
-		const res = await apiGetV2(`/booking/${bookingId}`, {
+		const res = await apiGet(`/booking/${bookingId}`, {
 			next: {
 				revalidate: 7 * 24 * 60 * 60,
 				tags: [`booking-detail-${bookingId}`],
@@ -117,27 +93,25 @@ export const getBookingByUserIdAction = async ({
 	page: number
 	perPage: number
 	sort: 'new' | 'old'
-}): Promise<ApiResponse<{ bookings: PublicBooking[]; totalCount: number }>> => {
-	const res = await apiGet<{
-		bookings: RawBookingData[]
-		totalCount: number
-	}>(`/booking/user/${userId}`, {
+}): Promise<ApiResponse<BookingByUserResponse>> => {
+	const res = await apiGet(`/booking/user/${userId}`, {
 		searchParams: {
 			page,
 			perPage,
 			sort,
 		},
 		next: { revalidate: 24 * 60 * 60, tags: [`booking-user-${userId}`] },
+		schemas: {
+			searchParams: BookingUserQuerySchema,
+			response: BookingByUserResponseSchema,
+		},
 	})
 
-	return mapSuccess(
-		res,
-		(data) => ({
-			bookings: mapRawBookingList(data.bookings),
-			totalCount: data.totalCount ?? 0,
-		}),
-		'ユーザーの予約一覧の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザーの予約一覧の取得に失敗しました。')
+	}
+
+	return okResponse(res.data)
 }
 
 export const createBookingAction = async ({
@@ -152,7 +126,7 @@ export const createBookingAction = async ({
 	today: string
 }): Promise<ApiResponse<{ id: string }>> => {
 	const bookingDateKey = toDateKey(booking.bookingDate)
-	const res = await apiPost<{ id: string }>('/booking', {
+	const res = await apiPost('/booking', {
 		body: {
 			userId,
 			bookingDate: bookingDateKey,
@@ -161,6 +135,10 @@ export const createBookingAction = async ({
 			name: booking.name,
 			password,
 			today,
+		},
+		schemas: {
+			body: BookingCreateSchema,
+			response: BookingCreateResponseSchema,
 		},
 	})
 
@@ -173,7 +151,6 @@ export const createBookingAction = async ({
 
 	await revalidateTag('booking', 'max')
 	await revalidateTag(`booking-user-${userId}`, 'max')
-	await revalidateBookingCalendarsForDate(bookingDateKey)
 
 	return createdResponse({ id: res.data.id })
 }
@@ -192,16 +169,17 @@ export const updateBookingAction = async ({
 	authToken?: string | null
 }): Promise<ApiResponse<null>> => {
 	const bookingDateKey = toDateKey(booking.bookingDate)
-	const res = await apiPut<null>(`/booking/${bookingId}`, {
+	const res = await apiPut(`/booking/${bookingId}`, {
 		body: {
-			userId,
 			bookingDate: bookingDateKey,
 			bookingTime: booking.bookingTime,
 			registName: booking.registName,
 			name: booking.name,
-			isDeleted: booking.isDeleted ?? false,
 			today,
 			authToken: authToken ?? undefined,
+		},
+		schemas: {
+			body: BookingUpdateSchema,
 		},
 	})
 
@@ -215,7 +193,6 @@ export const updateBookingAction = async ({
 	await revalidateTag('booking', 'max')
 	await revalidateTag(`booking-detail-${bookingId}`, 'max')
 	await revalidateTag(`booking-user-${userId}`, 'max')
-	await revalidateBookingCalendarsForDate(bookingDateKey)
 
 	return noContentResponse()
 }
@@ -231,9 +208,12 @@ export const deleteBookingAction = async ({
 	userId: string
 	authToken?: string | null
 }): Promise<ApiResponse<null>> => {
-	const res = await apiDelete<null>(`/booking/${bookingId}`, {
+	const res = await apiDelete(`/booking/${bookingId}`, {
 		body: {
 			authToken: authToken ?? undefined,
+		},
+		schemas: {
+			body: BookingDeleteSchema,
 		},
 	})
 
@@ -244,12 +224,11 @@ export const deleteBookingAction = async ({
 		}
 	}
 
-	const bookingDateKey = toDateKey(bookingDate)
+	const _bookingDateKey = toDateKey(bookingDate)
 
 	await revalidateTag('booking', 'max')
 	await revalidateTag(`booking-detail-${bookingId}`, 'max')
 	await revalidateTag(`booking-user-${userId}`, 'max')
-	await revalidateBookingCalendarsForDate(bookingDateKey)
 
 	const cookieStore = await cookies()
 	cookieStore.set(
@@ -261,26 +240,20 @@ export const deleteBookingAction = async ({
 	return noContentResponse()
 }
 
-export type BookingAccessGrant = {
-	token: string
-	expiresAt: string
-}
-
 export const authBookingAction = async ({
 	bookingId,
-	userId,
 	password,
 }: {
 	bookingId: string
-	userId: string
 	password: string
-}): Promise<ApiResponse<BookingAccessGrant>> => {
-	const res = await apiPost<BookingAccessGrant>(
-		`/booking/${bookingId}/verify`,
-		{
-			body: { userId, password },
+}): Promise<ApiResponse<BookingAccessTokenResponse>> => {
+	const res = await apiPost(`/booking/${bookingId}/verify`, {
+		body: { password },
+		schemas: {
+			body: BookingPasswordSchema,
+			response: BookingAccessTokenResponseSchema,
 		},
-	)
+	})
 
 	if (!res.ok) {
 		return {
@@ -300,12 +273,19 @@ export const authBookingAction = async ({
 }
 
 export const getBookingIds = async (): Promise<string[]> => {
-	const response = await apiGet<string[]>('/booking/ids', {
+	const response = await apiGet('/booking/ids', {
 		next: { revalidate: 24 * 60 * 60, tags: ['booking'] },
+		schemas: {
+			response: BookingIdsSchema,
+		},
 	})
 
-	if (response.ok && Array.isArray(response.data)) {
-		return response.data
+	if (!response.ok) {
+		logError(
+			`[getBookingIds] Failed to fetch booking IDs. status: ${response.status}`,
+		)
+		return []
 	}
-	return []
+
+	return response.data
 }

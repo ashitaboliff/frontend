@@ -10,7 +10,7 @@ import { addDays } from 'date-fns'
 import {
 	BOOKING_CALENDAR_SWR_KEY,
 	BOOKING_TIME_LIST,
-} from '@/domains/booking/constants/bookingConstants'
+} from '@/domains/booking/constants'
 import { bffGet } from '@/shared/lib/api/bff'
 import { toDateKey } from '@/shared/utils'
 import type { ApiResponse } from '@/types/response'

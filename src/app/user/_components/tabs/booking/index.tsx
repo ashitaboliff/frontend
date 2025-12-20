@@ -1,9 +1,9 @@
 'use client'
 
+import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
 import { useState } from 'react'
 import useSWR from 'swr'
-import { getBookingByUserIdAction } from '@/domains/booking/api/bookingActions'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
+import { getBookingByUserIdAction } from '@/domains/booking/api/actions'
 import BookingDetailPopup from '@/domains/booking/ui/BookingDetailPopup'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
@@ -54,7 +54,9 @@ const UserBookingLogs = ({ session }: Props) => {
 		initialPerPage: 10,
 		initialSort: 'new',
 	})
-	const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+	const [selectedBooking, setSelectedBooking] = useState<PublicBooking | null>(
+		null,
+	)
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const bookingFeedback = useFeedback()
 
@@ -84,7 +86,7 @@ const UserBookingLogs = ({ session }: Props) => {
 		},
 	})
 
-	const handleBookingItemClick = (booking: Booking) => {
+	const handleBookingItemClick = (booking: PublicBooking) => {
 		setSelectedBooking(booking)
 		setIsPopupOpen(true)
 	}

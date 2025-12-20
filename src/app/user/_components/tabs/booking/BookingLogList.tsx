@@ -1,16 +1,16 @@
 'use client'
 
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
+import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 import type { FeedbackMessageType } from '@/types/feedback'
 
-interface Props {
-	readonly bookings?: Booking[]
+type Props = {
+	readonly bookings?: PublicBooking[]
 	readonly isLoading: boolean
 	readonly error?: FeedbackMessageType | null
-	readonly onBookingItemClick: (booking: Booking) => void
+	readonly onBookingItemClick: (booking: PublicBooking) => void
 }
 
 const BookingLogList = ({
@@ -19,7 +19,7 @@ const BookingLogList = ({
 	error,
 	onBookingItemClick,
 }: Props) => {
-	const renderBookingCells = (booking: Booking) => (
+	const renderBookingCells = (booking: PublicBooking) => (
 		<>
 			<td>{formatDateSlashWithWeekday(booking.bookingDate)}</td>
 			<td>{BOOKING_TIME_LIST[booking.bookingTime]}</td>

@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
-import { createBookingAction } from '@/domains/booking/api/bookingActions'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
+import { createBookingAction } from '@/domains/booking/api/actions'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import {
 	type BookingCreateFormInput,
 	type BookingCreateFormValues,
 	bookingCreateSchema,
-} from '@/domains/booking/model/bookingSchema'
+} from '@/domains/booking/model/schema'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
 import { LATEST_GACHA_VERSION } from '@/domains/gacha/config/gachaConfig'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'

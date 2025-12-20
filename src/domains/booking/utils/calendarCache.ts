@@ -1,13 +1,7 @@
 import { addDays, isWithinInterval, parseISO } from 'date-fns'
 import type { useSWRConfig } from 'swr'
-import {
-	BOOKING_CALENDAR_SWR_KEY,
-	BOOKING_CALENDAR_TAG,
-} from '@/domains/booking/constants/bookingConstants'
+import { BOOKING_CALENDAR_SWR_KEY } from '@/domains/booking/constants'
 import { toDateKey } from '@/shared/utils'
-
-export const buildBookingCalendarTag = (startDate: string, endDate: string) =>
-	`${BOOKING_CALENDAR_TAG}-${startDate}-${endDate}`
 
 export const isDateWithinRange = (
 	date: string,

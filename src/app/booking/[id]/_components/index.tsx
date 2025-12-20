@@ -3,7 +3,7 @@
 import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import BookingDetailCard from '@/domains/booking/ui/BookingDetailCard'
 import { Ads } from '@/shared/ui/ads'
 import ShareButton from '@/shared/ui/atoms/ShareButton'

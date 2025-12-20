@@ -93,7 +93,6 @@ const DeniedBookingPage = ({ deniedBookings, query, headers }: Props) => {
 		try {
 			const res = await deleteDeniedBookingAction({
 				id: selectedBooking.id,
-				date: selectedBooking.startDate,
 			})
 			if (res.ok) {
 				await mutateAllBookingCalendars(mutate)

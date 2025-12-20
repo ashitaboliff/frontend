@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getBookingIds } from '@/domains/booking/api/bookingActions'
+import { getBookingIds } from '@/domains/booking/api/actions'
 import { getYoutubeIds } from '@/domains/video/api/videoActions'
 import PublicEnv from '@/shared/lib/env/public'
 

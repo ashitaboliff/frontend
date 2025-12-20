@@ -1,5 +1,5 @@
 import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import Card from '@/shared/ui/molecules/Card'
 import { formatDateJaWithWeekday } from '@/shared/utils/dateFormat'
 

@@ -15,7 +15,6 @@ import {
 	getDeleteDeniedBookingErrorMessage,
 } from '@/domains/admin/api/adminErrorMessages'
 import type { DeniedBookingFormValues } from '@/domains/admin/model/adminTypes'
-import { revalidateBookingCalendarsForDate } from '@/domains/booking/api/bookingRevalidate'
 import { apiDelete, apiPost } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
@@ -46,7 +45,6 @@ export const createDeniedBookingAction = async (
 		}
 	}
 
-	await revalidateBookingCalendarsForDate(request.payload.startDate)
 	await revalidateTag('denied-bookings', 'max')
 
 	const cookieStore = await cookies()
@@ -99,10 +97,8 @@ export const getDeniedBookingAction = async ({
 
 export const deleteDeniedBookingAction = async ({
 	id,
-	date,
 }: {
 	id: string
-	date: string
 }): Promise<ApiResponse<null>> => {
 	const res = await apiDelete<null>(`/booking/denied/${id}`)
 
@@ -113,7 +109,6 @@ export const deleteDeniedBookingAction = async ({
 		}
 	}
 
-	await revalidateBookingCalendarsForDate(date)
 	await revalidateTag('denied-bookings', 'max')
 
 	return noContentResponse()

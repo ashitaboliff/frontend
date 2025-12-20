@@ -11,8 +11,8 @@ import {
 	ABLE_BOOKING_DAYS,
 	BOOKING_TIME_LIST,
 	DENIED_BOOKING,
-} from '@/domains/booking/constants/bookingConstants'
-import type { BookingEditFormValues } from '@/domains/booking/model/bookingSchema'
+} from '@/domains/booking/constants'
+import type { BookingEditFormValues } from '@/domains/booking/model/schema'
 import {
 	AvailableCell,
 	BookingInfoCell,

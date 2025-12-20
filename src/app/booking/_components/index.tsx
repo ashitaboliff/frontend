@@ -8,12 +8,12 @@ import {
 	bookingRangeFetcher,
 	buildBookingRangeKey,
 	buildEmptyBookingResponse,
-} from '@/domains/booking/api/bookingFetcher'
+} from '@/domains/booking/api/fetcher'
 import {
 	BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
 	BOOKING_VIEW_RANGE_DAYS,
-} from '@/domains/booking/constants/bookingConstants'
-import { useBookingWeekNavigation } from '@/domains/booking/hooks/bookingHooks'
+} from '@/domains/booking/constants'
+import { useBookingWeekNavigation } from '@/domains/booking/hooks'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
@@ -90,41 +90,39 @@ const BookingMainPage = () => {
 					</button>
 				</div>
 			)}
-			<div className="flex flex-col justify-center space-x-2">
-				<div className="mx-auto my-2 flex items-center justify-between">
-					<button
-						type="button"
-						className="btn btn-outline"
-						onClick={goPrevWeek}
-						disabled={!canGoPrevWeek}
-					>
-						{'<'}
-					</button>
-					<div className="w-64 text-center font-bold text-md sm:w-72 sm:text-lg">
-						{`${formatMonthDay(viewDate, {
-							pad: false,
-							separator: '/',
-						})}${formatWeekday(viewDate, { enclosed: true })}`}
-						~
-						{`${formatMonthDay(addDays(viewDate, viewRangeDays - 1), {
-							pad: false,
-							separator: '/',
-						})}${formatWeekday(addDays(viewDate, viewRangeDays - 1), {
-							enclosed: true,
-						})}`}
-						までのコマ表
-					</div>
-					<button
-						type="button"
-						className="btn btn-outline"
-						onClick={goNextWeek}
-						disabled={!canGoNextWeek}
-					>
-						{'>'}
-					</button>
+			<div className="mx-auto my-2 flex items-center justify-between">
+				<button
+					type="button"
+					className="btn btn-outline"
+					onClick={goPrevWeek}
+					disabled={!canGoPrevWeek}
+				>
+					{'<'}
+				</button>
+				<div className="w-64 text-center font-bold text-md sm:w-72 sm:text-lg">
+					{`${formatMonthDay(viewDate, {
+						pad: false,
+						separator: '/',
+					})}${formatWeekday(viewDate, { enclosed: true })}`}
+					~
+					{`${formatMonthDay(addDays(viewDate, viewRangeDays - 1), {
+						pad: false,
+						separator: '/',
+					})}${formatWeekday(addDays(viewDate, viewRangeDays - 1), {
+						enclosed: true,
+					})}`}
+					までのコマ表
 				</div>
-				<Content />
+				<button
+					type="button"
+					className="btn btn-outline"
+					onClick={goNextWeek}
+					disabled={!canGoNextWeek}
+				>
+					{'>'}
+				</button>
 			</div>
+			<Content />
 		</>
 	)
 }

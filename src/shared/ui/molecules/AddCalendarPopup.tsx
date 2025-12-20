@@ -1,8 +1,8 @@
 'use client'
 
+import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
 import { useCallback, useId, useMemo } from 'react'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import {
 	useLocationNavigate,
 	useWindowOpen,
@@ -13,7 +13,7 @@ import { formatDateTimeCompact } from '@/shared/utils/dateFormat'
 
 export type AddCalendarPopupProps = {
 	bookingDetail: Omit<
-		Booking,
+		PublicBooking,
 		'userId' | 'createdAt' | 'updatedAt' | 'isDeleted'
 	>
 	isPopupOpen: boolean

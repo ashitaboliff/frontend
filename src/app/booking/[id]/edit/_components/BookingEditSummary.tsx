@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { useSWRConfig } from 'swr'
-import { deleteBookingAction } from '@/domains/booking/api/bookingActions'
+import { deleteBookingAction } from '@/domains/booking/api/actions'
 import BookingDetailCard from '@/domains/booking/ui/BookingDetailCard'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'

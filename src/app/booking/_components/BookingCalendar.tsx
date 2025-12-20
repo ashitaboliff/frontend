@@ -8,7 +8,7 @@ import {
 	ABLE_BOOKING_DAYS,
 	BOOKING_TIME_LIST,
 	DENIED_BOOKING,
-} from '@/domains/booking/constants/bookingConstants'
+} from '@/domains/booking/constants'
 import {
 	AvailableCell,
 	BookingInfoCell,

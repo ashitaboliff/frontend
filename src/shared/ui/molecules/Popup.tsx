@@ -118,7 +118,7 @@ const Popup = ({
 			aria-labelledby={titleId}
 			aria-modal={open ? true : undefined}
 		>
-			<div
+			<section
 				className={classNames(
 					'modal-box relative mx-auto overflow-y-auto overflow-x-hidden bg-base-100',
 					maxWClass,
@@ -152,7 +152,7 @@ const Popup = ({
 					</form>
 				)}
 				{children}
-			</div>
+			</section>
 			<form method="dialog" className="modal-backdrop" onSubmit={closeDialog}>
 				<button type="submit" aria-label="閉じる">
 					<span className="sr-only">閉じる</span>

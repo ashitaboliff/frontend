@@ -4,11 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
-import { updateBookingAction } from '@/domains/booking/api/bookingActions'
+import { updateBookingAction } from '@/domains/booking/api/actions'
 import {
 	type BookingEditFormValues,
 	bookingEditSchema,
-} from '@/domains/booking/model/bookingSchema'
+} from '@/domains/booking/model/schema'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { getCurrentJSTDateString, toDateKey } from '@/shared/utils'
@@ -79,7 +79,6 @@ const BookingEditForm = () => {
 					bookingTime: Number(data.bookingTime),
 					registName: data.registName,
 					name: data.name,
-					isDeleted: false,
 				},
 				today,
 				authToken: token ?? undefined,

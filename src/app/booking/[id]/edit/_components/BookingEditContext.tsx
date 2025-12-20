@@ -1,6 +1,9 @@
 'use client'
 
-import type { PublicBooking as Booking } from '@ashitaboliff/types/modules/booking/types'
+import type {
+	PublicBooking as Booking,
+	BookingAccessTokenResponse as BookingAccessGrant,
+} from '@ashitaboliff/types/modules/booking/types'
 import {
 	createContext,
 	useCallback,
@@ -8,7 +11,6 @@ import {
 	useMemo,
 	useReducer,
 } from 'react'
-import type { BookingAccessGrant } from '@/domains/booking/api/bookingActions'
 import type { Session } from '@/types/session'
 
 type ViewMode = 'auth' | 'summary' | 'editing' | 'editSuccess'

@@ -8,13 +8,13 @@ import {
 	bookingRangeFetcher,
 	buildBookingRangeKey,
 	buildEmptyBookingResponse,
-} from '@/domains/booking/api/bookingFetcher'
+} from '@/domains/booking/api/fetcher'
 import {
 	BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
 	BOOKING_VIEW_RANGE_DAYS,
-} from '@/domains/booking/constants/bookingConstants'
-import { useBookingWeekNavigation } from '@/domains/booking/hooks/bookingHooks'
-import type { BookingEditFormValues } from '@/domains/booking/model/bookingSchema'
+} from '@/domains/booking/constants'
+import { useBookingWeekNavigation } from '@/domains/booking/hooks'
+import type { BookingEditFormValues } from '@/domains/booking/model/schema'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import Popup from '@/shared/ui/molecules/Popup'
@@ -101,11 +101,11 @@ const BookingEditCalendarPopup = ({
 			onClose={onClose}
 			noPadding
 		>
-			<div className="flex flex-col items-center justify-center gap-y-2 sm:p-2">
-				<div className="flex flex-row items-center gap-2">
+			<div className="flex flex-col items-center gap-y-2 sm:p-2">
+				<div className="mx-auto flex w-full items-center justify-between px-2">
 					<button
 						type="button"
-						className="btn btn-outline btn-sm sm:btn-md"
+						className="btn btn-outline"
 						onClick={goPrevWeek}
 						disabled={!canGoPrevWeek}
 					>
@@ -117,7 +117,7 @@ const BookingEditCalendarPopup = ({
 					</div>
 					<button
 						type="button"
-						className="btn btn-outline btn-sm sm:btn-md"
+						className="btn btn-outline"
 						onClick={goNextWeek}
 						disabled={!canGoNextWeek}
 					>

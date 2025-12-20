@@ -1,23 +1,19 @@
 'use client'
 
+import type { PublicBooking as Booking } from '@ashitaboliff/types/modules/booking/types'
 import { useState } from 'react'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import AddCalendarPopup from '@/shared/ui/molecules/AddCalendarPopup'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa, formatDateTimeJa } from '@/shared/utils/dateFormat'
 
-interface BookingDetailPopupProps {
+type Props = {
 	booking: Booking | null
 	open: boolean
 	onClose: () => void
 }
 
-const BookingDetailPopup = ({
-	booking,
-	open,
-	onClose,
-}: BookingDetailPopupProps) => {
+const BookingDetailPopup = ({ booking, open, onClose }: Props) => {
 	const [isAddCalendarPopupOpen, setIsAddCalendarPopupOpen] = useState(false)
 
 	if (!booking) {

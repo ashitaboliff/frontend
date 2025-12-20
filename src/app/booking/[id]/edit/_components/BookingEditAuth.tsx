@@ -4,11 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { authBookingAction } from '@/domains/booking/api/bookingActions'
+import { authBookingAction } from '@/domains/booking/api/actions'
 import {
 	type BookingAuthFormValues,
 	bookingAuthSchema,
-} from '@/domains/booking/model/bookingSchema'
+} from '@/domains/booking/model/schema'
 import BookingDetailCard from '@/domains/booking/ui/BookingDetailCard'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { Ads } from '@/shared/ui/ads'
@@ -21,8 +21,7 @@ const BookingEditAuthForm = () => {
 	const router = useRouter()
 	const [showPassword, setShowPassword] = useState(false)
 	const feedback = useFeedback()
-	const { booking, session, handleAuthSuccess, authPromptMessage } =
-		useBookingEdit()
+	const { booking, handleAuthSuccess, authPromptMessage } = useBookingEdit()
 
 	const {
 		register,
@@ -47,7 +46,6 @@ const BookingEditAuthForm = () => {
 		feedback.clearFeedback()
 		try {
 			const response = await authBookingAction({
-				userId: session.user.id,
 				bookingId: booking.id,
 				password: data.password,
 			})

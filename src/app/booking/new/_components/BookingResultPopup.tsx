@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import GachaResult, {
 	type GachaResultViewState,
 } from '@/domains/gacha/ui/GachaResult'
