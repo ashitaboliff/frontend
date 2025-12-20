@@ -10,7 +10,7 @@ import PadlockList from '@/app/admin/padlock/_components/PadlockList'
 import {
 	createPadLockAction,
 	deletePadLockAction,
-} from '@/domains/admin/api/adminActions'
+} from '@/domains/admin/api/actions'
 import type { PadLockFormValues } from '@/domains/admin/model/adminTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'

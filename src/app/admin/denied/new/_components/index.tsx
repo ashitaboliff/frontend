@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { Controller, type UseFormRegister, useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
-import { createDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
+import { createDeniedBookingAction } from '@/domains/admin/api/actions'
 import { deniedBookingFormSchema } from '@/domains/admin/model/adminSchema'
 import {
 	DENIED_BOOKING_TYPE_OPTIONS,

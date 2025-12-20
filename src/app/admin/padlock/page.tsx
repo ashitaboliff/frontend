@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import PadLockEdit from '@/app/admin/padlock/_components'
 import PageLayout from '@/app/admin/padlock/_components/PageLayout'
-import { getAllPadLocksAction } from '@/domains/admin/api/adminActions'
+import { getAllPadLocksAction } from '@/domains/admin/api/actions'
 import PaginatedErrorView from '@/shared/ui/organisms/PaginatedErrorView'
 import PaginatedTableSkeleton from '@/shared/ui/organisms/PaginatedTableSkeleton'
 import { logError } from '@/shared/utils/logger'

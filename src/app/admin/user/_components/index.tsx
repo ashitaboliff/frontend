@@ -11,7 +11,7 @@ import type { AdminUserPageParams } from '@/app/admin/user/schema'
 import {
 	deleteUserAction,
 	updateUserRoleAction,
-} from '@/domains/admin/api/adminActions'
+} from '@/domains/admin/api/actions'
 import { AdminUserQueryOptions } from '@/domains/admin/query/adminUserQuery'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'

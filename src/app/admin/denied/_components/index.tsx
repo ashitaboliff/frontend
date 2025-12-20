@@ -8,7 +8,7 @@ import type {
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { useSWRConfig } from 'swr'
-import { deleteDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
+import { deleteDeniedBookingAction } from '@/domains/admin/api/actions'
 import type { DeniedBookingQuery } from '@/domains/admin/model/adminTypes'
 import { DeniedBookingQueryOptions } from '@/domains/admin/query/deniedBookingQuery'
 import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'

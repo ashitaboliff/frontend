@@ -24,7 +24,7 @@ import {
 } from '@/shared/lib/api/helper'
 import { apiGet } from '@/shared/lib/api/v2/crud'
 import type { ApiResponse } from '@/types/response'
-import { buildDeniedBookingRequestBody } from './adminService'
+import { buildDeniedBookingRequestBody } from '../service'
 
 export const createDeniedBookingAction = async (
 	values: DeniedBookingFormValues,
