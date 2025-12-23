@@ -170,5 +170,3 @@ export const deletePadLockAction = async ({
 
 	return noContentResponse()
 }
-
-export * from './denied'

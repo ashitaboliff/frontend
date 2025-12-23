@@ -70,6 +70,9 @@ const VideoSearchForm = ({
 					title="ライブ映像をシェアする"
 					text="あしたぼライブ映像を共有しよう"
 					url={shareUrl}
+					label="共有"
+					className="btn btn-ghost w-16"
+					isIcon
 				/>
 			</div>
 			<Popup

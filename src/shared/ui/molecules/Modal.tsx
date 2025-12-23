@@ -23,7 +23,7 @@ const Modal = ({
 	id,
 	btnText,
 	children,
-	btnClass = 'btn-primary',
+	btnClass = 'btn btn-primary',
 	modalClass = '',
 	title,
 	defaultOpen = false,
@@ -46,7 +46,7 @@ const Modal = ({
 		<>
 			<button
 				type="button"
-				className={classNames('btn', btnClass)}
+				className={classNames(btnClass)}
 				onClick={() => setOpen(true)}
 			>
 				{btnText || '開く'}

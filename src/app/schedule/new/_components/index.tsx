@@ -297,7 +297,8 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 									)} - ${formatDateSlashWithWeekday(createdSchedule.endDate, {
 										space: false,
 									})}`}
-									isFullButton
+									label="日程調整を共有"
+									className="btn btn-outline"
 								/>
 							) : (
 								<p className="text-gray-500 text-sm">

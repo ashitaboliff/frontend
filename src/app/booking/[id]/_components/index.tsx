@@ -2,20 +2,18 @@
 
 import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState } from 'react'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import AddBookingToCalendar from '@/domains/booking/ui/AddBookingToCalendar'
 import BookingDetailCard from '@/domains/booking/ui/BookingDetailCard'
 import { Ads } from '@/shared/ui/ads'
-import ShareButton from '@/shared/ui/atoms/ShareButton'
-import AddCalendarPopup from '@/shared/ui/molecules/AddCalendarPopup'
+import ShareToLineButton from '@/shared/ui/molecules/ShareToLineButton'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 
-interface Props {
+type Props = {
 	readonly booking: PublicBooking
 }
 
 const BookingDetail = ({ booking }: Props) => {
-	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const router = useRouter()
 	const pathname = usePathname()
 
@@ -31,22 +29,18 @@ const BookingDetail = ({ booking }: Props) => {
 				>
 					編集
 				</button>
-				<button
-					type="button"
-					className="btn btn-accent btn-outline flex-1"
-					onClick={() => setIsPopupOpen(true)}
-				>
-					スマホ追加
-				</button>
-				<ShareButton
+				<AddBookingToCalendar
+					booking={booking}
+					buttonLabel="スマホ追加"
+					buttonClassName="btn btn-accent btn-outline flex-1"
+				/>
+				<ShareToLineButton
 					url={pathname}
-					title="共有"
 					text={`予約日時: ${formatDateSlashWithWeekday(booking.bookingDate, {
 						space: false,
 					})} ${BOOKING_TIME_LIST[Number(booking.bookingTime)]}`}
-					isFullButton
-					isOnlyLine
-					className="btn btn-outline flex-1"
+					className="flex-1"
+					label="共有"
 				/>
 			</div>
 			<button
@@ -56,11 +50,6 @@ const BookingDetail = ({ booking }: Props) => {
 			>
 				戻る
 			</button>
-			<AddCalendarPopup
-				bookingDetail={booking}
-				isPopupOpen={isPopupOpen}
-				setIsPopupOpen={setIsPopupOpen}
-			/>
 		</div>
 	)
 }

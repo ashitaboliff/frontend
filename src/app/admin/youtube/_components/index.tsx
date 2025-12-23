@@ -51,7 +51,7 @@ const YoutubeManagement = ({ playlists, query, headers }: Props) => {
 		return Math.max(1, Math.ceil(playlists.total / query.videoPerPage) || 1)
 	}, [query.videoPerPage, playlists.total, query])
 
-	const _handleFetchPlaylist = useCallback(async () => {
+	const handleFetchPlaylist = useCallback(async () => {
 		actionFeedback.clearFeedback()
 		setIsLoading(true)
 		const res = await postSyncPlaylistAction()
@@ -76,6 +76,14 @@ const YoutubeManagement = ({ playlists, query, headers }: Props) => {
 	return (
 		<>
 			<FeedbackMessage source={actionFeedback.feedback} />
+			<button
+				type="button"
+				className="btn btn-primary mt-2 sm:mt-0"
+				onClick={handleFetchPlaylist}
+				disabled={isLoading}
+			>
+				プレイリスト取得
+			</button>
 			<PaginatedResourceLayout
 				perPage={{
 					label: '表示件数:',

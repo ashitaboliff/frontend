@@ -1,110 +1,66 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import {
 	useNavigatorShare,
 	useWindowAlert,
-	useWindowOpen,
 } from '@/shared/hooks/useBrowserApis'
-import PublicEnv from '@/shared/lib/env/public'
-import { CiShare1, IoShareSocialSharp } from '@/shared/ui/icons'
-import { classNames } from '@/shared/ui/utils/classNames'
+import { IoShareSocialSharp } from '@/shared/ui/icons'
 
-type ShareButtonProps = {
+type Props = {
 	url: string
 	title: string
 	text: string
-	isFullButton?: boolean
 	className?: string
-	isOnlyLine?: boolean
-	/** isFullButton=true 時に表示するラベル。未指定なら title を表示。 */
-	buttonLabel?: string
+	label?: string
+	isIcon?: boolean
+}
+
+const resolveShareUrl = (url: string) => {
+	if (url.startsWith('http://') || url.startsWith('https://')) {
+		return url
+	}
+	if (typeof window === 'undefined') {
+		return url
+	}
+	try {
+		return new URL(url, window.location.origin).toString()
+	} catch {
+		return url
+	}
 }
 
 /**
- * Web Share API / LINE 共有に対応したボタン。
- * - isOnlyLine=true なら LINE 共有リンクのみを開く
- * - Web Share 失敗時は LINE 共有にフォールバック
+ * Web Share API を使ったシンプルな共有ボタン。
  */
 const ShareButton = ({
 	url,
 	title,
 	text,
-	isFullButton,
 	className,
-	isOnlyLine,
-	buttonLabel,
-}: ShareButtonProps) => {
-	const openWindow = useWindowOpen()
+	label,
+	isIcon = false,
+}: Props) => {
 	const navigatorShare = useNavigatorShare()
 	const alertUser = useWindowAlert()
 
-	const lineShareUrl = useMemo(() => {
-		const encodedUrl = encodeURIComponent(
-			`${PublicEnv.NEXT_PUBLIC_APP_URL}${url}`,
-		)
-		return `https://social-plugins.line.me/lineit/share?url=${encodedUrl}&text=${encodeURIComponent(text)}`
-	}, [text, url])
-
-	const shareData = useMemo(
-		() => ({
-			title,
-			text,
-			url,
-		}),
-		[text, title, url],
-	)
-
 	const handleShare = useCallback(async () => {
-		if (isOnlyLine) {
-			const result = openWindow(lineShareUrl, '_blank', 'noopener')
-			if (!result) {
-				alertUser(
-					'別タブで共有画面を開けませんでした。ポップアップのブロックを確認してください。',
-				)
-			}
-			return
-		}
-
 		try {
-			await navigatorShare(shareData)
+			const shareUrl = resolveShareUrl(url)
+			await navigatorShare({ title, text, url: shareUrl })
 		} catch (_error) {
-			const fallbackWindow = openWindow(lineShareUrl, '_blank', 'noopener')
-			if (!fallbackWindow) {
-				alertUser(
-					'このブラウザは共有機能に対応していません。LINE共有リンクを開けませんでした。',
-				)
-			}
+			alertUser('このブラウザは共有機能に対応していません。')
 		}
-	}, [
-		alertUser,
-		isOnlyLine,
-		lineShareUrl,
-		navigatorShare,
-		openWindow,
-		shareData,
-	])
-
-	const buttonClassName = classNames(
-		className,
-		isFullButton ? 'btn btn-outline w-full sm:w-auto' : 'btn btn-ghost',
-	)
+	}, [alertUser, navigatorShare, text, title, url])
 
 	return (
 		<button
 			type="button"
-			className={buttonClassName}
+			className={className}
 			onClick={handleShare}
-			aria-label={isOnlyLine ? 'LINEで共有' : '共有する'}
+			aria-label={label ?? title}
 		>
-			{isFullButton ? (
-				<div className="flex items-center justify-center">
-					<CiShare1 size={15} aria-hidden />
-					<span className="ml-2">{buttonLabel ?? title}</span>
-				</div>
-			) : (
-				<IoShareSocialSharp size={25} aria-hidden />
-			)}
+			{isIcon ? <IoShareSocialSharp size={25} /> : (label ?? title)}
 		</button>
 	)
 }

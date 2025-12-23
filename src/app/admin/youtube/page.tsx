@@ -32,6 +32,7 @@ const Content = async ({ searchParams }: Props) => {
 	if (response.ok) {
 		return (
 			<YoutubeManagement
+				key={actionQuery.toString()}
 				playlists={response.data}
 				query={query}
 				headers={headers}

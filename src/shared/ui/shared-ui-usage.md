@@ -28,7 +28,9 @@
 - **Tabs / Tab**  
   - 制御/非制御両対応。Arrow/Home/End で移動。`value` と `onChange` を渡すと制御モード。
 - **ShareButton**  
-  - Web Share API + LINE フォールバック。`isOnlyLine` で LINE 専用、`isFullButton` でテキストボタン。
+  - Web Share API のみ。`label` で表示文言を指定。
+- **LineButton**  
+  - LINE公式デザイン準拠の汎用ボタン。デフォルトで LINE アイコン付き（`showIcon={false}` で非表示）。hover/active は黒オーバーレイ、disabled は白背景＋薄灰ボーダー。
 - **Image / Img**  
   - `fallback` を指定するとエラー時に差し替えを行う画像コンポーネント。next/image 版と img 版。
 - **Carousel**  
@@ -49,8 +51,8 @@
   - `<dialog>` ラッパ。`open/onClose` 必須。`maxWidth` は Tailwind トークン or 任意長さ。フォーカスを閉じ元に戻す。バックドロップは form method="dialog" で閉じる。
 - **Modal**  
   - Popup を内部利用。`open/onOpenChange` で外部制御も可。`defaultOpen` で初期表示。
-- **AddCalendarPopup**  
-  - 予約情報を Google/Yahoo/Apple (ics) へ追加リンク生成。`bookingDetail` を渡す。
+- **ShareToLineButton**  
+  - LINE 共有専用ボタン。`url` と `text` を渡す。内部で `LineButton` を利用。
 - **TextSearchField**  
   - TextInput + 検索アイコン。input 属性透過、`register` 併用可。
 - **FlashMessage**  
@@ -73,6 +75,8 @@
   - ページネーション UI のスケルトン/エラー表示付き。
 - **HomePageHeader**  
   - トップページ用ヒーロー。背景バー + タイトル。`className` で余白調整。
+- **AddToCalendarModal**  
+  - 予定情報から Google/Yahoo/Apple 追加リンクを生成するモーダル。
 
 ## 新規コンポーネントを追加する際のガイド
 1. **階層を決める**:  
