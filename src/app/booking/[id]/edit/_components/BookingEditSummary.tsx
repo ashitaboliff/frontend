@@ -37,7 +37,6 @@ const BookingEditSummary = () => {
 			}
 			const response = await deleteBookingAction({
 				bookingId: booking.id,
-				bookingDate: booking.bookingDate,
 				userId: session.user.id,
 				authToken: token ?? undefined,
 			})

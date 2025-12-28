@@ -30,7 +30,7 @@ export const Tabs = ({
 	children,
 	value,
 	onChange,
-	className = 'mt-2',
+	className,
 	tabListClassName = 'flex justify-center tabs tabs-box',
 	contentClassName = 'pt-4',
 }: TabsProps) => {

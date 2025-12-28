@@ -14,9 +14,6 @@ const GachaPage = async () => {
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
 				const session = authResult.session
-				if (!session) {
-					return null
-				}
 
 				const carouselPackData = await resolveCarouselPackData()
 

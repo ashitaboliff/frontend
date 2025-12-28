@@ -1,3 +1,6 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
 import type { AccountRole, Profile } from '@/domains/user/model/userTypes'
 import {
 	AccountRoleMap,
@@ -7,7 +10,7 @@ import {
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import { formatDateJa } from '@/shared/utils/dateFormat'
 
-interface Props {
+type Props = {
 	readonly profile: Profile | null
 	readonly userInfo?: {
 		name?: string | null
@@ -23,6 +26,8 @@ const displayValue = (value?: string | null) => {
 }
 
 const ProfileDetailsTab = ({ profile, userInfo }: Props) => {
+	const router = useRouter()
+
 	if (!profile) {
 		return (
 			<FeedbackMessage
@@ -60,21 +65,25 @@ const ProfileDetailsTab = ({ profile, userInfo }: Props) => {
 	]
 
 	return (
-		<div className="space-y-6">
-			<div className="grid gap-4 rounded-2xl p-6 text-sm shadow-lg sm:grid-cols-2">
-				{detailRows.map((row) => (
-					<div key={row.label}>
-						<p className="font-semibold text-base-content/60 text-xs uppercase tracking-wider">
-							{row.label}
-						</p>
-						<p className="mt-1 font-semibold text-base">{row.value}</p>
-					</div>
-				))}
-			</div>
-			<p className="text-base-content/70 text-sm">
-				※ 表示内容はプロフィール編集画面から変更できます。
-			</p>
-		</div>
+		<dl className="grid gap-4 rounded-2xl p-6 text-sm shadow-lg sm:grid-cols-2">
+			{detailRows.map((row) => (
+				<div key={row.label}>
+					<dt className="font-semibold text-base-content/60 text-xs uppercase tracking-wider">
+						{row.label}
+					</dt>
+					<dd className="mt-1 font-semibold text-base">{row.value}</dd>
+				</div>
+			))}
+			<button
+				type="button"
+				className="btn btn-outline btn-primary w-full"
+				onClick={() => {
+					router.push('/user/edit')
+				}}
+			>
+				編集する
+			</button>
+		</dl>
 	)
 }
 

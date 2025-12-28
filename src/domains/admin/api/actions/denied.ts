@@ -15,6 +15,11 @@ import {
 	getDeleteDeniedBookingErrorMessage,
 } from '@/domains/admin/api/adminErrorMessages'
 import type { DeniedBookingFormValues } from '@/domains/admin/model/adminTypes'
+import {
+	buildFlashMessageValue,
+	FLASH_MESSAGE_COOKIE_OPTIONS,
+	FLASH_MESSAGE_KEYS,
+} from '@/shared/constants/flashMessage'
 import { apiDelete, apiPost } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
@@ -49,9 +54,12 @@ export const createDeniedBookingAction = async (
 
 	const cookieStore = await cookies()
 	cookieStore.set(
-		'admin/denied:flash',
-		JSON.stringify({ type: 'success', message: '予約禁止日を作成しました。' }),
-		{ path: '/admin/denied', maxAge: 10, httpOnly: false },
+		FLASH_MESSAGE_KEYS.adminDenied,
+		buildFlashMessageValue({
+			type: 'success',
+			message: '予約禁止日を作成しました。',
+		}),
+		FLASH_MESSAGE_COOKIE_OPTIONS.adminDenied,
 	)
 
 	return createdResponse('created')

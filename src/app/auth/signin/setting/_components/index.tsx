@@ -13,9 +13,16 @@ import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import MultiSelectField from '@/shared/ui/molecules/MultiSelectField'
 
-const SigninSetting = () => {
+interface Props {
+	readonly redirectFrom?: string | null
+}
+
+const SigninSetting = ({ redirectFrom }: Props) => {
 	const router = useRouter()
-	const profileForm = useProfileForm({ mode: 'create' })
+	const profileForm = useProfileForm({
+		mode: 'create',
+		redirectTo: redirectFrom ?? undefined,
+	})
 	const signOutFeedback = useFeedback()
 
 	const { form, onSubmit, feedback } = profileForm

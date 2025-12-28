@@ -1,6 +1,7 @@
 import UserPageLayout from '@/app/user/_components/UserPageLayout'
 import UserPageTabs from '@/app/user/_components/UserPageTabs'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { buildPathWithSearch } from '@/domains/auth/utils/authRedirect'
 import { resolveCarouselPackData } from '@/domains/gacha/services/resolveCarouselPackData'
 import { getUserProfile } from '@/domains/user/api/userActions'
 import type { AccountRole, Profile } from '@/domains/user/model/userTypes'
@@ -12,25 +13,19 @@ export const metadata = createMetaData({
 	url: '/user',
 })
 
-interface UserPageSearchParams {
-	tab?: string
+type Props = {
+	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-const UserPageServer = async ({
-	searchParams,
-}: {
-	searchParams?: Promise<UserPageSearchParams>
-}) => {
+const UserPageServer = async ({ searchParams }: Props) => {
 	const params = await searchParams
 	const initialTab = typeof params?.tab === 'string' ? params.tab : undefined
+	const redirectFrom = buildPathWithSearch('/user', params)
 
 	return (
-		<AuthPage requireProfile={true}>
+		<AuthPage requireProfile={true} redirectFrom={redirectFrom}>
 			{async (authResult) => {
 				const session = authResult.session
-				if (!session) {
-					return null
-				}
 
 				const [profile, gachaCarouselData] = await Promise.all([
 					(async (): Promise<Profile | null> => {

@@ -14,9 +14,6 @@ const Page = async () => {
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
 				const session = authResult.session
-				if (!session) {
-					return null
-				}
 
 				const usersRes = await getUserIdWithNames()
 				let initialUsers: Record<string, string> = {}

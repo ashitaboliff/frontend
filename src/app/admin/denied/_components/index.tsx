@@ -12,6 +12,7 @@ import { deleteDeniedBookingAction } from '@/domains/admin/api/actions/denied'
 import type { DeniedBookingQuery } from '@/domains/admin/model/adminTypes'
 import { DeniedBookingQueryOptions } from '@/domains/admin/query/deniedBookingQuery'
 import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
+import { FLASH_MESSAGE_KEYS } from '@/shared/constants/flashMessage'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
@@ -64,7 +65,7 @@ const DeniedBookingPage = ({ deniedBookings, query, headers }: Props) => {
 		[deniedBookings.totalCount, query.perPage],
 	)
 	const { type, message } = useFlashMessage({
-		key: 'admin/denied:flash',
+		key: FLASH_MESSAGE_KEYS.adminDenied,
 	})
 
 	const handleSelectBooking = useCallback(

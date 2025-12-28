@@ -56,15 +56,11 @@ const Content = async ({ id, session }: { id: string; session: Session }) => {
 }
 
 const Page = async ({ params }: Props) => {
+	const { id } = await params
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
 				const session = authResult.session
-				if (!session) {
-					return null
-				}
-
-				const { id } = await params
 
 				return (
 					<Suspense fallback={<Loading />}>

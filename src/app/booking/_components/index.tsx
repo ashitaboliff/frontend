@@ -14,6 +14,7 @@ import {
 	BOOKING_VIEW_RANGE_DAYS,
 } from '@/domains/booking/constants'
 import { useBookingWeekNavigation } from '@/domains/booking/hooks'
+import { FLASH_MESSAGE_KEYS } from '@/shared/constants/flashMessage'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import useFlashMessage from '@/shared/hooks/useFlashMessage'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
@@ -23,7 +24,9 @@ import { formatMonthDay, formatWeekday } from '@/shared/utils/dateFormat'
 import type { ApiError } from '@/types/response'
 
 const BookingMainPage = () => {
-	const { type, message } = useFlashMessage({ key: 'booking:flash' })
+	const { type, message } = useFlashMessage({
+		key: FLASH_MESSAGE_KEYS.booking,
+	})
 	const initialDate = useMemo(
 		() => new Date(getCurrentJSTDateString({ offsetDays: -1 })),
 		[],

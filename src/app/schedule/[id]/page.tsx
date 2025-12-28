@@ -40,17 +40,14 @@ export async function generateMetadata(
 }
 
 const Page = async ({ params }: PageProps) => {
-	const scheduleDetail = await getScheduleDetail((await params).id)
+	const { id } = await params
+	const scheduleDetail = await getScheduleDetail(id)
 	if (!scheduleDetail) {
 		notFound()
 	}
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
-				if (!authResult.session) {
-					notFound()
-				}
-
 				const userId = authResult.session.user.id
 				const mentionList = Array.isArray(scheduleDetail.mention)
 					? (scheduleDetail.mention as string[])

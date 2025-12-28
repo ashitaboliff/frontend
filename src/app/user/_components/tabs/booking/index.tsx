@@ -92,7 +92,7 @@ const UserBookingLogs = ({ session }: Props) => {
 	}
 
 	return (
-		<div className="mt-4 flex flex-col justify-center">
+		<>
 			<PaginatedResourceLayout
 				perPage={{
 					label: '表示件数:',
@@ -126,7 +126,7 @@ const UserBookingLogs = ({ session }: Props) => {
 				open={isPopupOpen}
 				onClose={() => setIsPopupOpen(false)}
 			/>
-		</div>
+		</>
 	)
 }
 

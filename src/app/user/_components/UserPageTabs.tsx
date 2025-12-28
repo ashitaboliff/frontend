@@ -53,7 +53,7 @@ const normalizeTab = (tab?: string | null): TabId => {
 	return (TAB_ORDER.find((item) => item === lower) ?? 'profile') as TabId
 }
 
-interface Props {
+type Props = {
 	readonly session: Session
 	readonly gachaCarouselData: CarouselPackDataItem[]
 	readonly profile: Profile | null
@@ -203,7 +203,11 @@ const UserPageTabs = ({
 
 	return (
 		<>
-			<Tabs value={activeTab} onChange={handleTabChange}>
+			<Tabs
+				value={activeTab}
+				onChange={handleTabChange}
+				className="mt-4 w-full"
+			>
 				{tabs.map((tab) => (
 					<Tab key={tab.id} label={tab.label} value={tab.id}>
 						{tab.content}

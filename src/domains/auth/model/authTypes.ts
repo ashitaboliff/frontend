@@ -9,7 +9,7 @@ export type AuthIssue =
 	| 'unauthorized'
 	| null
 
-export interface AuthDetails {
+export type AuthDetails = {
 	session: Session | null
 	status: AuthStatus
 	isSignedIn: boolean

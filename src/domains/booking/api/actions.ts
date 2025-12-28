@@ -26,6 +26,11 @@ import {
 	getUpdateBookingErrorMessage,
 } from '@/domains/booking/api/bookingErrorMessages'
 import {
+	buildFlashMessageValue,
+	FLASH_MESSAGE_COOKIE_OPTIONS,
+	FLASH_MESSAGE_KEYS,
+} from '@/shared/constants/flashMessage'
+import {
 	createdResponse,
 	failure,
 	noContentResponse,
@@ -149,8 +154,8 @@ export const createBookingAction = async ({
 		}
 	}
 
-	await revalidateTag('booking', 'max')
-	await revalidateTag(`booking-user-${userId}`, 'max')
+	revalidateTag('booking', 'max')
+	revalidateTag(`booking-user-${userId}`, 'max')
 
 	return createdResponse({ id: res.data.id })
 }
@@ -190,21 +195,19 @@ export const updateBookingAction = async ({
 		}
 	}
 
-	await revalidateTag('booking', 'max')
-	await revalidateTag(`booking-detail-${bookingId}`, 'max')
-	await revalidateTag(`booking-user-${userId}`, 'max')
+	revalidateTag('booking', 'max')
+	revalidateTag(`booking-detail-${bookingId}`, 'max')
+	revalidateTag(`booking-user-${userId}`, 'max')
 
 	return noContentResponse()
 }
 
 export const deleteBookingAction = async ({
 	bookingId,
-	bookingDate,
 	userId,
 	authToken,
 }: {
 	bookingId: string
-	bookingDate: string
 	userId: string
 	authToken?: string | null
 }): Promise<ApiResponse<null>> => {
@@ -224,17 +227,18 @@ export const deleteBookingAction = async ({
 		}
 	}
 
-	const _bookingDateKey = toDateKey(bookingDate)
-
-	await revalidateTag('booking', 'max')
-	await revalidateTag(`booking-detail-${bookingId}`, 'max')
-	await revalidateTag(`booking-user-${userId}`, 'max')
+	revalidateTag('booking', 'max')
+	revalidateTag(`booking-detail-${bookingId}`, 'max')
+	revalidateTag(`booking-user-${userId}`, 'max')
 
 	const cookieStore = await cookies()
 	cookieStore.set(
-		'booking:flash',
-		JSON.stringify({ type: 'success', message: '予約を削除しました。' }),
-		{ path: '/booking', maxAge: 10, httpOnly: false },
+		FLASH_MESSAGE_KEYS.booking,
+		buildFlashMessageValue({
+			type: 'success',
+			message: '予約を削除しました。',
+		}),
+		FLASH_MESSAGE_COOKIE_OPTIONS.booking,
 	)
 
 	return noContentResponse()
