@@ -1,5 +1,5 @@
 import type { PointerEvent } from 'react'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type SwipeAxis = 'x' | 'y'
 
@@ -38,16 +38,45 @@ export const useDragSwipe = ({
 }: UseDragSwipeOptions): UseDragSwipeResult => {
 	const [isDragging, setIsDragging] = useState(false)
 	const [dragOffset, setDragOffset] = useState(0)
+	const isDraggingRef = useRef(false)
 	const startXRef = useRef(0)
 	const startYRef = useRef(0)
 	const deltaXRef = useRef(0)
 	const deltaYRef = useRef(0)
+	const finishedRef = useRef(false)
+	const frameRef = useRef<number | null>(null)
+	const pendingOffsetRef = useRef(0)
+
+	const scheduleOffsetUpdate = useCallback((offset: number) => {
+		pendingOffsetRef.current = offset
+		if (frameRef.current !== null) return
+		frameRef.current = requestAnimationFrame(() => {
+			frameRef.current = null
+			setDragOffset(pendingOffsetRef.current)
+		})
+	}, [])
+
+	useEffect(() => {
+		return () => {
+			if (frameRef.current !== null) {
+				cancelAnimationFrame(frameRef.current)
+				frameRef.current = null
+			}
+		}
+	}, [])
 
 	const finishSwipe = useCallback(
 		(commit: boolean) => {
-			if (!isDragging) return
+			if (finishedRef.current) return
+			if (!isDraggingRef.current) return
+			finishedRef.current = true
+			isDraggingRef.current = false
 			setIsDragging(false)
 			setDragOffset(0)
+			if (frameRef.current !== null) {
+				cancelAnimationFrame(frameRef.current)
+				frameRef.current = null
+			}
 
 			if (!commit) {
 				deltaXRef.current = 0
@@ -76,15 +105,7 @@ export const useDragSwipe = ({
 				}
 			}
 		},
-		[
-			axis,
-			isDragging,
-			onSwipeDown,
-			onSwipeLeft,
-			onSwipeRight,
-			onSwipeUp,
-			threshold,
-		],
+		[axis, onSwipeDown, onSwipeLeft, onSwipeRight, onSwipeUp, threshold],
 	)
 
 	const handlePointerDown = useCallback(
@@ -92,6 +113,8 @@ export const useDragSwipe = ({
 			if (disabled) return
 			if (event.pointerType === 'mouse' && event.button !== 0) return
 
+			finishedRef.current = false
+			isDraggingRef.current = true
 			setIsDragging(true)
 			startXRef.current = event.clientX
 			startYRef.current = event.clientY
@@ -104,35 +127,35 @@ export const useDragSwipe = ({
 
 	const handlePointerMove = useCallback(
 		(event: PointerEvent<HTMLDivElement>) => {
-			if (!isDragging) return
+			if (!isDraggingRef.current) return
 			const deltaX = event.clientX - startXRef.current
 			const deltaY = event.clientY - startYRef.current
 			deltaXRef.current = deltaX
 			deltaYRef.current = deltaY
-			setDragOffset(axis === 'x' ? deltaX : deltaY)
+			scheduleOffsetUpdate(axis === 'x' ? deltaX : deltaY)
 			event.preventDefault()
 		},
-		[axis, isDragging],
+		[axis, scheduleOffsetUpdate],
 	)
 
 	const handlePointerUp = useCallback(
 		(event: PointerEvent<HTMLDivElement>) => {
-			if (!isDragging) return
+			if (!isDraggingRef.current) return
 			event.currentTarget.releasePointerCapture?.(event.pointerId)
 			finishSwipe(true)
 		},
-		[finishSwipe, isDragging],
+		[finishSwipe],
 	)
 
 	const handlePointerLeave = useCallback(() => {
-		if (!isDragging) return
+		if (!isDraggingRef.current) return
 		finishSwipe(true)
-	}, [finishSwipe, isDragging])
+	}, [finishSwipe])
 
 	const handlePointerCancel = useCallback(() => {
-		if (!isDragging) return
+		if (!isDraggingRef.current) return
 		finishSwipe(false)
-	}, [finishSwipe, isDragging])
+	}, [finishSwipe])
 
 	const bind = useMemo(
 		() => ({

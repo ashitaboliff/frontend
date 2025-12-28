@@ -4,7 +4,7 @@ import { getAuthDetails } from '@/domains/auth/api/authActions'
 import type { AuthDetails } from '@/domains/auth/model/authTypes'
 import type { AccountRole } from '@/domains/user/model/userTypes'
 
-interface Props {
+type Props = {
 	readonly children: (authResult: AuthDetails) => ReactNode
 	readonly requireProfile?: boolean
 	readonly allowUnauthenticated?: boolean

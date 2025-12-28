@@ -10,7 +10,7 @@ import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 import { classNames } from '@/shared/ui/utils/classNames'
 import { composeRefs } from '@/shared/ui/utils/refs'
 
-export type TextInputFieldProps = {
+type TextInputFieldProps = {
 	/** ラベルテキスト。未指定の場合はラベルを描画しません。 */
 	readonly label?: string
 	/** input の id。ラベル/エラーと紐付ける際に利用します。 */

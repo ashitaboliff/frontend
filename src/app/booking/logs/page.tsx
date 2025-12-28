@@ -8,11 +8,11 @@ export const metadata = createMetaData({
 	url: '/booking/logs',
 })
 
-const BookingLog = async () => {
-	const booking = await getAllBookingAction()
-	if (!booking.ok) return notFound()
+const Page = async () => {
+	const res = await getAllBookingAction()
+	if (!res.ok) return notFound()
 
-	return <BookingLogs booking={booking.data} />
+	return <BookingLogs booking={res.data} />
 }
 
-export default BookingLog
+export default Page

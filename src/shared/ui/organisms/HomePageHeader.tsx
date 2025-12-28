@@ -14,7 +14,7 @@ const HomePageHeader = () => {
 			)}
 		>
 			<HomePageBar className="absolute" />
-			<div className="z-10 mt-4 flex flex-col items-center bg-white/60">
+			<div className="z-10 mt-4 flex flex-col items-center bg-white/60 md:mb-4">
 				<h2 className="-tracking-widest whitespace-nowrap text-xl">
 					信州大学工学部・教育学部・長野県立大学
 				</h2>

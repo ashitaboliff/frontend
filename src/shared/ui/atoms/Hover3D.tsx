@@ -29,8 +29,7 @@ const Hover3D = ({
 	...props
 }: Hover3DProps) => {
 	const wrapperClassName = classNames(
-		'hover-3d',
-		!disabled && 'cursor-pointer',
+		!disabled && 'hover-3d cursor-pointer',
 		className,
 	)
 

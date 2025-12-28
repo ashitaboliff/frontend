@@ -2,22 +2,16 @@
 
 import { useRouter } from 'next/navigation'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { BookingSummary } from '@/domains/booking/model/types'
 import AddBookingToCalendar from '@/domains/booking/ui/AddBookingToCalendar'
+import BookingDetailCard from '@/domains/booking/ui/BookingDetailCard'
 import GachaResult, {
 	type GachaResultViewState,
 } from '@/domains/gacha/ui/GachaResult'
 import Popup from '@/shared/ui/molecules/Popup'
 import ShareToLineButton from '@/shared/ui/molecules/ShareToLineButton'
-import { DateToDayISOstring } from '@/shared/utils'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 
-export type BookingSummary = {
-	id: string
-	bookingDate: Date
-	bookingTimeIndex: number
-	registName: string
-	name: string
-}
 type Props = {
 	booking: BookingSummary
 	popupOpen: boolean
@@ -32,9 +26,7 @@ const BookingResultPopup = ({
 	gachaResultState,
 }: Props) => {
 	const router = useRouter()
-	const shareUrl = `${window.location.origin}/booking/${DateToDayISOstring(
-		booking.bookingDate,
-	)}/${booking.bookingTimeIndex}?bookingId=${booking.id}`
+	const shareUrl = `${window.location.origin}/booking/${booking.id}`
 
 	return (
 		<Popup
@@ -46,44 +38,35 @@ const BookingResultPopup = ({
 			<h3 className="text-center font-semibold text-lg">
 				以下の内容で予約が完了しました
 			</h3>
-			<p className="text-center">
-				日付:{' '}
-				{formatDateSlashWithWeekday(booking.bookingDate, {
-					space: false,
-				})}
-			</p>
-			<p className="text-center">
-				時間: {BOOKING_TIME_LIST[booking.bookingTimeIndex]}
-			</p>
-			<p className="text-center">バンド名: {booking.registName}</p>
-			<p className="text-center">責任者: {booking.name}</p>
+			<BookingDetailCard booking={booking} is3DHover={false} />
 			<GachaResult state={gachaResultState} />
-			<div className="flex flex-col justify-center gap-2 pt-2 sm:flex-row">
+			<div className="flex justify-center gap-2 pt-2">
 				<AddBookingToCalendar
 					booking={{
-						bookingDate: DateToDayISOstring(booking.bookingDate),
-						bookingTime: booking.bookingTimeIndex,
+						bookingDate: booking.bookingDate,
+						bookingTime: booking.bookingTime,
 						registName: booking.registName,
 						name: booking.name,
 					}}
-					buttonLabel="スマホに予定追加"
-					buttonClassName="btn btn-primary"
+					buttonLabel="スマホに追加"
+					buttonClassName="btn btn-accent btn-outline flex-1"
 				/>
 				<ShareToLineButton
 					url={shareUrl}
 					text={`予約日時: ${formatDateSlashWithWeekday(booking.bookingDate, {
 						space: false,
-					})} ${BOOKING_TIME_LIST[booking.bookingTimeIndex]}`}
+					})} ${BOOKING_TIME_LIST[booking.bookingTime]}`}
 					label="LINEで共有"
+					className="flex-1"
 				/>
-				<button
-					type="button"
-					className="btn btn-outline"
-					onClick={() => router.push('/booking')}
-				>
-					ホームに戻る
-				</button>
 			</div>
+			<button
+				type="button"
+				className="btn btn-ghost mt-4 w-full"
+				onClick={() => router.push('/booking')}
+			>
+				ホームに戻る
+			</button>
 		</Popup>
 	)
 }

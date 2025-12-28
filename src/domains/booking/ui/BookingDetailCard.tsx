@@ -1,10 +1,10 @@
-import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { BookingSummary } from '@/domains/booking/model/types'
 import Card from '@/shared/ui/molecules/Card'
 import { formatDateJaWithWeekday } from '@/shared/utils/dateFormat'
 
 type Props = {
-	booking: Omit<PublicBooking, 'createdAt' | 'updatedAt'>
+	booking: BookingSummary
 	is3DHover?: boolean
 }
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
+import type { BookingNewPageParams } from '@/app/booking/new/schema'
 import { createBookingAction } from '@/domains/booking/api/actions'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import {
@@ -12,6 +13,7 @@ import {
 	type BookingCreateFormValues,
 	bookingCreateSchema,
 } from '@/domains/booking/model/schema'
+import type { BookingSummary } from '@/domains/booking/model/types'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
 import { LATEST_GACHA_VERSION } from '@/domains/gacha/config/gachaConfig'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
@@ -22,28 +24,19 @@ import { Ads } from '@/shared/ui/ads'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import PasswordInputField from '@/shared/ui/molecules/PasswordInputField'
-import {
-	DateToDayISOstring,
-	getCurrentJSTDateString,
-	toDateKey,
-} from '@/shared/utils'
+import { getCurrentJSTDateString, toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
 import type { Session } from '@/types/session'
-import BookingResultPopup, { type BookingSummary } from './BookingResultPopup'
+import BookingResultPopup from './BookingResultPopup'
 
 const today = getCurrentJSTDateString()
 
-interface Props {
+type Props = {
 	readonly session: Session
-	readonly initialDateParam?: string
-	readonly initialTimeParam?: string
+	readonly query: BookingNewPageParams
 }
 
-const BookingCreate = ({
-	session,
-	initialDateParam,
-	initialTimeParam,
-}: Props) => {
+const BookingCreate = ({ session, query }: Props) => {
 	const router = useRouter()
 	const { mutate } = useSWRConfig()
 	const messageFeedback = useFeedback()
@@ -56,31 +49,15 @@ const BookingCreate = ({
 		useState<GachaResultViewState>({ status: 'idle' })
 	const gachaExecutionIdRef = useRef(0)
 
-	const defaultBookingDate = useMemo(
-		() => (initialDateParam ? new Date(initialDateParam) : new Date()),
-		[initialDateParam],
-	)
-	const defaultBookingTimeIndex = useMemo(() => {
-		const parsed = Number(initialTimeParam ?? '0')
-		if (
-			!Number.isFinite(parsed) ||
-			parsed < 0 ||
-			parsed >= BOOKING_TIME_LIST.length
-		) {
-			return 0
-		}
-		return parsed
-	}, [initialTimeParam])
-
 	const defaultValues: Partial<BookingCreateFormInput> = useMemo(
 		() => ({
-			bookingDate: toDateKey(defaultBookingDate),
-			bookingTime: defaultBookingTimeIndex ?? 0,
+			bookingDate: toDateKey(query.date),
+			bookingTime: query.time,
 			registName: '',
 			name: '',
 			password: '',
 		}),
-		[defaultBookingDate, defaultBookingTimeIndex],
+		[query.date, query.time],
 	)
 
 	const {
@@ -128,10 +105,8 @@ const BookingCreate = ({
 		setCreatedBooking(null)
 		setGachaResultState({ status: 'idle' })
 
-		const bookingDate = new Date(data.bookingDate)
-
 		const reservationData = {
-			bookingDate: DateToDayISOstring(bookingDate),
+			bookingDate: data.bookingDate,
 			bookingTime: data.bookingTime,
 			registName: data.registName,
 			name: data.name,
@@ -147,11 +122,11 @@ const BookingCreate = ({
 			})
 
 			if (res.ok) {
-				await mutateBookingCalendarsForDate(mutate, toDateKey(bookingDate))
+				await mutateBookingCalendarsForDate(mutate, toDateKey(data.bookingDate))
 				setCreatedBooking({
 					id: res.data.id,
-					bookingDate,
-					bookingTimeIndex: data.bookingTime,
+					bookingDate: data.bookingDate,
+					bookingTime: data.bookingTime,
 					registName: data.registName,
 					name: data.name,
 				})
@@ -203,7 +178,7 @@ const BookingCreate = ({
 						<TextInputField
 							label="時間"
 							type="text"
-							value={BOOKING_TIME_LIST[defaultBookingTimeIndex]}
+							value={BOOKING_TIME_LIST[query.time]}
 							disabled
 						/>
 						<TextInputField

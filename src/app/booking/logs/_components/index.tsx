@@ -44,10 +44,10 @@ const BookingLogs = ({ booking }: Props) => {
 	const currentLogs = booking?.slice(indexOfFirstLog, indexOfLastLog) ?? []
 
 	return (
-		<div className="container mx-auto px-2 py-8 sm:px-4">
-			<div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
-				<h1 className="font-bold text-2xl sm:text-3xl">予約ログ</h1>
-			</div>
+		<div className="container mx-auto px-2">
+			<h1 className="my-4 text-center font-bold text-2xl sm:text-3xl">
+				予約ログ
+			</h1>
 
 			<PaginatedResourceLayout
 				perPage={{

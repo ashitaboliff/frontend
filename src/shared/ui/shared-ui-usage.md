@@ -104,7 +104,6 @@
 - `shared/ui/utils/classNames` — falsy を除外して className を結合。
 - `shared/ui/utils/refs` — 複数 ref を合成。
 - `shared/hooks/useSelectField` — select/multi-select 用の dropdown 制御・SyntheticEvent 生成。
-- `shared/hooks/useCarousel` — スワイプ対応カルーセルの状態管理。
 
 ## 最低限のチェックリスト
 - [ ] Props がネイティブ属性を阻害していないか

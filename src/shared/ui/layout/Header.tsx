@@ -66,7 +66,7 @@ const Header = async () => {
 							</p>
 							<Image
 								src="/logo.png"
-								alt="あしたぼホームページ"
+								alt="あしたぼホームページ - ロゴ"
 								width={50}
 								height={50}
 								className="md:hidden"
