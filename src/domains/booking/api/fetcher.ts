@@ -1,8 +1,11 @@
 import {
+	BookingByUserResponseSchema,
 	BookingResponseSchema,
+	BookingUserQuerySchema,
 	GetBookingQuerySchema,
 } from '@ashitaboliff/types/modules/booking/schema/booking'
 import type {
+	BookingByUserResponse,
 	BookingRange,
 	BookingResponse,
 } from '@ashitaboliff/types/modules/booking/types'
@@ -18,6 +21,16 @@ type BookingRangeKey = [
 	typeof BOOKING_CALENDAR_SWR_KEY,
 	BookingRange['start'],
 	BookingRange['end'],
+]
+
+export const BOOKING_USER_LOGS_SWR_KEY = 'booking-user-logs'
+
+export type BookingUserLogsKey = [
+	typeof BOOKING_USER_LOGS_SWR_KEY,
+	string,
+	number,
+	number,
+	'new' | 'old',
 ]
 
 export const buildEmptyBookingResponse = (
@@ -65,6 +78,49 @@ export const bookingRangeFetcher = async ([
 			response: BookingResponseSchema,
 		},
 	})
+	if (res.ok) {
+		return res.data
+	}
+
+	throw res
+}
+
+export const buildBookingUserLogsKey = (
+	userId: string,
+	page: number,
+	perPage: number,
+	sort: 'new' | 'old',
+): BookingUserLogsKey => [
+	BOOKING_USER_LOGS_SWR_KEY,
+	userId,
+	page,
+	perPage,
+	sort,
+]
+
+export const bookingUserLogsFetcher = async ([
+	cacheKey,
+	userId,
+	page,
+	perPage,
+	sort,
+]: BookingUserLogsKey): Promise<BookingByUserResponse> => {
+	if (cacheKey !== BOOKING_USER_LOGS_SWR_KEY) {
+		throw new Error('Invalid cache key for booking logs fetcher')
+	}
+
+	const res = await bffGet(`/booking/user/${userId}`, {
+		searchParams: {
+			page,
+			perPage,
+			sort,
+		},
+		schemas: {
+			searchParams: BookingUserQuerySchema,
+			response: BookingByUserResponseSchema,
+		},
+	})
+
 	if (res.ok) {
 		return res.data
 	}

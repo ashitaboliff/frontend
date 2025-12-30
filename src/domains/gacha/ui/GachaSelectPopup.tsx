@@ -40,7 +40,7 @@ const GachaSelectPopup = ({
 	return (
 		<Popup
 			id="gacha-select-popup"
-			title="ガチャパックを選択"
+			title=""
 			open={open}
 			onClose={onClose}
 			maxWidth="xl"
@@ -57,11 +57,11 @@ const GachaSelectPopup = ({
 					const reachedLimit = hasLimit && gachaPlayCountToday >= maxPlayCount
 					const displayMax = hasLimit ? maxPlayCount : '無制限'
 					return (
-						<div
+						<p
 							className={`mt-4 text-center text-sm ${reachedLimit ? 'text-error' : 'text-base-content'}`}
 						>
 							今日のガチャプレイ回数: {gachaPlayCountToday} / {displayMax}
-						</div>
+						</p>
 					)
 				})()}
 				<button className="btn btn-outline" onClick={onClose} type="button">
@@ -215,6 +215,7 @@ const GachaSelectCarousel = ({
 							sizes="(min-width: 768px) 250px, 75vw"
 							decoding="async"
 							fallback="/version1.webp"
+							draggable={false}
 						/>
 					) : (
 						<div className="flex h-100 w-[250px] flex-col items-center justify-center rounded-lg bg-base-200">
@@ -237,14 +238,12 @@ const GachaSelectCarousel = ({
 	}
 
 	return (
-		<div className="relative flex h-125 w-full select-none items-center justify-center overflow-hidden">
-			<div
-				className="relative flex h-full w-full items-center justify-center"
-				style={{ touchAction: 'pan-y' }}
-				{...bind}
-			>
-				{packs.map(renderSlide)}
-			</div>
+		<div
+			className="relative flex h-125 w-full select-none items-center justify-center overflow-hidden"
+			style={{ touchAction: 'pan-y' }}
+			{...bind}
+		>
+			{packs.map(renderSlide)}
 		</div>
 	)
 }

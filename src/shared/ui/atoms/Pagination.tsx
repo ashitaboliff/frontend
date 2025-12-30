@@ -21,7 +21,7 @@ const EDGE_ITEM_COUNT = 2
 export const createPaginationItems = (
 	currentPage: number,
 	totalPages: number,
-	maxMiddleItems = 3,
+	maxMiddleItems = 2,
 ): PaginationItem[] => {
 	if (totalPages <= maxMiddleItems + EDGE_ITEM_COUNT * 2) {
 		return Array.from({ length: totalPages }, (_, index) => index + 1)
@@ -61,7 +61,7 @@ const Pagination = ({
 	currentPage,
 	totalPages,
 	onPageChange,
-	maxMiddleItems = 3,
+	maxMiddleItems = 2,
 	className,
 }: PaginationProps) => {
 	const items = useMemo(
@@ -89,7 +89,7 @@ const Pagination = ({
 							type="button"
 							key={item}
 							className={classNames(
-								'join-item btn w-14',
+								'join-item btn w-12',
 								isActive ? 'btn-primary' : 'btn-outline',
 							)}
 							onClick={handlePageClick(item)}

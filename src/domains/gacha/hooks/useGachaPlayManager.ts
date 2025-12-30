@@ -45,7 +45,7 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 	useEffect(() => {
 		if (!canPlayGacha) {
 			setGachaMessage(
-				`本日は既にガチャを${MAX_GACHA_PLAYS_PER_DAY}回引いているため、これ以上引くことはできません。`,
+				`本日は既にガチャを${MAX_GACHA_PLAYS_PER_DAY}回引いています。`,
 			)
 		} else {
 			setGachaMessage('')
@@ -77,7 +77,7 @@ export const useGachaPlayManager = (options?: UseGachaPlayManagerOptions) => {
 			setGachaMessage('')
 		} else {
 			setGachaMessage(
-				`本日は既にガチャを${MAX_GACHA_PLAYS_PER_DAY}回引いているため、これ以上引くことはできません。`,
+				`本日は既にガチャを${MAX_GACHA_PLAYS_PER_DAY}回引いています。`,
 			)
 			setIsGachaSelectPopupOpen(false)
 		}

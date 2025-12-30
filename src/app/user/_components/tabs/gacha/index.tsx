@@ -1,37 +1,20 @@
 'use client'
 
+import type { GachaListResponse } from '@ashitaboliff/types/modules/gacha/types'
 import { useEffect } from 'react'
 import useSWR from 'swr'
 import GachaLogList from '@/app/user/_components/tabs/gacha/GachaLogList'
 import GachaPreviewPopup from '@/app/user/_components/tabs/gacha/GachaPreviewPopup'
-import { getGachaByUserIdAction } from '@/domains/gacha/api/gachaActions'
+import {
+	buildGachaLogsKey,
+	gachaLogsFetcher,
+} from '@/domains/gacha/api/fetcher'
 import { useGachaPreview } from '@/domains/gacha/hooks/useGachaPreview'
-import type { GachaData, GachaSort } from '@/domains/gacha/model/gachaTypes'
+import type { GachaSort } from '@/domains/gacha/model/gachaTypes'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
 import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import type { Session } from '@/types/session'
-
-type GachaLogsKey = ['gacha-logs', string, number, number, GachaSort]
-
-type GachaLogsResponse = {
-	gacha: GachaData[]
-	totalCount: number
-}
-
-const gachaLogsFetcher = async ([
-	,
-	userId,
-	page,
-	perPage,
-	sort,
-]: GachaLogsKey) => {
-	const res = await getGachaByUserIdAction({ userId, page, perPage, sort })
-	if (res.ok) {
-		return res.data
-	}
-	throw res
-}
 
 const perPageOptions = {
 	'15件': 15,
@@ -46,7 +29,7 @@ const sortOptions: { value: GachaSort; label: string }[] = [
 	{ value: 'notrare', label: 'コモン順' },
 ]
 
-interface Props {
+type Props = {
 	readonly session: Session
 }
 
@@ -73,15 +56,9 @@ const UserGachaLogs = ({ session }: Props) => {
 		error: previewError,
 	} = useGachaPreview({ session })
 
-	const swrKey: GachaLogsKey = [
-		'gacha-logs',
-		session.user.id,
-		page,
-		perPage,
-		sort,
-	]
+	const swrKey = buildGachaLogsKey(session.user.id, page, perPage, sort)
 
-	const { data, isLoading } = useSWR<GachaLogsResponse>(
+	const { data, isLoading } = useSWR<GachaListResponse>(
 		swrKey,
 		gachaLogsFetcher,
 		{
@@ -105,7 +82,7 @@ const UserGachaLogs = ({ session }: Props) => {
 	}, [data, feedback, setTotalCount])
 
 	return (
-		<div className="mt-4 flex flex-col justify-center">
+		<>
 			<PaginatedResourceLayout
 				perPage={{
 					label: '表示件数:',
@@ -153,7 +130,7 @@ const UserGachaLogs = ({ session }: Props) => {
 					ガチャプレビューの取得に失敗しました。
 				</div>
 			)}
-		</div>
+		</>
 	)
 }
 

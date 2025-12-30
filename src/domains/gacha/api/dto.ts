@@ -6,13 +6,11 @@ export interface RawGachaData {
 	gachaVersion: string
 	gachaRarity: RarityType
 	gachaSrc: string
+	signedGachaSrc?: string | null
 	createdAt: string
 	updatedAt: string
 	isDeleted?: boolean | null
 }
-
-const toDate = (value: string | Date): Date =>
-	value instanceof Date ? value : new Date(value)
 
 export const toSignedImageKey = (gachaSrc: string): string => {
 	const prefix = '/gacha/'
@@ -28,8 +26,9 @@ export const mapRawGacha = (data: RawGachaData): GachaData => ({
 	gachaVersion: data.gachaVersion,
 	gachaRarity: data.gachaRarity,
 	gachaSrc: data.gachaSrc,
-	createdAt: toDate(data.createdAt),
-	updatedAt: toDate(data.updatedAt),
+	signedGachaSrc: data.signedGachaSrc ?? null,
+	createdAt: data.createdAt,
+	updatedAt: data.updatedAt,
 	isDeleted: Boolean(data.isDeleted),
 })
 

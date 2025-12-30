@@ -1,10 +1,11 @@
 import UserPageLayout from '@/app/user/_components/UserPageLayout'
 import UserPageTabs from '@/app/user/_components/UserPageTabs'
+import { UserPageParamsSchema } from '@/app/user/schema'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { buildPathWithSearch } from '@/domains/auth/utils/authRedirect'
 import { resolveCarouselPackData } from '@/domains/gacha/services/resolveCarouselPackData'
 import { getUserProfile } from '@/domains/user/api/userActions'
-import type { AccountRole, Profile } from '@/domains/user/model/userTypes'
+import type { Profile } from '@/domains/user/model/userTypes'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export const metadata = createMetaData({
@@ -19,8 +20,10 @@ type Props = {
 
 const UserPageServer = async ({ searchParams }: Props) => {
 	const params = await searchParams
-	const initialTab = typeof params?.tab === 'string' ? params.tab : undefined
+	const query = UserPageParamsSchema.parse(params)
+	const tab = query.tab
 	const redirectFrom = buildPathWithSearch('/user', params)
+	const shouldFetchGachaCarousel = tab === 'gacha'
 
 	return (
 		<AuthPage requireProfile={true} redirectFrom={redirectFrom}>
@@ -33,13 +36,10 @@ const UserPageServer = async ({ searchParams }: Props) => {
 						const profileRes = await getUserProfile(session.user.id)
 						return profileRes.ok ? (profileRes.data ?? null) : null
 					})(),
-					resolveCarouselPackData(),
+					shouldFetchGachaCarousel
+						? resolveCarouselPackData()
+						: Promise.resolve([]),
 				])
-
-				const userInfo = {
-					name: session.user.name,
-					role: session.user.role as AccountRole | null,
-				}
 
 				return (
 					<UserPageLayout session={session} profile={profile}>
@@ -47,8 +47,7 @@ const UserPageServer = async ({ searchParams }: Props) => {
 							session={session}
 							gachaCarouselData={gachaCarouselData}
 							profile={profile}
-							userInfo={userInfo}
-							initialTab={initialTab}
+							tab={tab}
 						/>
 					</UserPageLayout>
 				)

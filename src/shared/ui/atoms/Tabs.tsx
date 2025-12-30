@@ -23,7 +23,6 @@ export type TabsProps = {
 	readonly onChange?: (value: string) => void
 	readonly className?: string
 	readonly tabListClassName?: string
-	readonly contentClassName?: string
 }
 
 export const Tabs = ({
@@ -31,8 +30,7 @@ export const Tabs = ({
 	value,
 	onChange,
 	className,
-	tabListClassName = 'flex justify-center tabs tabs-box',
-	contentClassName = 'pt-4',
+	tabListClassName = 'flex justify-center tabs tabs-box mb-4',
 }: TabsProps) => {
 	const tabChildren = useMemo(
 		() =>
@@ -143,25 +141,23 @@ export const Tabs = ({
 					)
 				})}
 			</div>
-			<div className={contentClassName}>
-				{tabChildren.map((child, index) => {
-					const tabValue = tabValues[index]
-					const isActive = tabValue === activeValue
-					const tabId = `tab-${tabValue}`
-					const panelId = `panel-${tabValue}`
-					return (
-						<div
-							key={`panel-${child.key ?? 'tab'}-${tabValue}`}
-							id={panelId}
-							role="tabpanel"
-							aria-labelledby={tabId}
-							hidden={!isActive}
-						>
-							{child}
-						</div>
-					)
-				})}
-			</div>
+			{tabChildren.map((child, index) => {
+				const tabValue = tabValues[index]
+				const isActive = tabValue === activeValue
+				const tabId = `tab-${tabValue}`
+				const panelId = `panel-${tabValue}`
+				return (
+					<div
+						key={`panel-${child.key ?? 'tab'}-${tabValue}`}
+						id={panelId}
+						role="tabpanel"
+						aria-labelledby={tabId}
+						hidden={!isActive}
+					>
+						{child}
+					</div>
+				)
+			})}
 		</div>
 	)
 }

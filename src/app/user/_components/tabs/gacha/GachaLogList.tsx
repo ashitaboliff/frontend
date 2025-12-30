@@ -8,7 +8,7 @@ import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import type { FeedbackMessageType } from '@/types/feedback'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
 
-interface Props {
+type Props = {
 	readonly gachaItems?: GachaData[]
 	readonly logsPerPage: number
 	readonly isLoading: boolean
@@ -46,11 +46,7 @@ const GachaLogList = ({
 	}
 
 	if (error) {
-		return (
-			<div className="py-10 text-center">
-				<FeedbackMessage source={error} />
-			</div>
-		)
+		return <FeedbackMessage source={error} />
 	}
 
 	if (!normalizedItems.length) {

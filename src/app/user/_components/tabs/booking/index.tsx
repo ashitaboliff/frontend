@@ -1,9 +1,15 @@
 'use client'
 
-import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
+import type {
+	BookingByUserResponse,
+	PublicBooking,
+} from '@ashitaboliff/types/modules/booking/types'
 import { useState } from 'react'
 import useSWR from 'swr'
-import { getBookingByUserIdAction } from '@/domains/booking/api/actions'
+import {
+	bookingUserLogsFetcher,
+	buildBookingUserLogsKey,
+} from '@/domains/booking/api/fetcher'
 import BookingDetailPopup from '@/domains/booking/ui/BookingDetailPopup'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
@@ -13,22 +19,6 @@ import BookingLogList from './BookingLogList'
 
 type Props = {
 	readonly session: Session
-}
-
-type BookingLogsKey = ['booking-logs', string, number, number, 'new' | 'old']
-
-const bookingLogsFetcher = async ([
-	,
-	userId,
-	page,
-	perPage,
-	sort,
-]: BookingLogsKey) => {
-	const res = await getBookingByUserIdAction({ userId, page, perPage, sort })
-	if (res.ok) {
-		return res.data
-	}
-	throw res
 }
 
 const perPageOptions = {
@@ -60,31 +50,29 @@ const UserBookingLogs = ({ session }: Props) => {
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const bookingFeedback = useFeedback()
 
-	const swrKey: BookingLogsKey = [
-		'booking-logs',
-		session.user.id,
-		page,
-		perPage,
-		sort,
-	]
+	const swrKey = buildBookingUserLogsKey(session.user.id, page, perPage, sort)
 
-	const { data, isLoading } = useSWR(swrKey, bookingLogsFetcher, {
-		keepPreviousData: true,
-		revalidateOnFocus: false,
-		revalidateOnReconnect: false,
-		revalidateIfStale: true,
-		dedupingInterval: 60 * 1000,
-		shouldRetryOnError: false,
-		onError(error) {
-			bookingFeedback.showApiError(error)
+	const { data, isLoading } = useSWR<BookingByUserResponse>(
+		swrKey,
+		bookingUserLogsFetcher,
+		{
+			keepPreviousData: true,
+			revalidateOnFocus: false,
+			revalidateOnReconnect: false,
+			revalidateIfStale: true,
+			dedupingInterval: 60 * 1000,
+			shouldRetryOnError: false,
+			onError(error) {
+				bookingFeedback.showApiError(error)
+			},
+			onSuccess(data) {
+				if (data) {
+					setTotalCount(data.totalCount)
+					bookingFeedback.clearFeedback()
+				}
+			},
 		},
-		onSuccess(data) {
-			if (data) {
-				setTotalCount(data.totalCount)
-				bookingFeedback.clearFeedback()
-			}
-		},
-	})
+	)
 
 	const handleBookingItemClick = (booking: PublicBooking) => {
 		setSelectedBooking(booking)

@@ -202,7 +202,7 @@ const GachaController = ({
 									className="btn btn-outline"
 									onClick={handleResultBackToSelect}
 								>
-									パック選択に戻る
+									パックを選ぶ
 								</button>
 							</div>
 						</div>
