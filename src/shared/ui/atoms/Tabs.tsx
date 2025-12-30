@@ -4,6 +4,7 @@ import {
 	type KeyboardEventHandler,
 	type ReactElement,
 	type ReactNode,
+	Suspense,
 	useCallback,
 	useEffect,
 	useMemo,
@@ -23,6 +24,9 @@ export type TabsProps = {
 	readonly onChange?: (value: string) => void
 	readonly className?: string
 	readonly tabListClassName?: string
+	readonly mountStrategy?: 'all' | 'active' | 'lazy'
+	readonly suspenseFallback?: ReactNode
+	readonly onTabHover?: (value: string) => void
 }
 
 export const Tabs = ({
@@ -31,6 +35,9 @@ export const Tabs = ({
 	onChange,
 	className,
 	tabListClassName = 'flex justify-center tabs tabs-box mb-4',
+	mountStrategy = 'all',
+	suspenseFallback,
+	onTabHover,
 }: TabsProps) => {
 	const tabChildren = useMemo(
 		() =>
@@ -78,11 +85,29 @@ export const Tabs = ({
 		})
 	}, [tabValues])
 
+	const activeValue = value ?? internalValue
+	const [mountedTabs, setMountedTabs] = useState<string[]>([])
+
+	useEffect(() => {
+		if (mountStrategy !== 'lazy') {
+			return
+		}
+		setMountedTabs((prev) => {
+			const next = new Set(prev)
+			next.add(activeValue)
+			const filtered = Array.from(next).filter((tabValue) =>
+				tabValues.includes(tabValue),
+			)
+			const isSame =
+				filtered.length === prev.length &&
+				filtered.every((tabValue) => prev.includes(tabValue))
+			return isSame ? prev : filtered
+		})
+	}, [activeValue, mountStrategy, tabValues])
+
 	if (tabChildren.length === 0) {
 		return null
 	}
-
-	const activeValue = value ?? internalValue
 
 	const handleKeyDown: KeyboardEventHandler<HTMLButtonElement> = (event) => {
 		const currentIndex = tabValues.indexOf(activeValue)
@@ -134,6 +159,8 @@ export const Tabs = ({
 									: 'text-base-content hover:text-accent',
 							)}
 							onClick={() => setActive(tabValue)}
+							onMouseEnter={() => onTabHover?.(tabValue)}
+							onFocus={() => onTabHover?.(tabValue)}
 							onKeyDown={handleKeyDown}
 						>
 							{child.props.label}
@@ -146,6 +173,10 @@ export const Tabs = ({
 				const isActive = tabValue === activeValue
 				const tabId = `tab-${tabValue}`
 				const panelId = `panel-${tabValue}`
+				const shouldRenderChild =
+					mountStrategy === 'all' ||
+					isActive ||
+					(mountStrategy === 'lazy' && mountedTabs.includes(tabValue))
 				return (
 					<div
 						key={`panel-${child.key ?? 'tab'}-${tabValue}`}
@@ -154,7 +185,13 @@ export const Tabs = ({
 						aria-labelledby={tabId}
 						hidden={!isActive}
 					>
-						{child}
+						{shouldRenderChild ? (
+							suspenseFallback ? (
+								<Suspense fallback={suspenseFallback}>{child}</Suspense>
+							) : (
+								child
+							)
+						) : null}
 					</div>
 				)
 			})}

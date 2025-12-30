@@ -3,8 +3,7 @@
 import dynamic from 'next/dynamic'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
-import BookingLogs from '@/app/user/_components/tabs/booking'
-import GachaLogs from '@/app/user/_components/tabs/gacha'
+import GachaLogsSkeleton from '@/app/user/_components/tabs/gacha/GachaLogsSkeleton'
 import ProfileDetailsTab from '@/app/user/_components/tabs/profile/ProfileDetailsTab'
 import type { UserPageTabId } from '@/app/user/schema'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
@@ -17,17 +16,42 @@ import {
 	LuUserRound,
 	MdOutlineEditCalendar,
 } from '@/shared/ui/icons'
+import PaginatedTableSkeleton from '@/shared/ui/organisms/PaginatedTableSkeleton'
 import type { Session } from '@/types/session'
 
-const GachaController = dynamic(
-	() => import('@/domains/gacha/ui/GachaController'),
-	{
-		ssr: false,
-		loading: () => null,
-	},
-) as typeof import('@/domains/gacha/ui/GachaController')['default']
+const loadBookingLogs = () => import('@/app/user/_components/tabs/booking')
+const loadGachaLogs = () => import('@/app/user/_components/tabs/gacha')
+const loadGachaController = () => import('@/domains/gacha/ui/GachaController')
+const loadRatioPopup = () => import('@/domains/gacha/ui/RatioPopup')
 
-const RatioPopup = dynamic(() => import('@/domains/gacha/ui/RatioPopup'), {
+const BookingLogs = dynamic(loadBookingLogs, {
+	ssr: false,
+	loading: () => (
+		<PaginatedTableSkeleton
+			headers={[
+				{ key: 'booking-date', label: '予約日' },
+				{ key: 'booking-time', label: '予約時間' },
+				{ key: 'band-name', label: 'バンド名' },
+				{ key: 'registrant-name', label: '登録者名' },
+			]}
+			rows={8}
+			showPagination={true}
+			showSort={true}
+		/>
+	),
+}) as typeof import('@/app/user/_components/tabs/booking')['default']
+
+const GachaLogs = dynamic(loadGachaLogs, {
+	ssr: false,
+	loading: () => <GachaLogsSkeleton logsPerPage={15} />,
+}) as typeof import('@/app/user/_components/tabs/gacha')['default']
+
+const GachaController = dynamic(loadGachaController, {
+	ssr: false,
+	loading: () => null,
+}) as typeof import('@/domains/gacha/ui/GachaController')['default']
+
+const RatioPopup = dynamic(loadRatioPopup, {
 	ssr: false,
 	loading: () => (
 		<button type="button" className="btn btn-outline w-full sm:w-auto">
@@ -62,11 +86,28 @@ const UserPageTabs = ({ session, gachaCarouselData, profile, tab }: Props) => {
 			router.push('/gacha')
 			return
 		}
+		void loadGachaController()
 		setIsGachaPopupOpen(true)
-	}, [canPlayGacha, router.push])
+	}, [canPlayGacha, router])
+
+	const prefetchTabContent = useCallback((nextTabId: string) => {
+		switch (nextTabId) {
+			case 'booking':
+				void loadBookingLogs()
+				break
+			case 'gacha':
+				void loadGachaLogs()
+				void loadRatioPopup()
+				void loadGachaController()
+				break
+			default:
+				break
+		}
+	}, [])
 
 	const handleTabChange = useCallback(
 		(nextTabId: string) => {
+			prefetchTabContent(nextTabId)
 			const params = new URLSearchParams(searchParams?.toString())
 			if (nextTabId === 'profile') {
 				params.delete('tab')
@@ -77,7 +118,7 @@ const UserPageTabs = ({ session, gachaCarouselData, profile, tab }: Props) => {
 			const target = queryString ? `${pathname}?${queryString}` : pathname
 			router.replace(target, { scroll: false })
 		},
-		[pathname, router, searchParams],
+		[pathname, prefetchTabContent, router, searchParams],
 	)
 
 	const userInfo = useMemo(() => {
@@ -150,23 +191,31 @@ const UserPageTabs = ({ session, gachaCarouselData, profile, tab }: Props) => {
 
 	return (
 		<>
-			<Tabs value={tab} onChange={handleTabChange} className="mt-4 w-full">
+			<Tabs
+				value={tab}
+				onChange={handleTabChange}
+				onTabHover={prefetchTabContent}
+				mountStrategy="lazy"
+				className="mt-4 w-full"
+			>
 				{tabs.map((tab) => (
 					<Tab key={tab.id} label={tab.label} value={tab.id}>
 						{tab.content}
 					</Tab>
 				))}
 			</Tabs>
-			<GachaController
-				session={session}
-				gachaPlayCountToday={gachaPlayCountToday}
-				onGachaPlayedSuccessfully={() => {
-					onGachaPlayedSuccessfully()
-				}}
-				open={isGachaPopupOpen}
-				onClose={() => setIsGachaPopupOpen(false)}
-				carouselPackData={gachaCarouselData}
-			/>
+			{isGachaPopupOpen && (
+				<GachaController
+					session={session}
+					gachaPlayCountToday={gachaPlayCountToday}
+					onGachaPlayedSuccessfully={() => {
+						onGachaPlayedSuccessfully()
+					}}
+					open={isGachaPopupOpen}
+					onClose={() => setIsGachaPopupOpen(false)}
+					carouselPackData={gachaCarouselData}
+				/>
+			)}
 		</>
 	)
 }
