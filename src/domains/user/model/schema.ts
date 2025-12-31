@@ -5,7 +5,7 @@ import {
 	type Profile,
 	type Role,
 	RoleMap,
-} from '@/domains/user/model/userTypes'
+} from '@/domains/user/model/types'
 import { generateAcademicYear, generateFiscalYearObject } from '@/shared/utils'
 
 const academicYearLastTwoDigits = generateAcademicYear() % 100
@@ -123,3 +123,5 @@ export const getAutoExpectedYear = (studentId?: string) => {
 	)
 	return expectedYearValues.includes(expectedYear) ? expectedYear : undefined
 }
+
+export * from '@ashitaboliff/types/modules/user/schema'

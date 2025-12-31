@@ -1,13 +1,10 @@
 'use client'
 
-import type {
-	PlaylistDoc,
-	SearchResponse,
-} from '@ashitaboliff/types/modules/video/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import type { AdminYoutubePageParams } from '@/app/admin/youtube/schema'
-import { postSyncPlaylistAction } from '@/domains/video/api/videoActions'
+import { postSyncPlaylistAction } from '@/domains/video/api/actions'
+import type { PlaylistDoc, SearchResponse } from '@/domains/video/model/types'
 import { ADMIN_YOUTUBE_DEFAULT_PARAMS } from '@/domains/video/query/youtubeQuery'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'

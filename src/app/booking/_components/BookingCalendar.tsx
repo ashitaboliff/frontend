@@ -1,6 +1,5 @@
 'use client'
 
-import type { BookingResponse } from '@ashitaboliff/types/modules/booking/types'
 import { addDays } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
@@ -9,6 +8,7 @@ import {
 	BOOKING_TIME_LIST,
 	DENIED_BOOKING,
 } from '@/domains/booking/constants'
+import type { BookingResponse } from '@/domains/booking/model/types'
 import {
 	AvailableCell,
 	BookingInfoCell,

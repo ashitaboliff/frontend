@@ -1,12 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import type { AccountRole, Profile } from '@/domains/user/model/userTypes'
-import {
-	AccountRoleMap,
-	PartMap,
-	RoleMap,
-} from '@/domains/user/model/userTypes'
+import type { AccountRole, Profile } from '@/domains/user/model/types'
+import { AccountRoleMap, PartMap, RoleMap } from '@/domains/user/model/types'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import { formatDateJa } from '@/shared/utils/dateFormat'
 

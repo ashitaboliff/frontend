@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getBookingIds } from '@/domains/booking/api/actions'
-import { getYoutubeIds } from '@/domains/video/api/videoActions'
+import { getYoutubeIds } from '@/domains/video/api/actions'
 import PublicEnv from '@/shared/lib/env/public'
 
 const URL = PublicEnv.NEXT_PUBLIC_APP_URL

@@ -1,7 +1,7 @@
 'use client'
 
-import type { YoutubeSearchQuery } from '@ashitaboliff/types/modules/video/types'
 import { useMemo } from 'react'
+import type { YoutubeSearchQuery } from '@/domains/video/model/types'
 import { createYoutubeQueryOptions } from '@/domains/video/query/youtubeQuery'
 import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
 

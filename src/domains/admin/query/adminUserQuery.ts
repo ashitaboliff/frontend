@@ -1,4 +1,4 @@
-import type { UserQuery } from '@ashitaboliff/types/modules/user/types'
+import type { UserQuery } from '@/domains/user/model/types'
 import type { QueryOptions } from '@/shared/utils/queryParams'
 
 export const ADMIN_USER_DEFAULT_QUERY: UserQuery = {

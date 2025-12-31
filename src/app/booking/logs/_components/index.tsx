@@ -1,8 +1,8 @@
 'use client'
 
-import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
 import { useState } from 'react'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { Booking } from '@/domains/booking/model/types'
 import BookingDetailPopup from '@/domains/booking/ui/BookingDetailPopup'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
@@ -10,7 +10,7 @@ import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayo
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 
 type Props = {
-	readonly booking: PublicBooking[]
+	readonly booking: Booking[]
 }
 
 const LOGS_PER_PAGE_OPTIONS: Record<string, number> = {
@@ -31,7 +31,7 @@ const headers = [
 const BookingLogs = ({ booking }: Props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [logsPerPage, setLogsPerPage] = useState(10)
-	const [popupData, setPopupData] = useState<PublicBooking | null>(
+	const [popupData, setPopupData] = useState<Booking | null>(
 		booking?.[0] ?? null,
 	)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
@@ -67,7 +67,7 @@ const BookingLogs = ({ booking }: Props) => {
 					onPageChange: setCurrentPage,
 				}}
 			>
-				<GenericTable<PublicBooking>
+				<GenericTable<Booking>
 					headers={headers}
 					data={currentLogs}
 					isLoading={false}

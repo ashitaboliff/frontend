@@ -1,19 +1,19 @@
 'use server'
 
+import { revalidateTag } from 'next/cache'
+import { getSyncPlaylistErrorMessage } from '@/domains/video/api/videoErrorMessages'
 import {
 	PlaylistDetailSchema,
 	SearchResponseSchema,
 	VideoDetailSchema,
 	YoutubeSearchQuerySchema,
-} from '@ashitaboliff/types/modules/video/schema'
+} from '@/domains/video/model/schema'
 import type {
 	PlaylistDetail,
 	SearchResponse,
 	VideoDetail,
 	YoutubeSearchQuery,
-} from '@ashitaboliff/types/modules/video/types'
-import { revalidateTag } from 'next/cache'
-import { getSyncPlaylistErrorMessage } from '@/domains/video/api/videoErrorMessages'
+} from '@/domains/video/model/types'
 import { apiPost } from '@/shared/lib/api/crud'
 import { okResponse, withFallbackMessage } from '@/shared/lib/api/helper'
 import { apiGet } from '@/shared/lib/api/v2/crud'

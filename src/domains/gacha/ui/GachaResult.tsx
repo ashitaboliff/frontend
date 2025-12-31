@@ -1,6 +1,6 @@
 'use client'
 
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+import type { RarityType } from '@/domains/gacha/model/types'
 import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
 
 export type GachaResultViewState =

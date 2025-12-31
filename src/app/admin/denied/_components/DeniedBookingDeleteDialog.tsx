@@ -1,6 +1,6 @@
 'use client'
 
-import type { DeniedBooking } from '@ashitaboliff/types/modules/booking/types'
+import type { DeniedBooking } from '@/domains/booking/model/types'
 import FeedbackMessage, {
 	type MessageSource,
 } from '@/shared/ui/molecules/FeedbackMessage'

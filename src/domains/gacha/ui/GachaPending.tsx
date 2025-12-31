@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useMemo, useRef } from 'react'
-import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
+import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import { usePackOpeningAnimation } from '@/domains/gacha/ui/animations/usePackOpeningAnimation'
 import type { PackSelectionPayload } from '@/domains/gacha/ui/GachaSelectPopup'
 import { Image } from '@/shared/ui/atoms/ImageWithFallback'

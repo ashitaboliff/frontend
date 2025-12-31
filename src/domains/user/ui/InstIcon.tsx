@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { type Part, PartMap } from '@/domains/user/model/userTypes'
+import { type Part, PartMap } from '@/domains/user/model/types'
 import {
 	GiGuitarBassHead as BassIcon,
 	FaDrum as DrumIcon,

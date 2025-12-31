@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { toSignedImageKey } from '@/domains/gacha/api/dto'
-import type { GachaData } from '@/domains/gacha/model/gachaTypes'
+import type { Gacha } from '@/domains/gacha/model/types'
 import {
 	ensureSignedResourceUrls,
 	getSignedResourceEntry,
@@ -9,6 +8,7 @@ import {
 	setSignedResourceEntry,
 	shouldRefreshSignedResource,
 } from '@/domains/gacha/services/signedGachaResourceCache'
+import { toSignedImageKey } from '@/domains/gacha/utils'
 
 type SignedUrlEntry = {
 	url: string | null
@@ -23,7 +23,7 @@ const STALE_EXPIRY_OFFSET_MS = 1000
  * ガチャカードの署名付き画像URLをまとめて解決し、期限管理と再取得制御を自動化するフック。
  * 既存の署名済みURLをプリフェッチしつつ、失効前にバックグラウンド更新を行う。
  */
-export const useSignedGachaImages = (items: GachaData[] | undefined) => {
+export const useSignedGachaImages = (items: Gacha[] | undefined) => {
 	const [signedUrlMap, setSignedUrlMap] = useState<SignedUrlMap>({})
 	const [isFetching, setIsFetching] = useState(false)
 	const mapRef = useRef(signedUrlMap)

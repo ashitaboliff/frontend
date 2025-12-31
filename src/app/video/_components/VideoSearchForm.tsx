@@ -1,7 +1,7 @@
 'use client'
 
 import { type FormEvent, useId, useState } from 'react'
-import type { YoutubeSearchQuery } from '@/domains/video/model/videoTypes'
+import type { YoutubeSearchQuery } from '@/domains/video/model/types'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
 import { BiSearch, RiQuestionLine } from '@/shared/ui/icons'
 import Popup from '@/shared/ui/molecules/Popup'

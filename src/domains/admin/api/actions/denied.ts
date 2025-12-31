@@ -1,20 +1,20 @@
 'use server'
 
-import {
-	AdminDeniedBookingQuerySchema,
-	AdminDeniedBookingResponseSchema,
-} from '@ashitaboliff/types/modules/booking/schema/denied'
-import type {
-	AdminDeniedBookingResponse,
-	AdminDeniedSort,
-} from '@ashitaboliff/types/modules/booking/types'
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
 import {
 	getCreateDeniedBookingErrorMessage,
 	getDeleteDeniedBookingErrorMessage,
 } from '@/domains/admin/api/adminErrorMessages'
-import type { DeniedBookingFormValues } from '@/domains/admin/model/adminTypes'
+import type { DeniedBookingFormValues } from '@/domains/admin/model/types'
+import {
+	AdminDeniedBookingQuerySchema,
+	AdminDeniedBookingResponseSchema,
+} from '@/domains/booking/model/schema'
+import type {
+	AdminDeniedBookingResponse,
+	AdminDeniedSort,
+} from '@/domains/booking/model/types'
 import {
 	buildFlashMessageValue,
 	FLASH_MESSAGE_COOKIE_OPTIONS,

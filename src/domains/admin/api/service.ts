@@ -1,5 +1,5 @@
 import { eachDayOfInterval, getDay } from 'date-fns'
-import type { DeniedBookingFormValues } from '@/domains/admin/model/adminTypes'
+import type { DeniedBookingFormValues } from '@/domains/admin/model/types'
 import { failure } from '@/shared/lib/api/helper'
 import { toDateKey } from '@/shared/utils'
 import { StatusCode } from '@/types/response'

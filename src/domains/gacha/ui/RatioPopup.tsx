@@ -6,7 +6,7 @@ import {
 	type GachaCategoryConfig,
 	gachaConfigs,
 } from '@/domains/gacha/config/gachaConfig'
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+import type { RarityType } from '@/domains/gacha/model/types'
 import { gkktt } from '@/shared/lib/fonts'
 import { getImageUrl } from '@/shared/lib/r2'
 import { Tab, Tabs } from '@/shared/ui/atoms/Tabs'

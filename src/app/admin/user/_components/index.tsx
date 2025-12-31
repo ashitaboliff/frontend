@@ -1,10 +1,5 @@
 'use client'
 
-import type {
-	UserAccountRole,
-	UserForAdmin,
-	UserListForAdmin,
-} from '@ashitaboliff/types/modules/user/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import type { AdminUserPageParams } from '@/app/admin/user/schema'
@@ -13,6 +8,11 @@ import {
 	updateUserRoleAction,
 } from '@/domains/admin/api/actions'
 import { AdminUserQueryOptions } from '@/domains/admin/query/adminUserQuery'
+import type {
+	AccountRole,
+	UserForAdmin,
+	UserListForAdmin,
+} from '@/domains/user/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
 import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
@@ -92,7 +92,7 @@ const AdminUserPage = ({ users, query, headers }: Props) => {
 	}, [actionFeedback, router, selectedUser])
 
 	const handleRoleChange = useCallback(
-		async (userId: string, role: UserAccountRole) => {
+		async (userId: string, role: AccountRole) => {
 			setIsActionLoading(true)
 			actionFeedback.clearFeedback()
 			try {

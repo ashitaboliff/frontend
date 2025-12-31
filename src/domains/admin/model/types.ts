@@ -1,10 +1,10 @@
-import type { AdminDeniedBookingQuery } from '@ashitaboliff/types/modules/booking/types'
 import type { z } from 'zod'
+import type { AdminDeniedBookingQuery } from '@/domains/booking/model/types'
 import type {
 	deniedBookingFormSchema,
 	deniedBookingTypeSchema,
 	padLockFormSchema,
-} from './adminSchema'
+} from './schema'
 
 export type DeniedBookingQuery = Omit<AdminDeniedBookingQuery, 'today'>
 

@@ -6,7 +6,7 @@ import {
 	deleteBandAction,
 	getUserBandsAction,
 } from '@/domains/band/api/bandActions'
-import type { BandDetails } from '@/domains/band/model/bandTypes'
+import type { BandDetails } from '@/domains/band/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { FaPlusCircle } from '@/shared/ui/icons'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'

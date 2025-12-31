@@ -2,19 +2,10 @@
 
 import { revalidateTag } from 'next/cache'
 import {
-	mapRawGacha,
-	mapRawGachaList,
-	type RawGachaData,
-} from '@/domains/gacha/api/dto'
-import {
 	getCreateGachaErrorMessage,
 	getGachaImageErrorMessage,
 } from '@/domains/gacha/api/gachaErrorMessages'
-import type {
-	GachaData,
-	GachaSort,
-	RarityType,
-} from '@/domains/gacha/model/gachaTypes'
+import type { Gacha, GachaSort, RarityType } from '@/domains/gacha/model/types'
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
@@ -33,9 +24,9 @@ export const getGachaByUserIdAction = async ({
 	page: number
 	perPage: number
 	sort: GachaSort
-}): Promise<ApiResponse<{ gacha: GachaData[]; totalCount: number }>> => {
+}): Promise<ApiResponse<{ gacha: Gacha[]; totalCount: number }>> => {
 	const res = await apiGet<{
-		gacha: RawGachaData[]
+		gacha: Gacha[]
 		totalCount: number
 	}>(`/gacha/users/${userId}`, {
 		searchParams: {
@@ -49,7 +40,7 @@ export const getGachaByUserIdAction = async ({
 	return mapSuccess(
 		res,
 		(data) => ({
-			gacha: mapRawGachaList(data.gacha),
+			gacha: data.gacha,
 			totalCount: data.totalCount ?? 0,
 		}),
 		'ガチャ情報の取得に失敗しました。',
@@ -62,9 +53,9 @@ export const getGachaByGachaSrcAction = async ({
 }: {
 	userId: string
 	gachaSrc: string
-}): Promise<ApiResponse<{ gacha: GachaData | null; totalCount: number }>> => {
+}): Promise<ApiResponse<{ gacha: Gacha | null; totalCount: number }>> => {
 	const res = await apiGet<{
-		gacha: RawGachaData | null
+		gacha: Gacha | null
 		totalCount: number
 	}>(`/gacha/users/${userId}/by-src`, {
 		searchParams: {
@@ -76,7 +67,7 @@ export const getGachaByGachaSrcAction = async ({
 	return mapSuccess(
 		res,
 		(data) => ({
-			gacha: data.gacha ? mapRawGacha(data.gacha) : null,
+			gacha: data.gacha ? data.gacha : null,
 			totalCount: data.totalCount ?? 0,
 		}),
 		'ガチャ情報の取得に失敗しました。',

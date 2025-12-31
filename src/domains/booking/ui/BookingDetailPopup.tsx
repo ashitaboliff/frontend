@@ -1,7 +1,7 @@
 'use client'
 
-import type { PublicBooking as Booking } from '@ashitaboliff/types/modules/booking/types'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { Booking } from '@/domains/booking/model/types'
 import AddBookingToCalendar from '@/domains/booking/ui/AddBookingToCalendar'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa, formatDateTimeJa } from '@/shared/utils/dateFormat'

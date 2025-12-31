@@ -1,11 +1,8 @@
 'use client'
 
-import type {
-	PlaylistDoc,
-	VideoDoc,
-} from '@ashitaboliff/types/modules/video/types'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { useRouter } from 'next/navigation'
+import type { PlaylistDoc, VideoDoc } from '@/domains/video/model/types'
 
 type Props = {
 	youtubeDetail: VideoDoc | PlaylistDoc

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import ProfileDisplay from '@/app/user/_components/ProfileDisplay'
-import type { Profile } from '@/domains/user/model/userTypes'
+import type { Profile } from '@/domains/user/model/types'
 import type { Session } from '@/types/session'
 import UserPageControls from './UserPageControls'
 

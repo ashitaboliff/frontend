@@ -17,8 +17,8 @@ import {
 	profileDefaultValues,
 	profileSchema,
 	toProfileFormValues,
-} from '@/domains/user/model/profileSchema'
-import type { Profile } from '@/domains/user/model/userTypes'
+} from '@/domains/user/model/schema'
+import type { Profile } from '@/domains/user/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { logError } from '@/shared/utils/logger'
 import { StatusCode } from '@/types/response'

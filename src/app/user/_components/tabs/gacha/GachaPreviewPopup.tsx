@@ -2,13 +2,13 @@
 
 import { useId } from 'react'
 import { gachaConfigs } from '@/domains/gacha/config/gachaConfig'
-import type { GachaData } from '@/domains/gacha/model/gachaTypes'
+import type { Gacha } from '@/domains/gacha/model/types'
 import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa } from '@/shared/utils/dateFormat'
 
 type Props = {
-	readonly gachaItem: GachaData
+	readonly gachaItem: Gacha
 	readonly count: number
 	readonly open: boolean
 	readonly onClose: () => void

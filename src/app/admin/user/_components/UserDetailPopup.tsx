@@ -7,7 +7,7 @@ import {
 	PartMap,
 	RoleMap,
 	type UserDetail,
-} from '@/domains/user/model/userTypes'
+} from '@/domains/user/model/types'
 import FeedbackMessage, {
 	type MessageSource,
 } from '@/shared/ui/molecules/FeedbackMessage'

@@ -10,8 +10,8 @@ import {
 import {
 	type BandFormValues,
 	bandFormSchema,
-} from '@/domains/band/model/bandSchema'
-import type { BandDetails } from '@/domains/band/model/bandTypes'
+} from '@/domains/band/model/schema'
+import type { BandDetails } from '@/domains/band/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'

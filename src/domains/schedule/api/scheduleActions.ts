@@ -5,10 +5,7 @@ import {
 	type RawUserWithName,
 } from '@/domains/schedule/api/dto'
 import { getCreateScheduleErrorMessage } from '@/domains/schedule/api/scheduleErrorMessages'
-import type {
-	Schedule,
-	UserWithName,
-} from '@/domains/schedule/model/scheduleTypes'
+import type { Schedule, UserWithName } from '@/domains/schedule/model/types'
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
 import { createdResponse, mapSuccess } from '@/shared/lib/api/helper'
 import { type ApiResponse, StatusCode } from '@/types/response'

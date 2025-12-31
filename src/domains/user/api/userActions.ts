@@ -1,7 +1,7 @@
 'use server'
 
 import { getUserErrorMessage } from '@/domains/user/api/userErrorMessages'
-import type { Profile, UserForSelect } from '@/domains/user/model/userTypes'
+import type { Profile, UserForSelect } from '@/domains/user/model/types'
 import { apiGet } from '@/shared/lib/api/crud'
 import { okResponse } from '@/shared/lib/api/helper'
 import type { ApiResponse } from '@/types/response'

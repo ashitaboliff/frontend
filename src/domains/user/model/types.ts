@@ -1,18 +1,12 @@
-import type { UserDetailForAdminSchema } from '@ashitaboliff/types/modules/user/schema'
+import type {
+	UserAccountRole as AccountRole,
+	UserPart as Part,
+	UserRole as Role,
+} from '@ashitaboliff/types/modules/user/types'
 import type { z } from 'zod'
-
-export type Role = 'GRADUATE' | 'STUDENT'
+import type { UserDetailForAdminSchema } from './schema'
 
 type RoleEnum = '卒業生' | '現役生'
-
-export type Part =
-	| 'BACKING_GUITAR'
-	| 'LEAD_GUITAR'
-	| 'BASS'
-	| 'DRUMS'
-	| 'KEYBOARD'
-	| 'VOCAL'
-	| 'OTHER'
 
 type PartEnum =
 	| 'バッキングギター'
@@ -22,8 +16,6 @@ type PartEnum =
 	| 'キーボード'
 	| 'ボーカル'
 	| 'その他'
-
-export type AccountRole = 'ADMIN' | 'USER' | 'TOPADMIN'
 
 export const RoleMap: Record<Role, RoleEnum> = {
 	GRADUATE: '卒業生',
@@ -62,42 +54,21 @@ export const AccountRoleMap: Record<AccountRole, string> = {
 	TOPADMIN: '管理者',
 }
 
-export interface Profile {
-	id: string
-	userId: string
-	name?: string | null
-	studentId?: string | null
-	expected?: string | null
-	createdAt?: Date
-	updatedAt?: Date
-	role: Role
-	part: Part[]
-	isDeleted?: boolean
-}
-
-export interface User {
-	id: string
-	userId: string | null
-	name: string | null
-	role: AccountRole | null
-	password: string | null
-	email: string | null
-	emailVerified: Date | null
-	image: string | null
-	createdAt: Date
-	updatedAt: Date
-}
-
 export type UserDetail = z.infer<typeof UserDetailForAdminSchema>
 
-export interface UserForSelectProfile {
-	name?: string | null
-	part?: Part[] | null
-}
-
-export interface UserForSelect {
-	id: string
-	name: string | null
-	image?: string | null
-	profile?: UserForSelectProfile | null
-}
+export type {
+	ProfileInput,
+	ProfileModel as Profile,
+	ProfileResponse,
+	UpdateUserRole,
+	UserAccountRole as AccountRole,
+	UserForAdmin,
+	UserForSelect,
+	UserListForAdmin,
+	UserModel,
+	UserPart as Part,
+	UserQuery,
+	UserRole as Role,
+	UserSelectList,
+	UserWithProfile,
+} from '@ashitaboliff/types/modules/user/types'

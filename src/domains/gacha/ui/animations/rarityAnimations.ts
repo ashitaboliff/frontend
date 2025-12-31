@@ -1,5 +1,5 @@
 import gsap from 'gsap'
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+import type { RarityType } from '@/domains/gacha/model/types'
 
 export interface AnimationContext {
 	timeline: gsap.core.Timeline

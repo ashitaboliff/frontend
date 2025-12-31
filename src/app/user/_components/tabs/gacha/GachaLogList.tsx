@@ -2,14 +2,14 @@
 
 import { useMemo } from 'react'
 import { useSignedGachaImages } from '@/domains/gacha/hooks/useSignedGachaImages'
-import type { GachaData } from '@/domains/gacha/model/gachaTypes'
+import type { Gacha } from '@/domains/gacha/model/types'
 import { Image } from '@/shared/ui/atoms/ImageWithFallback'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import type { FeedbackMessageType } from '@/types/feedback'
 import GachaLogsSkeleton from './GachaLogsSkeleton'
 
 type Props = {
-	readonly gachaItems?: GachaData[]
+	readonly gachaItems?: Gacha[]
 	readonly logsPerPage: number
 	readonly isLoading: boolean
 	readonly error?: FeedbackMessageType | null

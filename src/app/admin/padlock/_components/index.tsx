@@ -1,6 +1,5 @@
 'use client'
 
-import type { PublicPadLock as PadLock } from '@ashitaboliff/types/modules/auth/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import PadlockCreateDialog from '@/app/admin/padlock/_components/PadlockCreateDialog'
@@ -11,7 +10,8 @@ import {
 	createPadLockAction,
 	deletePadLockAction,
 } from '@/domains/admin/api/actions'
-import type { PadLockFormValues } from '@/domains/admin/model/adminTypes'
+import type { PadLockFormValues } from '@/domains/admin/model/types'
+import type { PadLock } from '@/domains/auth/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
 import Pagination from '@/shared/ui/atoms/Pagination'

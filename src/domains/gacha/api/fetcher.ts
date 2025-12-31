@@ -1,11 +1,8 @@
 import {
 	GachaListResponseSchema,
 	GachaQuerySchema,
-} from '@ashitaboliff/types/modules/gacha/schema'
-import type {
-	GachaListResponse,
-	GachaSort,
-} from '@ashitaboliff/types/modules/gacha/types'
+} from '@/domains/gacha/model/schema'
+import type { GachaListResponse, GachaSort } from '@/domains/gacha/model/types'
 import { bffGet } from '@/shared/lib/api/bff'
 
 export const GACHA_LOGS_SWR_KEY = 'gacha-logs'

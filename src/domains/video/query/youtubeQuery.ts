@@ -1,4 +1,4 @@
-import type { YoutubeSearchQuery } from '@ashitaboliff/types/modules/video/types'
+import type { YoutubeSearchQuery } from '@/domains/video/model/types'
 import { buildQueryString, type QueryOptions } from '@/shared/utils/queryParams'
 
 export const createYoutubeQueryOptions = (

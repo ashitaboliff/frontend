@@ -1,4 +1,4 @@
-import type { DeniedBookingQuery } from '@/domains/admin/model/adminTypes'
+import type { DeniedBookingQuery } from '@/domains/admin/model/types'
 import type { QueryOptions } from '@/shared/utils/queryParams'
 
 export const DENIED_BOOKING_DEFAULT_QUERY: DeniedBookingQuery = {

@@ -1,7 +1,7 @@
 'use client'
 
-import type { DeniedBooking } from '@ashitaboliff/types/modules/booking/types'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { DeniedBooking } from '@/domains/booking/model/types'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 import { formatDateJa } from '@/shared/utils/dateFormat'

@@ -7,8 +7,8 @@ import GachaLogsSkeleton from '@/app/user/_components/tabs/gacha/GachaLogsSkelet
 import ProfileDetailsTab from '@/app/user/_components/tabs/profile/ProfileDetailsTab'
 import type { UserPageTabId } from '@/app/user/schema'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
-import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
-import type { Profile } from '@/domains/user/model/userTypes'
+import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
+import type { Profile } from '@/domains/user/model/types'
 import { Tab, Tabs } from '@/shared/ui/atoms/Tabs'
 import {
 	GiCardRandom,

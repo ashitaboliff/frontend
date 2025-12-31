@@ -1,7 +1,7 @@
 'use client'
 
-import type { UserForAdmin } from '@ashitaboliff/types/modules/user/types'
-import { AccountRoleMap, RoleMap } from '@/domains/user/model/userTypes'
+import type { UserForAdmin } from '@/domains/user/model/types'
+import { AccountRoleMap, RoleMap } from '@/domains/user/model/types'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 
 type Props = {

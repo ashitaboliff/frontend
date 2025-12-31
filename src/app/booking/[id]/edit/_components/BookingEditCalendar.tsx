@@ -1,9 +1,5 @@
 'use client'
 
-import type {
-	PublicBooking as Booking,
-	BookingResponse,
-} from '@ashitaboliff/types/modules/booking/types'
 import { addDays } from 'date-fns'
 import { useMemo } from 'react'
 import type { UseFormSetValue } from 'react-hook-form'
@@ -13,6 +9,7 @@ import {
 	DENIED_BOOKING,
 } from '@/domains/booking/constants'
 import type { BookingEditFormValues } from '@/domains/booking/model/schema'
+import type { Booking, BookingResponse } from '@/domains/booking/model/types'
 import {
 	AvailableCell,
 	BookingInfoCell,

@@ -3,7 +3,7 @@ import {
 	type GachaVersionConfig,
 	gachaConfigs,
 } from '@/domains/gacha/config/gachaConfig'
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+import type { RarityType } from '@/domains/gacha/model/types'
 
 /**
  * ガチャで獲得可能なアイテムを表すクラス

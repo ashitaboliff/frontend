@@ -1,4 +1,4 @@
-import type { AccountRole } from '@/domains/user/model/userTypes'
+import type { AccountRole } from '@/domains/user/model/types'
 import type { Session } from '@/types/session'
 
 export type AuthStatus = 'guest' | 'invalid' | 'needs-profile' | 'signed-in'
@@ -21,3 +21,5 @@ export type AuthDetails = {
 	issue: AuthIssue
 	error?: string
 }
+
+export type { PublicPadLock as PadLock } from '@ashitaboliff/types/modules/auth/types'

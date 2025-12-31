@@ -1,8 +1,8 @@
 'use client'
 
-import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
 import { usePathname, useRouter } from 'next/navigation'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { Booking } from '@/domains/booking/model/types'
 import AddBookingToCalendar from '@/domains/booking/ui/AddBookingToCalendar'
 import BookingDetailCard from '@/domains/booking/ui/BookingDetailCard'
 import { Ads } from '@/shared/ui/ads'
@@ -10,7 +10,7 @@ import ShareToLineButton from '@/shared/ui/molecules/ShareToLineButton'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 
 type Props = {
-	readonly booking: PublicBooking
+	readonly booking: Booking
 }
 
 const BookingDetail = ({ booking }: Props) => {

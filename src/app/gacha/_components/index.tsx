@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
+import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import GachaController from '@/domains/gacha/ui/GachaController'
 import { Ads, CreepingOverlayAd } from '@/shared/ui/ads'
 import type { AdPlacement } from '@/shared/ui/ads/Ads'

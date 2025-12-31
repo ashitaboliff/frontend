@@ -1,16 +1,16 @@
 'use client'
 
-import type {
-	AdminDeniedBookingResponse,
-	AdminDeniedSort,
-	DeniedBooking,
-} from '@ashitaboliff/types/modules/booking/types'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { useSWRConfig } from 'swr'
 import { deleteDeniedBookingAction } from '@/domains/admin/api/actions/denied'
-import type { DeniedBookingQuery } from '@/domains/admin/model/adminTypes'
+import type { DeniedBookingQuery } from '@/domains/admin/model/types'
 import { DeniedBookingQueryOptions } from '@/domains/admin/query/deniedBookingQuery'
+import type {
+	AdminDeniedBookingResponse,
+	AdminDeniedSort,
+	DeniedBooking,
+} from '@/domains/booking/model/types'
 import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 import { FLASH_MESSAGE_KEYS } from '@/shared/constants/flashMessage'
 import { useFeedback } from '@/shared/hooks/useFeedback'

@@ -1,6 +1,5 @@
 'use client'
 
-import type { GachaListResponse } from '@ashitaboliff/types/modules/gacha/types'
 import { useEffect } from 'react'
 import useSWR from 'swr'
 import GachaLogList from '@/app/user/_components/tabs/gacha/GachaLogList'
@@ -10,7 +9,7 @@ import {
 	gachaLogsFetcher,
 } from '@/domains/gacha/api/fetcher'
 import { useGachaPreview } from '@/domains/gacha/hooks/useGachaPreview'
-import type { GachaSort } from '@/domains/gacha/model/gachaTypes'
+import type { GachaListResponse, GachaSort } from '@/domains/gacha/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
 import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'

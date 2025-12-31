@@ -1,12 +1,12 @@
 'use client'
 
-import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
 import { useMemo } from 'react'
 import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { Booking } from '@/domains/booking/model/types'
 import AddToCalendarModal from '@/shared/ui/organisms/AddToCalendarModal'
 
 type BookingCalendarTarget = Pick<
-	PublicBooking,
+	Booking,
 	'bookingDate' | 'bookingTime' | 'registName' | 'name'
 >
 

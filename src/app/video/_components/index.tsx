@@ -1,11 +1,11 @@
 'use client'
 
+import { Fragment, useMemo } from 'react'
+import { useYoutubeSearchQuery } from '@/domains/video/hooks/useYoutubeSearchQuery'
 import type {
 	SearchResponse,
 	YoutubeSearchQuery,
-} from '@ashitaboliff/types/modules/video/types'
-import { Fragment, useMemo } from 'react'
-import { useYoutubeSearchQuery } from '@/domains/video/hooks/useYoutubeSearchQuery'
+} from '@/domains/video/model/types'
 import { buildYoutubeQueryString } from '@/domains/video/query/youtubeQuery'
 import { useAdInsertion } from '@/shared/hooks/useAdInsertion'
 import { gkktt } from '@/shared/lib/fonts'

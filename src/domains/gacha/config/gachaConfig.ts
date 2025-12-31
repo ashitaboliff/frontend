@@ -1,4 +1,4 @@
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+import type { RarityType } from '@/domains/gacha/model/types'
 
 export const MAX_GACHA_PLAYS_PER_DAY = 3
 

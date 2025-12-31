@@ -13,8 +13,8 @@ import type {
 	UpdateBandMemberResponse,
 	UpdateBandResponse,
 	UserWithProfile,
-} from '@/domains/band/model/bandTypes'
-import type { Part } from '@/domains/user/model/userTypes'
+} from '@/domains/band/model/types'
+import type { Part } from '@/domains/user/model/types'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import {
 	createdResponse,

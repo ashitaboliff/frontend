@@ -4,7 +4,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { type CSSProperties, useId, useMemo, useRef, useState } from 'react'
 import { GachaRarityMap } from '@/domains/gacha/config/gachaConfig'
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+import type { RarityType } from '@/domains/gacha/model/types'
 import {
 	type AnimationContext,
 	rarityAnimations,

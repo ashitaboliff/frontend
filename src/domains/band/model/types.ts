@@ -1,9 +1,7 @@
-import type { Part } from '@/domains/user/model/userTypes'
+import type { Part } from '@/domains/user/model/types'
 import type { ApiResponse } from '@/types/response'
 
-export type { Part }
-
-export interface BandMemberUserSummary {
+export type BandMemberUserSummary = {
 	id: string
 	name: string | null
 	image: string | null
@@ -17,7 +15,7 @@ export interface BandMemberUserSummary {
 	} | null
 }
 
-export interface BandMemberDetails {
+export type BandMemberDetails = {
 	id: string
 	bandId: string
 	userId: string
@@ -27,7 +25,7 @@ export interface BandMemberDetails {
 	user: BandMemberUserSummary
 }
 
-export interface BandDetails {
+export type BandDetails = {
 	id: string
 	name: string
 	description?: string | null
@@ -37,7 +35,7 @@ export interface BandDetails {
 	members: BandMemberDetails[]
 }
 
-export interface UserWithProfile {
+export type UserWithProfile = {
 	id: string
 	name: string | null
 	image: string | null
@@ -51,11 +49,11 @@ export interface UserWithProfile {
 	} | null
 }
 
-export interface BandFormData {
+export type BandFormData = {
 	name: string
 }
 
-export interface BandMemberFormData {
+export type BandMemberFormData = {
 	userId: string
 	part: Part
 }
@@ -66,3 +64,5 @@ export type DeleteBandResponse = ApiResponse<null>
 export type AddBandMemberResponse = ApiResponse<null>
 export type UpdateBandMemberResponse = ApiResponse<null>
 export type RemoveBandMemberResponse = ApiResponse<null>
+
+export * from '@ashitaboliff/types/modules/band/types'

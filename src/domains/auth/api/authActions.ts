@@ -7,10 +7,10 @@ import {
 	getPadlockErrorMessage,
 	getUpdateProfileErrorMessage,
 } from '@/domains/auth/api/authErrorMessages'
-import type { AuthDetails } from '@/domains/auth/model/authTypes'
+import type { AuthDetails } from '@/domains/auth/model/types'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
-import type { ProfileFormValues } from '@/domains/user/model/profileSchema'
-import type { Profile } from '@/domains/user/model/userTypes'
+import type { ProfileFormValues } from '@/domains/user/model/schema'
+import type { Profile } from '@/domains/user/model/types'
 import { apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import { createdResponse, failure, okResponse } from '@/shared/lib/api/helper'
 import { type ApiResponse, StatusCode } from '@/types/response'

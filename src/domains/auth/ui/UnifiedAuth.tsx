@@ -2,7 +2,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { getAuthDetails } from '@/domains/auth/api/authActions'
-import type { AuthDetails } from '@/domains/auth/model/authTypes'
+import type { AuthDetails } from '@/domains/auth/model/types'
 import {
 	type AuthRedirectReason,
 	buildAuthRedirectBouncePath,
@@ -11,7 +11,7 @@ import {
 	getSafeRedirectFrom,
 	resolveRequestPathFromHeaders,
 } from '@/domains/auth/utils/authRedirect'
-import type { AccountRole } from '@/domains/user/model/userTypes'
+import type { AccountRole } from '@/domains/user/model/types'
 import type { Session } from '@/types/session'
 
 type AuthDetailsWithSession = AuthDetails & { session: Session }

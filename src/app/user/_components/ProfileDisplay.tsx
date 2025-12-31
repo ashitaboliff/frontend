@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import { type Profile, RoleMap } from '@/domains/user/model/userTypes'
-import InstIcon from '@/shared/ui/atoms/InstIcon'
+import { type Profile, RoleMap } from '@/domains/user/model/types'
+import InstIcon from '@/domains/user/ui/InstIcon'
 import Card from '@/shared/ui/molecules/Card'
 import type { Session } from '@/types/session'
 

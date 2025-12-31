@@ -1,6 +1,6 @@
 'use client'
 
-import type { PublicBooking as Booking } from '@ashitaboliff/types/modules/booking/types'
+import type { Booking } from '@/domains/booking/model/types'
 import type { Session } from '@/types/session'
 import BookingEditAuthForm from './BookingEditAuth'
 import { BookingEditProvider, useBookingEdit } from './BookingEditContext'

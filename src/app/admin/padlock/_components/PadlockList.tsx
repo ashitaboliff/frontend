@@ -1,6 +1,6 @@
 'use client'
 
-import type { PublicPadLock as PadLock } from '@ashitaboliff/types/modules/auth/types'
+import type { PadLock } from '@/domains/auth/model/types'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'

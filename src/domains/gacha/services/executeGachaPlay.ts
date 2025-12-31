@@ -1,13 +1,13 @@
 'use client'
 
-import { toSignedImageKey } from '@/domains/gacha/api/dto'
 import {
 	createUserGachaResultAction,
 	getSignedUrlForGachaImageAction,
-} from '@/domains/gacha/api/gachaActions'
+} from '@/domains/gacha/api/actions'
 import { invalidateGachaPreviewCache } from '@/domains/gacha/hooks/useGachaPreview'
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+import type { RarityType } from '@/domains/gacha/model/types'
 import Gacha, { type GachaItem } from '@/domains/gacha/services/gacha'
+import { toSignedImageKey } from '@/domains/gacha/utils'
 
 export type ExecuteGachaPlayErrorType =
 	| 'missing-src'

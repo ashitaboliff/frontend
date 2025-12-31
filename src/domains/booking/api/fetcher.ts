@@ -1,19 +1,19 @@
-import {
-	BookingByUserResponseSchema,
-	BookingResponseSchema,
-	BookingUserQuerySchema,
-	GetBookingQuerySchema,
-} from '@ashitaboliff/types/modules/booking/schema/booking'
-import type {
-	BookingByUserResponse,
-	BookingRange,
-	BookingResponse,
-} from '@ashitaboliff/types/modules/booking/types'
 import { addDays } from 'date-fns'
 import {
 	BOOKING_CALENDAR_SWR_KEY,
 	BOOKING_TIME_LIST,
 } from '@/domains/booking/constants'
+import {
+	BookingByUserResponseSchema,
+	BookingResponseSchema,
+	BookingUserQuerySchema,
+	GetBookingQuerySchema,
+} from '@/domains/booking/model/schema'
+import type {
+	BookingByUserResponse,
+	BookingRange,
+	BookingResponse,
+} from '@/domains/booking/model/types'
 import { bffGet } from '@/shared/lib/api/bff'
 import { toDateKey } from '@/shared/utils'
 

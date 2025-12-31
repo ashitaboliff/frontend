@@ -1,5 +1,13 @@
 'use server'
 
+import { revalidateTag } from 'next/cache'
+import { cookies } from 'next/headers'
+import {
+	getAuthBookingErrorMessage,
+	getCreateBookingErrorMessage,
+	getDeleteBookingErrorMessage,
+	getUpdateBookingErrorMessage,
+} from '@/domains/booking/api/bookingErrorMessages'
 import {
 	BookingAccessTokenResponseSchema,
 	BookingByUserResponseSchema,
@@ -11,20 +19,12 @@ import {
 	BookingUpdateSchema,
 	BookingUserQuerySchema,
 	PublicBookingSchema,
-} from '@ashitaboliff/types/modules/booking/schema/booking'
+} from '@/domains/booking/model/schema'
 import type {
-	BookingAccessTokenResponse,
+	Booking,
+	BookingAccessGrant,
 	BookingByUserResponse,
-	PublicBooking,
-} from '@ashitaboliff/types/modules/booking/types'
-import { revalidateTag } from 'next/cache'
-import { cookies } from 'next/headers'
-import {
-	getAuthBookingErrorMessage,
-	getCreateBookingErrorMessage,
-	getDeleteBookingErrorMessage,
-	getUpdateBookingErrorMessage,
-} from '@/domains/booking/api/bookingErrorMessages'
+} from '@/domains/booking/model/types'
 import {
 	buildFlashMessageValue,
 	FLASH_MESSAGE_COOKIE_OPTIONS,
@@ -43,12 +43,12 @@ import { logError } from '@/shared/utils/logger'
 import { type ApiResponse, StatusCode } from '@/types/response'
 
 type BookingPayload = Pick<
-	PublicBooking,
+	Booking,
 	'bookingDate' | 'bookingTime' | 'registName' | 'name'
 >
 
 export const getAllBookingAction = async (): Promise<
-	ApiResponse<PublicBooking[]>
+	ApiResponse<Booking[]>
 > => {
 	const res = await apiGet('/booking/logs', {
 		next: { revalidate: 60 * 60, tags: ['booking'] },
@@ -66,7 +66,7 @@ export const getAllBookingAction = async (): Promise<
 
 export const getBookingByIdAction = async (
 	bookingId: string,
-): Promise<ApiResponse<PublicBooking>> => {
+): Promise<ApiResponse<Booking>> => {
 	try {
 		const res = await apiGet(`/booking/${bookingId}`, {
 			next: {
@@ -250,7 +250,7 @@ export const authBookingAction = async ({
 }: {
 	bookingId: string
 	password: string
-}): Promise<ApiResponse<BookingAccessTokenResponse>> => {
+}): Promise<ApiResponse<BookingAccessGrant>> => {
 	const res = await apiPost(`/booking/${bookingId}/verify`, {
 		body: { password },
 		schemas: {

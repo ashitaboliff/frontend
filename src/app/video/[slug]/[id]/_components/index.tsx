@@ -1,18 +1,15 @@
 'use client'
 
-import type {
-	PlaylistItem,
-	VideoItem,
-} from '@ashitaboliff/types/modules/video/types'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { useRouter } from 'next/navigation'
+import type { PlaylistDetail, VideoDetail } from '@/domains/video/model/types'
 import { useWindowOpen } from '@/shared/hooks/useBrowserApis'
 import { gkktt } from '@/shared/lib/fonts'
 import { HiOutlineExternalLink } from '@/shared/ui/icons'
 
 type Props =
-	| { liveOrBand: 'live'; detail: PlaylistItem }
-	| { liveOrBand: 'band'; detail: VideoItem; playlist: PlaylistItem }
+	| { liveOrBand: 'live'; detail: PlaylistDetail }
+	| { liveOrBand: 'band'; detail: VideoDetail; playlist: PlaylistDetail }
 
 const VideoDetailPage = (props: Props) => {
 	const router = useRouter()

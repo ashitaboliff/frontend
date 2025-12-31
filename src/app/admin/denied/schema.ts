@@ -1,6 +1,6 @@
-import { AdminDeniedSortSchema } from '@ashitaboliff/types/modules/booking/schema/denied'
 import { z } from 'zod'
 import { DENIED_BOOKING_DEFAULT_QUERY } from '@/domains/admin/query/deniedBookingQuery'
+import { AdminDeniedSortSchema } from '@/domains/booking/model/schema'
 
 export const AdminDeniedPageParamsSchema = z.object({
 	page: z.coerce

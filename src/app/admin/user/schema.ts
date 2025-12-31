@@ -1,6 +1,6 @@
-import { SortSchema } from '@ashitaboliff/types/modules/shared/schema'
 import { z } from 'zod'
 import { ADMIN_USER_DEFAULT_QUERY } from '@/domains/admin/query/adminUserQuery'
+import { SortSchema } from '@/domains/shared/model/schema'
 
 export const AdminUserPageParamsSchema = z.looseObject({
 	page: z.coerce

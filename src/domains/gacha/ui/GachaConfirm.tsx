@@ -2,7 +2,7 @@
 
 import gsap from 'gsap'
 import { useLayoutEffect, useRef, useState } from 'react'
-import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
+import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import type { PackSelectionPayload } from '@/domains/gacha/ui/GachaSelectPopup'
 import { Image } from '@/shared/ui/atoms/ImageWithFallback'
 import { TbArrowBackUp } from '@/shared/ui/icons'

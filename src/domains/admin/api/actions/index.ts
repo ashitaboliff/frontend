@@ -1,20 +1,5 @@
 'use server'
 
-import {
-	PadLockCreateSchema,
-	PadLockSchema,
-} from '@ashitaboliff/types/modules/auth/schema'
-import type { PublicPadLock } from '@ashitaboliff/types/modules/auth/types'
-import {
-	UpdateUserRoleSchema,
-	UserListForAdminResponseSchema,
-	UserQuerySchema,
-} from '@ashitaboliff/types/modules/user/schema'
-import type {
-	UserAccountRole,
-	UserListForAdmin,
-	UserQuery,
-} from '@ashitaboliff/types/modules/user/types'
 import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import {
@@ -23,6 +8,18 @@ import {
 	getDeleteUserErrorMessage,
 	getUpdateUserRoleErrorMessage,
 } from '@/domains/admin/api/adminErrorMessages'
+import { PadLockCreateSchema, PadLockSchema } from '@/domains/auth/model/schema'
+import type { PadLock } from '@/domains/auth/model/types'
+import {
+	UpdateUserRoleSchema,
+	UserListForAdminResponseSchema,
+	UserQuerySchema,
+} from '@/domains/user/model/schema'
+import type {
+	AccountRole,
+	UserListForAdmin,
+	UserQuery,
+} from '@/domains/user/model/types'
 import {
 	createdResponse,
 	noContentResponse,
@@ -33,7 +30,7 @@ import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/v2/crud'
 import { type ApiResponse, StatusCode } from '@/types/response'
 
 export const getAllPadLocksAction = async (): Promise<
-	ApiResponse<PublicPadLock[]>
+	ApiResponse<PadLock[]>
 > => {
 	const res = await apiGet('/auth/admin/padlocks', {
 		next: { revalidate: 6 * 30 * 24 * 60 * 60, tags: ['padlocks'] },
@@ -97,7 +94,7 @@ export const updateUserRoleAction = async ({
 	role,
 }: {
 	id: string
-	role: UserAccountRole
+	role: AccountRole
 }): Promise<ApiResponse<null>> => {
 	const res = await apiPut(`/users/${id}/role`, {
 		body: { role },
