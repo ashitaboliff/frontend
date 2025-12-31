@@ -349,7 +349,7 @@ export default function MemberManagementModal({
 											onClick={() => {
 												setSelectedUserForAdd(user)
 												setSearchResults([])
-												setSearchQuery(user.name || user.userId || '')
+												setSearchQuery(user.name || user.id || '')
 											}}
 											className="flex w-full items-center gap-2 rounded-md p-2 text-left hover:bg-base-300"
 										>
@@ -361,7 +361,7 @@ export default function MemberManagementModal({
 													height={32}
 													className="rounded-full"
 												/>
-												<span>{user.name || user.userId}</span>
+												<span>{user.name || user.id}</span>
 												{user.profile?.part?.length ? (
 													<span className="text-xs opacity-70">
 														({user.profile.part.join(', ')})
@@ -380,8 +380,7 @@ export default function MemberManagementModal({
 							<div className="grow">
 								<div className="label">
 									<span className="label-text">
-										選択中:{' '}
-										{selectedUserForAdd.name || selectedUserForAdd.userId}
+										選択中: {selectedUserForAdd.name || selectedUserForAdd.id}
 									</span>
 								</div>
 								<SelectField
@@ -444,7 +443,7 @@ export default function MemberManagementModal({
 										/>
 										<div>
 											<span className="font-medium">
-												{member.user.name || member.user.userId}
+												{member.user.name || member.user.id}
 											</span>
 											{editingMember?.id === member.id ? (
 												<SelectField
@@ -514,7 +513,7 @@ export default function MemberManagementModal({
 											onClick={() =>
 												handleRemoveMember(
 													member.id,
-													member.user.name || member.user.userId,
+													member.user.name || member.user.id,
 												)
 											}
 											className="btn btn-sm btn-outline btn-error"

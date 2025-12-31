@@ -1,6 +1,6 @@
 import ScheduleCreatePage from '@/app/schedule/new/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
-import { getUserIdWithNames } from '@/domains/schedule/api/scheduleActions'
+import { getUserIdWithNames } from '@/domains/schedule/api/actions'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { logError } from '@/shared/utils/logger'
 

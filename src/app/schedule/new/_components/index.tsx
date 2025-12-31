@@ -5,7 +5,7 @@ import { eachDayOfInterval } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
-import { createScheduleAction } from '@/domains/schedule/api/scheduleActions'
+import { createScheduleAction } from '@/domains/schedule/api/actions'
 import {
 	type ScheduleCreateFormInput,
 	type ScheduleCreateFormValues,

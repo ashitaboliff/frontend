@@ -5,6 +5,17 @@ import {
 	getRemoveMemberErrorMessage,
 	getUpdateBandErrorMessage,
 } from '@/domains/band/api/errorMessages'
+import {
+	BandCreateResponseSchema,
+	BandCreateSchema,
+	BandListSchema,
+	BandMemberCreateSchema,
+	BandMemberUpdateSchema,
+	BandSchema,
+	BandSearchQuerySchema,
+	BandSearchResultSchema,
+	BandUpdateSchema,
+} from '@/domains/band/model/schema'
 import type {
 	AddBandMemberResponse,
 	BandDetails,
@@ -14,21 +25,23 @@ import type {
 	UpdateBandResponse,
 	UserWithProfile,
 } from '@/domains/band/model/types'
+import { UserPartSchema } from '@/domains/user/model/schema'
 import type { Part } from '@/domains/user/model/types'
-import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
 	noContentResponse,
 	okResponse,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
+import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/v2/crud'
 import { type ApiResponse, StatusCode } from '@/types/response'
 
 export const getBandDetailsAction = async (
 	bandId: string,
 ): Promise<ApiResponse<BandDetails>> => {
-	const res = await apiGet<BandDetails>(`/band/${bandId}`, {
+	const res = await apiGet(`/band/${bandId}`, {
 		next: { revalidate: 60, tags: ['bands', `band:${bandId}`] },
+		schemas: { response: BandSchema },
 	})
 
 	if (!res.ok) {
@@ -41,8 +54,9 @@ export const getBandDetailsAction = async (
 export const getUserBandsAction = async (): Promise<
 	ApiResponse<BandDetails[]>
 > => {
-	const res = await apiGet<BandDetails[]>('/band/me', {
+	const res = await apiGet('/band/me', {
 		next: { revalidate: 30, tags: ['band-me'] },
+		schemas: { response: BandListSchema },
 	})
 
 	if (!res.ok) {
@@ -56,8 +70,12 @@ export const createBandAction = async (
 	formData: FormData,
 ): Promise<CreateBandResponse> => {
 	const name = String(formData.get('name') ?? '').trim()
-	const res = await apiPost<{ id: string }>('/band', {
+	const res = await apiPost('/band', {
 		body: { name },
+		schemas: {
+			body: BandCreateSchema,
+			response: BandCreateResponseSchema,
+		},
 	})
 
 	if (!res.ok) {
@@ -91,8 +109,9 @@ export const updateBandAction = async (
 	formData: FormData,
 ): Promise<UpdateBandResponse> => {
 	const name = String(formData.get('name') ?? '').trim()
-	const res = await apiPut<UpdateBandResponse>(`/band/${bandId}`, {
+	const res = await apiPut(`/band/${bandId}`, {
 		body: { name },
+		schemas: { body: BandUpdateSchema },
 	})
 
 	if (!res.ok) {
@@ -117,7 +136,7 @@ export const updateBandAction = async (
 export const deleteBandAction = async (
 	bandId: string,
 ): Promise<ApiResponse<null>> => {
-	const res = await apiDelete<null>(`/band/${bandId}`)
+	const res = await apiDelete(`/band/${bandId}`)
 
 	if (!res.ok) {
 		return {
@@ -134,8 +153,9 @@ export const addBandMemberAction = async (
 	userId: string,
 	part: Part,
 ): Promise<AddBandMemberResponse> => {
-	const res = await apiPost<null>(`/band/${bandId}/members`, {
+	const res = await apiPost(`/band/${bandId}/members`, {
 		body: { userId, part },
+		schemas: { body: BandMemberCreateSchema },
 	})
 
 	if (!res.ok) {
@@ -152,8 +172,9 @@ export const updateBandMemberAction = async (
 	bandMemberId: string,
 	part: Part,
 ): Promise<UpdateBandMemberResponse> => {
-	const res = await apiPut<null>(`/band/members/${bandMemberId}`, {
+	const res = await apiPut(`/band/members/${bandMemberId}`, {
 		body: { part },
+		schemas: { body: BandMemberUpdateSchema },
 	})
 
 	if (!res.ok) {
@@ -166,7 +187,7 @@ export const updateBandMemberAction = async (
 export const removeBandMemberAction = async (
 	bandMemberId: string,
 ): Promise<RemoveBandMemberResponse> => {
-	const res = await apiDelete<null>(`/band/members/${bandMemberId}`)
+	const res = await apiDelete(`/band/members/${bandMemberId}`)
 
 	if (!res.ok) {
 		return {
@@ -181,9 +202,10 @@ export const removeBandMemberAction = async (
 export const getAvailablePartsAction = async (): Promise<
 	ApiResponse<Part[]>
 > => {
-	const res = await apiGet<Part[]>('/band/parts', {
+	const res = await apiGet('/band/parts', {
 		cache: 'force-cache',
 		next: { revalidate: 86400, tags: ['band-parts'] },
+		schemas: { response: UserPartSchema.array() },
 	})
 
 	if (!res.ok) {
@@ -197,9 +219,13 @@ export const searchUsersForBandAction = async (
 	query?: string,
 	part?: Part,
 ): Promise<ApiResponse<UserWithProfile[]>> => {
-	const res = await apiGet<UserWithProfile[]>('/band/search-users', {
+	const res = await apiGet('/band/search-users', {
 		searchParams: { query, part },
 		next: { revalidate: 30, tags: ['band-search-users'] },
+		schemas: {
+			searchParams: BandSearchQuerySchema,
+			response: BandSearchResultSchema,
+		},
 	})
 
 	if (!res.ok) {

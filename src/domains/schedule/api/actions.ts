@@ -1,41 +1,55 @@
+import { getCreateScheduleErrorMessage } from '@/domains/schedule/api/errorMessages'
 import {
-	mapRawSchedule,
-	mapRawUserWithNames,
-	type RawSchedule,
-	type RawUserWithName,
-} from '@/domains/schedule/api/dto'
-import { getCreateScheduleErrorMessage } from '@/domains/schedule/api/scheduleErrorMessages'
+	ScheduleCreatedResponseSchema,
+	ScheduleCreateSchema,
+	ScheduleResponseSchema,
+	ScheduleUserListSchema,
+} from '@/domains/schedule/model/schema'
 import type { Schedule, UserWithName } from '@/domains/schedule/model/types'
-import { apiGet, apiPost } from '@/shared/lib/api/crud'
-import { createdResponse, mapSuccess } from '@/shared/lib/api/helper'
+import {
+	createdResponse,
+	okResponse,
+	withFallbackMessage,
+} from '@/shared/lib/api/helper'
+import { apiGet, apiPost } from '@/shared/lib/api/v2/crud'
 import { type ApiResponse, StatusCode } from '@/types/response'
 
 export const getScheduleByIdAction = async (
 	scheduleId: string,
 ): Promise<ApiResponse<Schedule>> => {
-	const res = await apiGet<RawSchedule>(`/schedule/${scheduleId}`, {
+	const res = await apiGet(`/schedule/${scheduleId}`, {
 		next: {
 			revalidate: 60,
 			tags: ['schedules', `schedule:${scheduleId}`],
 		},
+		schemas: {
+			response: ScheduleResponseSchema,
+		},
 	})
 
-	return mapSuccess(res, mapRawSchedule, '日程調整の取得に失敗しました。')
+	if (!res.ok) {
+		return withFallbackMessage(res, '日程調整の取得に失敗しました。')
+	}
+
+	return okResponse(res.data)
 }
 
 export const getUserIdWithNames = async (): Promise<
 	ApiResponse<UserWithName[]>
 > => {
-	const res = await apiGet<RawUserWithName[]>('/schedule/users', {
+	const res = await apiGet('/schedule/users', {
 		cache: 'force-cache',
 		next: { revalidate: 300, tags: ['schedule-users'] },
+		schemas: {
+			response: ScheduleUserListSchema,
+		},
 	})
 
-	return mapSuccess(
-		res,
-		mapRawUserWithNames,
-		'ユーザー一覧の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ユーザー一覧の取得に失敗しました。')
+	}
+
+	return okResponse(res.data)
 }
 
 export const createScheduleAction = async ({
@@ -57,7 +71,7 @@ export const createScheduleAction = async ({
 	timeExtended: boolean
 	deadline: string
 }): Promise<ApiResponse<Schedule>> => {
-	const res = await apiPost<{ id: string } | RawSchedule>('/schedule', {
+	const res = await apiPost('/schedule', {
 		body: {
 			id,
 			userId,
@@ -68,6 +82,10 @@ export const createScheduleAction = async ({
 			timeExtended,
 			deadline,
 		},
+		schemas: {
+			body: ScheduleCreateSchema,
+			response: ScheduleCreatedResponseSchema,
+		},
 	})
 
 	if (!res.ok) {
@@ -77,13 +95,7 @@ export const createScheduleAction = async ({
 		}
 	}
 
-	const createdId =
-		res.status === StatusCode.CREATED &&
-		typeof res.data === 'object' &&
-		res.data !== null &&
-		'id' in res.data
-			? ((res.data.id as string | undefined) ?? id)
-			: id
+	const createdId = res.status === StatusCode.CREATED ? (res.data.id ?? id) : id
 
 	const detail = await getScheduleByIdAction(createdId)
 	if (!detail.ok) {

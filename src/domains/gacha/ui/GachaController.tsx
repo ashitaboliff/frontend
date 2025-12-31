@@ -106,7 +106,6 @@ const GachaController = ({
 			void executeGachaPlay({
 				version: selectedVersion,
 				userId: session.user.id,
-				currentPlayCount: gachaPlayCountToday,
 				ignorePlayCountLimit,
 			}).then((result) => {
 				if (executionIdRef.current !== executionId) return
@@ -127,7 +126,6 @@ const GachaController = ({
 			})
 		},
 		[
-			gachaPlayCountToday,
 			ignorePlayCountLimit,
 			onGachaPlayedSuccessfully,
 			selectedRect,

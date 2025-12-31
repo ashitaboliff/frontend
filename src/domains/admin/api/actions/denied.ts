@@ -8,6 +8,7 @@ import {
 } from '@/domains/admin/api/errorMessages'
 import type { DeniedBookingFormValues } from '@/domains/admin/model/types'
 import {
+	AdminDeniedBookingCreateSchema,
 	AdminDeniedBookingQuerySchema,
 	AdminDeniedBookingResponseSchema,
 } from '@/domains/booking/model/schema'
@@ -20,14 +21,13 @@ import {
 	FLASH_MESSAGE_COOKIE_OPTIONS,
 	FLASH_MESSAGE_KEYS,
 } from '@/shared/constants/flashMessage'
-import { apiDelete, apiPost } from '@/shared/lib/api/crud'
 import {
 	createdResponse,
 	noContentResponse,
 	okResponse,
 	withFallbackMessage,
 } from '@/shared/lib/api/helper'
-import { apiGet } from '@/shared/lib/api/v2/crud'
+import { apiDelete, apiGet, apiPost } from '@/shared/lib/api/v2/crud'
 import type { ApiResponse } from '@/types/response'
 import { buildDeniedBookingRequestBody } from '../service'
 
@@ -39,8 +39,11 @@ export const createDeniedBookingAction = async (
 		return request.error
 	}
 
-	const res = await apiPost<unknown>('/booking/denied', {
+	const res = await apiPost('/booking/denied', {
 		body: request.payload,
+		schemas: {
+			body: AdminDeniedBookingCreateSchema,
+		},
 	})
 
 	if (!res.ok) {
@@ -108,7 +111,7 @@ export const deleteDeniedBookingAction = async ({
 }: {
 	id: string
 }): Promise<ApiResponse<null>> => {
-	const res = await apiDelete<null>(`/booking/denied/${id}`)
+	const res = await apiDelete(`/booking/denied/${id}`)
 
 	if (!res.ok) {
 		return {

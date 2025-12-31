@@ -71,8 +71,9 @@ const BookingCreate = ({ session, query }: Props) => {
 		defaultValues,
 	})
 
-	const { onGachaPlayedSuccessfully, gachaPlayCountToday } =
-		useGachaPlayManager({ userId: session.user.id })
+	const { onGachaPlayedSuccessfully } = useGachaPlayManager({
+		userId: session.user.id,
+	})
 
 	const triggerGachaExecution = useCallback(() => {
 		const executionId = gachaExecutionIdRef.current + 1
@@ -81,7 +82,6 @@ const BookingCreate = ({ session, query }: Props) => {
 		void executeGachaPlay({
 			version: LATEST_GACHA_VERSION,
 			userId: session.user.id,
-			currentPlayCount: gachaPlayCountToday,
 		}).then((result) => {
 			if (gachaExecutionIdRef.current !== executionId) return
 			if (result.ok) {
@@ -98,7 +98,7 @@ const BookingCreate = ({ session, query }: Props) => {
 				})
 			}
 		})
-	}, [gachaPlayCountToday, onGachaPlayedSuccessfully, session.user.id])
+	}, [onGachaPlayedSuccessfully, session.user.id])
 
 	const onSubmit: SubmitHandler<BookingCreateFormValues> = async (data) => {
 		messageFeedback.clearFeedback()

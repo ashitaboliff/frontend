@@ -3,20 +3,24 @@
 import { revalidateTag } from 'next/cache'
 import { getSyncPlaylistErrorMessage } from '@/domains/video/api/errorMessage'
 import {
+	AdminSyncPayloadSchema,
+	AdminSyncQueuedResponseSchema,
 	PlaylistDetailSchema,
 	SearchResponseSchema,
 	VideoDetailSchema,
+	VideoIdsQuerySchema,
+	VideoIdsResponseSchema,
 	YoutubeSearchQuerySchema,
 } from '@/domains/video/model/schema'
 import type {
+	AdminSyncQueuedResponse,
 	PlaylistDetail,
 	SearchResponse,
 	VideoDetail,
 	YoutubeSearchQuery,
 } from '@/domains/video/model/types'
-import { apiPost } from '@/shared/lib/api/crud'
 import { okResponse, withFallbackMessage } from '@/shared/lib/api/helper'
-import { apiGet } from '@/shared/lib/api/v2/crud'
+import { apiGet, apiPost } from '@/shared/lib/api/v2/crud'
 import { recordJoinSorted } from '@/shared/utils/cacheTag'
 import type { ApiResponse } from '@/types/response'
 
@@ -89,19 +93,17 @@ export const getPlaylistByIdAction = async (
 	return okResponse(res.data)
 }
 
-type PlaylistWebhook = {
-	ok: boolean
-	playlist: string
-	video: string
-}
-
 const YOUTUBE_IDS_TAG = (type: 'video' | 'playlist') => `youtube-${type}-ids`
 
 export const postSyncPlaylistAction = async (): Promise<
-	ApiResponse<PlaylistWebhook>
+	ApiResponse<AdminSyncQueuedResponse>
 > => {
-	const res = await apiPost<PlaylistWebhook>('/video/webhook', {
+	const res = await apiPost('/video/webhook', {
 		body: {},
+		schemas: {
+			body: AdminSyncPayloadSchema,
+			response: AdminSyncQueuedResponseSchema,
+		},
 	})
 
 	if (res.ok) {
@@ -127,9 +129,13 @@ export const getYoutubeIds = async (
 			tags: [YOUTUBE_IDS_TAG(type)],
 		},
 		cache: 'no-store',
+		schemas: {
+			searchParams: VideoIdsQuerySchema,
+			response: VideoIdsResponseSchema,
+		},
 	})
 
-	if (response.ok && Array.isArray(response.data)) {
+	if (response.ok) {
 		return response.data
 	}
 	return []

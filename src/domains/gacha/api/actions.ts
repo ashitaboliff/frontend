@@ -5,47 +5,21 @@ import {
 	getCreateGachaErrorMessage,
 	getGachaImageErrorMessage,
 } from '@/domains/gacha/api/errorMessages'
-import type { Gacha, GachaSort, RarityType } from '@/domains/gacha/model/types'
-import { apiGet, apiPost } from '@/shared/lib/api/crud'
+import {
+	GachaBySrcResponseSchema,
+	GachaCreateWithOverrideSchema,
+	GachaImageProxyRequestSchema,
+	GachaImageProxyResponseSchema,
+	GachaSrcQuerySchema,
+} from '@/domains/gacha/model/schema'
+import type { Gacha, RarityType } from '@/domains/gacha/model/types'
 import {
 	createdResponse,
-	mapSuccess,
 	okResponse,
+	withFallbackMessage,
 } from '@/shared/lib/api/helper'
+import { apiGet, apiPost } from '@/shared/lib/api/v2/crud'
 import type { ApiResponse } from '@/types/response'
-
-export const getGachaByUserIdAction = async ({
-	userId,
-	page,
-	perPage,
-	sort,
-}: {
-	userId: string
-	page: number
-	perPage: number
-	sort: GachaSort
-}): Promise<ApiResponse<{ gacha: Gacha[]; totalCount: number }>> => {
-	const res = await apiGet<{
-		gacha: Gacha[]
-		totalCount: number
-	}>(`/gacha/users/${userId}`, {
-		searchParams: {
-			page,
-			perPage,
-			sort,
-		},
-		next: { revalidate: 60 * 60, tags: [`gacha-user-${userId}`] },
-	})
-
-	return mapSuccess(
-		res,
-		(data) => ({
-			gacha: data.gacha,
-			totalCount: data.totalCount ?? 0,
-		}),
-		'ガチャ情報の取得に失敗しました。',
-	)
-}
 
 export const getGachaByGachaSrcAction = async ({
 	userId,
@@ -54,24 +28,22 @@ export const getGachaByGachaSrcAction = async ({
 	userId: string
 	gachaSrc: string
 }): Promise<ApiResponse<{ gacha: Gacha | null; totalCount: number }>> => {
-	const res = await apiGet<{
-		gacha: Gacha | null
-		totalCount: number
-	}>(`/gacha/users/${userId}/by-src`, {
+	const res = await apiGet(`/gacha/users/${userId}/by-src`, {
 		searchParams: {
 			gachaSrc,
 		},
 		next: { revalidate: 60 * 60, tags: [`gacha-id-${userId}-${gachaSrc}`] },
+		schemas: {
+			searchParams: GachaSrcQuerySchema,
+			response: GachaBySrcResponseSchema,
+		},
 	})
 
-	return mapSuccess(
-		res,
-		(data) => ({
-			gacha: data.gacha ? data.gacha : null,
-			totalCount: data.totalCount ?? 0,
-		}),
-		'ガチャ情報の取得に失敗しました。',
-	)
+	if (!res.ok) {
+		return withFallbackMessage(res, 'ガチャ情報の取得に失敗しました。')
+	}
+
+	return okResponse(res.data)
 }
 
 export const createUserGachaResultAction = async ({
@@ -80,23 +52,23 @@ export const createUserGachaResultAction = async ({
 	gachaRarity,
 	gachaSrc,
 	ignorePlayCountLimit,
-	currentPlayCount,
 }: {
 	userId: string
 	gachaVersion: string
 	gachaRarity: RarityType
 	gachaSrc: string
 	ignorePlayCountLimit?: boolean
-	currentPlayCount?: number
 }): Promise<ApiResponse<string>> => {
-	const res = await apiPost<unknown>(`/gacha/users/${userId}`, {
+	const res = await apiPost(`/gacha/users/${userId}`, {
 		body: {
 			userId,
 			gachaVersion,
 			gachaRarity,
 			gachaSrc,
 			ignoreLimit: ignorePlayCountLimit ?? false,
-			currentPlayCount,
+		},
+		schemas: {
+			body: GachaCreateWithOverrideSchema,
 		},
 	})
 
@@ -118,12 +90,13 @@ export const getSignedUrlForGachaImageAction = async ({
 }: {
 	r2Key: string
 }): Promise<ApiResponse<string>> => {
-	const res = await apiPost<{ urls: Record<string, string> }>(
-		'/gacha/images/proxy',
-		{
-			body: { keys: [r2Key] },
+	const res = await apiPost('/gacha/images/proxy', {
+		body: { keys: [r2Key] },
+		schemas: {
+			body: GachaImageProxyRequestSchema,
+			response: GachaImageProxyResponseSchema,
 		},
-	)
+	})
 	if (!res.ok) {
 		return {
 			...res,
@@ -150,12 +123,13 @@ export const getSignedUrlsForGachaImagesAction = async ({
 	if (uniqueKeys.length === 0) {
 		return okResponse({})
 	}
-	const res = await apiPost<{ urls: Record<string, string> }>(
-		'/gacha/images/proxy',
-		{
-			body: { keys: uniqueKeys },
+	const res = await apiPost('/gacha/images/proxy', {
+		body: { keys: uniqueKeys },
+		schemas: {
+			body: GachaImageProxyRequestSchema,
+			response: GachaImageProxyResponseSchema,
 		},
-	)
+	})
 	if (!res.ok) {
 		return {
 			...res,

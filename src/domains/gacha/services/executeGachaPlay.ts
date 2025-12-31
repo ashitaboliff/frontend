@@ -19,7 +19,6 @@ export type ExecuteGachaPlayErrorType =
 export interface ExecuteGachaPlayParams {
 	version: string
 	userId: string
-	currentPlayCount: number
 	ignorePlayCountLimit?: boolean
 	skipCacheInvalidation?: boolean
 }
@@ -53,7 +52,6 @@ const mapUnhandledError = (message?: string): ExecuteGachaPlayError => ({
 export const executeGachaPlay = async ({
 	version,
 	userId,
-	currentPlayCount,
 	ignorePlayCountLimit,
 	skipCacheInvalidation,
 }: ExecuteGachaPlayParams): Promise<ExecuteGachaPlayResult> => {
@@ -84,7 +82,6 @@ export const executeGachaPlay = async ({
 				gachaVersion: version,
 				gachaRarity: name,
 				gachaSrc: data.src,
-				currentPlayCount,
 				ignorePlayCountLimit,
 			}),
 			getSignedUrlForGachaImageAction({ r2Key }),

@@ -7,12 +7,25 @@ import {
 	getPadlockErrorMessage,
 	getUpdateProfileErrorMessage,
 } from '@/domains/auth/api/errorMessages'
+import {
+	PadlockRequestSchema,
+	PadlockResponseSchema,
+} from '@/domains/auth/model/schema'
 import type { AuthDetails } from '@/domains/auth/model/types'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
-import type { ProfileFormValues } from '@/domains/user/model/schema'
-import type { Profile } from '@/domains/user/model/types'
-import { apiGet, apiPost, apiPut } from '@/shared/lib/api/crud'
-import { createdResponse, failure, okResponse } from '@/shared/lib/api/helper'
+import {
+	type ProfileFormValues,
+	ProfilePayloadSchema,
+	UserPartSchema,
+} from '@/domains/user/model/schema'
+import type { AccountRole, Part, Role } from '@/domains/user/model/types'
+import {
+	createdResponse,
+	failure,
+	noContentResponse,
+	okResponse,
+} from '@/shared/lib/api/helper'
+import { apiGet, apiPost, apiPut } from '@/shared/lib/api/v2/crud'
 import { type ApiResponse, StatusCode } from '@/types/response'
 import type { Session } from '@/types/session'
 
@@ -31,6 +44,56 @@ const CALLBACK_COOKIE_KEYS = [
 ] as const
 
 const DEFAULT_CALLBACK_URL = '/user'
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === 'object' && value !== null
+
+const isAccountRole = (value: unknown): value is AccountRole =>
+	value === 'USER' || value === 'ADMIN' || value === 'TOPADMIN'
+
+const toSession = (value: unknown): Session | null => {
+	if (value === null) return null
+	if (!isRecord(value)) return null
+	const userValue = value.user
+	if (!isRecord(userValue)) return null
+	const id = typeof userValue.id === 'string' ? userValue.id : null
+	if (!id) return null
+	const name =
+		typeof userValue.name === 'string' || userValue.name === null
+			? userValue.name
+			: null
+	const email =
+		typeof userValue.email === 'string' || userValue.email === null
+			? userValue.email
+			: undefined
+	const image =
+		typeof userValue.image === 'string' || userValue.image === null
+			? userValue.image
+			: undefined
+	const role = isAccountRole(userValue.role) ? userValue.role : null
+	const hasProfile =
+		typeof userValue.hasProfile === 'boolean' ? userValue.hasProfile : false
+	const expires = typeof value.expires === 'string' ? value.expires : ''
+	const error = typeof value.error === 'string' ? value.error : undefined
+	return {
+		user: {
+			id,
+			name,
+			email,
+			image,
+			role,
+			hasProfile,
+		},
+		expires,
+		error,
+	}
+}
+
+const normalizeRole = (value: string): Role =>
+	value === 'GRADUATE' || value === 'STUDENT' ? value : 'STUDENT'
+
+const normalizeParts = (parts: string[]): Part[] =>
+	parts.filter((part): part is Part => UserPartSchema.safeParse(part).success)
 
 const getCookieValue = async (keyList: readonly string[]) => {
 	const store = await cookies()
@@ -58,10 +121,11 @@ export const getPadlockCallbackUrl = async (): Promise<string> => {
 export const getAuthDetails = async (
 	noStore?: boolean,
 ): Promise<AuthDetails> => {
-	const sessionRes = await apiGet<Session | null>('/auth/session', {
+	const sessionRes = await apiGet('/auth/session', {
 		cache: noStore ? 'no-store' : 'default',
 	})
-	const base = makeAuthDetails(sessionRes.ok ? (sessionRes.data ?? null) : null)
+	const session = sessionRes.ok ? toSession(sessionRes.data) : null
+	const base = makeAuthDetails(session)
 	return {
 		...base,
 		error: sessionRes.ok ? base.error : (sessionRes.message ?? base.error),
@@ -74,9 +138,17 @@ export const createProfileAction = async ({
 }: {
 	userId: string
 	body: ProfileFormValues
-}): Promise<ApiResponse<Profile>> => {
-	const res = await apiPost<Profile>(`/users/${userId}/profile`, {
-		body,
+}): Promise<ApiResponse<null>> => {
+	const payload = {
+		name: body.name,
+		studentId: body.studentId ?? null,
+		expected: body.expected ?? null,
+		role: normalizeRole(body.role),
+		part: normalizeParts(body.part),
+	}
+	const res = await apiPost(`/users/${userId}/profile`, {
+		body: payload,
+		schemas: { body: ProfilePayloadSchema },
 	})
 
 	if (!res.ok) {
@@ -89,7 +161,10 @@ export const createProfileAction = async ({
 	revalidateTag(`user-profile-${userId}`, 'max')
 	revalidateTag(`users`, 'max')
 
-	return createdResponse(res.data)
+	if (res.status === StatusCode.NO_CONTENT) {
+		return noContentResponse()
+	}
+	return createdResponse(null)
 }
 
 export const putProfileAction = async ({
@@ -98,9 +173,17 @@ export const putProfileAction = async ({
 }: {
 	userId: string
 	body: ProfileFormValues
-}): Promise<ApiResponse<Profile>> => {
-	const res = await apiPut<Profile>(`/users/${userId}/profile`, {
-		body,
+}): Promise<ApiResponse<null>> => {
+	const payload = {
+		name: body.name,
+		studentId: body.studentId ?? null,
+		expected: body.expected ?? null,
+		role: normalizeRole(body.role),
+		part: normalizeParts(body.part),
+	}
+	const res = await apiPut(`/users/${userId}/profile`, {
+		body: payload,
+		schemas: { body: ProfilePayloadSchema },
 	})
 
 	if (!res.ok) {
@@ -113,7 +196,10 @@ export const putProfileAction = async ({
 	revalidateTag(`user-profile-${userId}`, 'max')
 	revalidateTag(`users`, 'max')
 
-	return okResponse(res.data)
+	if (res.status === StatusCode.NO_CONTENT) {
+		return noContentResponse()
+	}
+	return okResponse(null)
 }
 
 export const revalidateUserAction = async (): Promise<void> => {
@@ -131,8 +217,12 @@ export type PadlockResponse = {
 export const padLockAction = async (
 	password: string,
 ): Promise<ApiResponse<PadlockResponse>> => {
-	const res = await apiPost<PadlockResponse>('/auth/padlock', {
+	const res = await apiPost('/auth/padlock', {
 		body: { password },
+		schemas: {
+			body: PadlockRequestSchema,
+			response: PadlockResponseSchema,
+		},
 	})
 
 	if (!res.ok) {
