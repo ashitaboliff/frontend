@@ -7,7 +7,7 @@ import {
 	getCreateBookingErrorMessage,
 	getDeleteBookingErrorMessage,
 	getUpdateBookingErrorMessage,
-} from '@/domains/booking/api/bookingErrorMessages'
+} from '@/domains/booking/api/errorMessages'
 import {
 	BookingAccessTokenResponseSchema,
 	BookingByUserResponseSchema,

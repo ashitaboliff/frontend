@@ -3,10 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import {
-	createBandAction,
-	updateBandAction,
-} from '@/domains/band/api/bandActions'
+import { createBandAction, updateBandAction } from '@/domains/band/api/actions'
 import {
 	type BandFormValues,
 	bandFormSchema,

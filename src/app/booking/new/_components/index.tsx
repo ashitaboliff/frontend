@@ -15,7 +15,7 @@ import {
 } from '@/domains/booking/model/schema'
 import type { BookingSummary } from '@/domains/booking/model/types'
 import { mutateBookingCalendarsForDate } from '@/domains/booking/utils/calendarCache'
-import { LATEST_GACHA_VERSION } from '@/domains/gacha/config/gachaConfig'
+import { LATEST_GACHA_VERSION } from '@/domains/gacha/config/config'
 import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
 import { executeGachaPlay } from '@/domains/gacha/services/executeGachaPlay'
 import type { GachaResultViewState } from '@/domains/gacha/ui/GachaResult'

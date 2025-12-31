@@ -2,7 +2,7 @@ import {
 	type GachaCategoryConfig,
 	type GachaVersionConfig,
 	gachaConfigs,
-} from '@/domains/gacha/config/gachaConfig'
+} from '@/domains/gacha/config/config'
 import type { RarityType } from '@/domains/gacha/model/types'
 
 /**

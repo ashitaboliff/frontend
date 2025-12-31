@@ -5,7 +5,7 @@ import { cookies } from 'next/headers'
 import {
 	getCreateDeniedBookingErrorMessage,
 	getDeleteDeniedBookingErrorMessage,
-} from '@/domains/admin/api/adminErrorMessages'
+} from '@/domains/admin/api/errorMessages'
 import type { DeniedBookingFormValues } from '@/domains/admin/model/types'
 import {
 	AdminDeniedBookingQuerySchema,

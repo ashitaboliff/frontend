@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { memo, useCallback, useEffect, useId, useState } from 'react'
-import { getUsersForSelect } from '@/domains/user/api/userActions'
+import { getUsersForSelect } from '@/domains/user/api/actions'
 import {
 	type Part,
 	PartMap,

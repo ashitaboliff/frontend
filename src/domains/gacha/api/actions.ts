@@ -4,7 +4,7 @@ import { revalidateTag } from 'next/cache'
 import {
 	getCreateGachaErrorMessage,
 	getGachaImageErrorMessage,
-} from '@/domains/gacha/api/gachaErrorMessages'
+} from '@/domains/gacha/api/errorMessages'
 import type { Gacha, GachaSort, RarityType } from '@/domains/gacha/model/types'
 import { apiGet, apiPost } from '@/shared/lib/api/crud'
 import {

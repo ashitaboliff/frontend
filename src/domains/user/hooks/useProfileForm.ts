@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import {
 	createProfileAction,
 	putProfileAction,
-} from '@/domains/auth/api/authActions'
+} from '@/domains/auth/api/actions'
 import { useSession } from '@/domains/auth/hooks/useSession'
 import { resolveRedirectTarget } from '@/domains/auth/utils/authRedirect'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'

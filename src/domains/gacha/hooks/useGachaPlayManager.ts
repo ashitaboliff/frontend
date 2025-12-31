@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useSWRConfig } from 'swr'
-import { MAX_GACHA_PLAYS_PER_DAY } from '@/domains/gacha/config/gachaConfig'
+import { MAX_GACHA_PLAYS_PER_DAY } from '@/domains/gacha/config/config'
 import { getCurrentJSTDateString } from '@/shared/utils'
 
 interface UseGachaPlayManagerOptions {

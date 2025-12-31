@@ -10,7 +10,7 @@ import {
 	removeBandMemberAction,
 	searchUsersForBandAction,
 	updateBandMemberAction,
-} from '@/domains/band/api/bandActions'
+} from '@/domains/band/api/actions'
 import type {
 	BandDetails,
 	BandMemberDetails,

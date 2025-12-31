@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidateTag } from 'next/cache'
-import { getSyncPlaylistErrorMessage } from '@/domains/video/api/videoErrorMessages'
+import { getSyncPlaylistErrorMessage } from '@/domains/video/api/errorMessage'
 import {
 	PlaylistDetailSchema,
 	SearchResponseSchema,

@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import {
 	deleteBandAction,
 	getUserBandsAction,
-} from '@/domains/band/api/bandActions'
+} from '@/domains/band/api/actions'
 import type { BandDetails } from '@/domains/band/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { FaPlusCircle } from '@/shared/ui/icons'

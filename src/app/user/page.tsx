@@ -4,7 +4,7 @@ import { UserPageParamsSchema } from '@/app/user/schema'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { buildPathWithSearch } from '@/domains/auth/utils/authRedirect'
 import { resolveCarouselPackData } from '@/domains/gacha/services/resolveCarouselPackData'
-import { getUserProfile } from '@/domains/user/api/userActions'
+import { getUserProfile } from '@/domains/user/api/actions'
 import type { Profile } from '@/domains/user/model/types'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 

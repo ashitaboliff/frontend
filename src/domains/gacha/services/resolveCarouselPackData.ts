@@ -1,4 +1,4 @@
-import { gachaConfigs } from '@/domains/gacha/config/gachaConfig'
+import { gachaConfigs } from '@/domains/gacha/config/config'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import { ensureSignedResourceUrls } from '@/domains/gacha/services/signedGachaResourceCache'
 import { logError } from '@/shared/utils/logger'

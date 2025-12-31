@@ -5,7 +5,7 @@ import { Fragment, useId, useState } from 'react'
 import {
 	type GachaCategoryConfig,
 	gachaConfigs,
-} from '@/domains/gacha/config/gachaConfig'
+} from '@/domains/gacha/config/config'
 import type { RarityType } from '@/domains/gacha/model/types'
 import { gkktt } from '@/shared/lib/fonts'
 import { getImageUrl } from '@/shared/lib/r2'

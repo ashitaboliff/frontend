@@ -2,7 +2,7 @@ import PadLockPage from '@/app/auth/padlock/_components'
 import {
 	getPadlockCallbackUrl,
 	getPadlockCsrfToken,
-} from '@/domains/auth/api/authActions'
+} from '@/domains/auth/api/actions'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
 import { getSafeRedirectFrom } from '@/domains/auth/utils/authRedirect'
 import { createMetaData } from '@/shared/hooks/useMetaData'

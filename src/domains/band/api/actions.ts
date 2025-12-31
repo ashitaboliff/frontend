@@ -4,7 +4,7 @@ import {
 	getDeleteBandErrorMessage,
 	getRemoveMemberErrorMessage,
 	getUpdateBandErrorMessage,
-} from '@/domains/band/api/bandErrorMessages'
+} from '@/domains/band/api/errorMessages'
 import type {
 	AddBandMemberResponse,
 	BandDetails,

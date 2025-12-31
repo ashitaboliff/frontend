@@ -2,8 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { MAX_GACHA_PLAYS_PER_DAY } from '@/domains/gacha/config/gachaConfig'
-import { FORCE_GACHA_PENDING } from '@/domains/gacha/config/gachaDebugConfig'
+import { MAX_GACHA_PLAYS_PER_DAY } from '@/domains/gacha/config/config'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import { executeGachaPlay } from '@/domains/gacha/services/executeGachaPlay'
 import GachaConfirm from '@/domains/gacha/ui/GachaConfirm'
@@ -216,9 +215,6 @@ const GachaController = ({
 	const shouldShowOverlay = open && currentStep !== 'select'
 
 	useEffect(() => {
-		if (FORCE_GACHA_PENDING) {
-			return
-		}
 		if (
 			currentStep === 'pending' &&
 			pendingAnimationDone &&

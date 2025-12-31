@@ -6,7 +6,7 @@ import {
 	getCreateProfileErrorMessage,
 	getPadlockErrorMessage,
 	getUpdateProfileErrorMessage,
-} from '@/domains/auth/api/authErrorMessages'
+} from '@/domains/auth/api/errorMessages'
 import type { AuthDetails } from '@/domains/auth/model/types'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
 import type { ProfileFormValues } from '@/domains/user/model/schema'

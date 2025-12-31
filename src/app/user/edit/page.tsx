@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import ProfileEdit from '@/app/user/edit/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
-import { getUserProfile } from '@/domains/user/api/userActions'
+import { getUserProfile } from '@/domains/user/api/actions'
 
 export const metadata = {
 	title: 'プロフィール編集',

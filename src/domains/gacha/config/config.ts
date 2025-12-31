@@ -11,14 +11,14 @@ export const GachaRarityMap: { [key in RarityType]: string } = {
 	SECRET_RARE: 'シークレットレア',
 }
 
-export interface GachaCategoryConfig {
+export type GachaCategoryConfig = {
 	name: RarityType
 	probability: number
 	count: number
 	prefix: string
 }
 
-export interface GachaVersionConfig {
+export type GachaVersionConfig = {
 	categories: GachaCategoryConfig[]
 	title: string
 	packKey: string

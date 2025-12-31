@@ -1,7 +1,7 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { getAuthDetails } from '@/domains/auth/api/authActions'
+import { getAuthDetails } from '@/domains/auth/api/actions'
 import type { AuthDetails } from '@/domains/auth/model/types'
 import {
 	type AuthRedirectReason,

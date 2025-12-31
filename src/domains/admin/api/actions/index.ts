@@ -7,7 +7,7 @@ import {
 	getDeletePadlockErrorMessage,
 	getDeleteUserErrorMessage,
 	getUpdateUserRoleErrorMessage,
-} from '@/domains/admin/api/adminErrorMessages'
+} from '@/domains/admin/api/errorMessages'
 import { PadLockCreateSchema, PadLockSchema } from '@/domains/auth/model/schema'
 import type { PadLock } from '@/domains/auth/model/types'
 import {
