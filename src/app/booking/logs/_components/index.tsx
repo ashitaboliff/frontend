@@ -1,16 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { Booking } from '@/domains/booking/model/types'
 import BookingDetailPopup from '@/domains/booking/ui/BookingDetailPopup'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 
-interface Props {
-	readonly bookingLog: Booking[]
+type Props = {
+	readonly booking: Booking[]
 }
 
 const LOGS_PER_PAGE_OPTIONS: Record<string, number> = {
@@ -28,26 +28,26 @@ const headers = [
 	{ key: 'owner', label: '責任者' },
 ]
 
-const BookingLogs = ({ bookingLog }: Props) => {
+const BookingLogs = ({ booking }: Props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [logsPerPage, setLogsPerPage] = useState(10)
 	const [popupData, setPopupData] = useState<Booking | null>(
-		bookingLog?.[0] ?? null,
+		booking?.[0] ?? null,
 	)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 
-	const totalLogs = bookingLog?.length ?? 0
+	const totalLogs = booking?.length ?? 0
 	const pageMax = Math.max(1, Math.ceil(totalLogs / logsPerPage) || 1)
 
 	const indexOfLastLog = currentPage * logsPerPage
 	const indexOfFirstLog = indexOfLastLog - logsPerPage
-	const currentLogs = bookingLog?.slice(indexOfFirstLog, indexOfLastLog) ?? []
+	const currentLogs = booking?.slice(indexOfFirstLog, indexOfLastLog) ?? []
 
 	return (
-		<div className="container mx-auto px-2 py-8 sm:px-4">
-			<div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
-				<h1 className="font-bold text-2xl sm:text-3xl">予約ログ</h1>
-			</div>
+		<div className="container mx-auto px-2">
+			<h1 className="my-4 text-center font-bold text-2xl sm:text-3xl">
+				予約ログ
+			</h1>
 
 			<PaginatedResourceLayout
 				perPage={{
@@ -72,7 +72,6 @@ const BookingLogs = ({ bookingLog }: Props) => {
 					data={currentLogs}
 					isLoading={false}
 					emptyDataMessage="予約ログはありません。"
-					loadingMessage="予約ログを読み込み中です..."
 					onRowClick={(log) => {
 						setIsPopupOpen(true)
 						setPopupData(log)
@@ -95,7 +94,7 @@ const BookingLogs = ({ bookingLog }: Props) => {
 							<td className="whitespace-nowrap p-3 text-xs-custom sm:table-cell sm:text-sm">
 								{BOOKING_TIME_LIST[log.bookingTime]}
 							</td>
-							<td className="break-words p-3 text-xs-custom sm:text-sm">
+							<td className="wrap-break-words p-3 text-xs-custom sm:text-sm">
 								{log.registName}
 							</td>
 							<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm md:table-cell">

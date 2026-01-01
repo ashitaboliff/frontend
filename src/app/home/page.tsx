@@ -6,12 +6,10 @@ const Page = async () => {
 	return (
 		<div className={gkktt.className}>
 			<Carousel />
-			<div className="z-10 flex flex-col items-center justify-center bg-white/60">
-				<div className={`whitespace-nowrap text-2xl`}>
-					信大＆県大のB1～M2が所属する
-				</div>
-				<div className={`text-2xl`}>軽音サークル♪</div>
-				<div className={`text-2xl`}>長野市で活動しています！</div>
+			<div className="whitespace-nowrap py-4 text-center text-2xl">
+				<p>信大＆県大のB1～M2が所属する</p>
+				<p>軽音サークル♪</p>
+				<p>長野市で活動しています！</p>
 			</div>
 			<HomeButton />
 		</div>

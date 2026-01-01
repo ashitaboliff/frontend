@@ -2,18 +2,21 @@
 
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
+import type { AdminUserPageParams } from '@/app/admin/user/schema'
 import {
 	deleteUserAction,
 	updateUserRoleAction,
-} from '@/domains/admin/api/adminActions'
-import type { AdminUserQuery } from '@/domains/admin/query/adminUserQuery'
-import { createAdminUserQueryOptions } from '@/domains/admin/query/adminUserQuery'
-import type { AccountRole, UserDetail } from '@/domains/user/model/userTypes'
+} from '@/domains/admin/api/actions'
+import { AdminUserQueryOptions } from '@/domains/admin/query/adminUserQuery'
+import type {
+	AccountRole,
+	UserForAdmin,
+	UserListForAdmin,
+} from '@/domains/user/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
-import { useQueryState } from '@/shared/hooks/useQueryState'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
+import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import { logError } from '@/shared/utils/logger'
-import type { ApiError } from '@/types/response'
 import UserDeleteConfirmPopup from './UserDeleteConfirmPopup'
 import UserDetailPopup from './UserDetailPopup'
 import UserManageList from './UserManageList'
@@ -24,48 +27,40 @@ const PER_PAGE_OPTIONS: Record<string, number> = {
 	'30件': 30,
 }
 
-const SORT_OPTIONS: Array<{ value: AdminUserQuery['sort']; label: string }> = [
+const SORT_OPTIONS: Array<{
+	value: AdminUserPageParams['sort']
+	label: string
+}> = [
 	{ value: 'new', label: '新しい順' },
 	{ value: 'old', label: '古い順' },
 ]
 
 type Props = {
-	readonly users: UserDetail[]
-	readonly totalCount: number
-	readonly defaultQuery: AdminUserQuery
-	readonly initialQuery: AdminUserQuery
-	readonly extraSearchParams?: string
-	readonly initialError?: ApiError
+	readonly users: UserListForAdmin
+	readonly query: AdminUserPageParams
+	readonly headers: Array<{ key: string; label: string }>
 }
 
-const AdminUserPage = ({
-	users,
-	totalCount,
-	defaultQuery,
-	initialQuery,
-	extraSearchParams,
-	initialError,
-}: Props) => {
+const AdminUserPage = ({ users, query, headers }: Props) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
-	const [selectedUser, setSelectedUser] = useState<UserDetail | null>(null)
+	const [selectedUser, setSelectedUser] = useState<UserForAdmin | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 	const [isActionLoading, setIsActionLoading] = useState(false)
 
-	const { query, updateQuery, isPending } = useQueryState<AdminUserQuery>({
-		queryOptions: createAdminUserQueryOptions(defaultQuery),
-		initialQuery,
-		extraSearchParams,
+	const { updateQuery, isPending } = useQueryUpdater<AdminUserPageParams>({
+		queryOptions: AdminUserQueryOptions,
+		currentQuery: query,
 	})
 
 	const pageCount = useMemo(
-		() => Math.max(1, Math.ceil(totalCount / query.perPage) || 1),
-		[totalCount, query.perPage],
+		() => Math.max(1, Math.ceil(users.totalCount / query.perPage) || 1),
+		[users.totalCount, query.perPage],
 	)
 
 	const handleSelectUser = useCallback(
-		(user: UserDetail) => {
+		(user: UserForAdmin) => {
 			actionFeedback.clearFeedback()
 			setSelectedUser(user)
 			setIsDetailOpen(true)
@@ -123,52 +118,41 @@ const AdminUserPage = ({
 
 	return (
 		<>
-			<div className="flex flex-col items-center justify-center gap-y-3">
-				<h1 className="font-bold text-2xl">ユーザ管理</h1>
-				<p className="text-sm">
-					このページでは登録ユーザの確認、削除、三役権限の追加が可能です。
-					<br />
-					見知らぬユーザやサイト上での不審な動きのあるユーザを削除可能ですが、基本的にそんなことしないでください。
-					<br />
-					また、三役権限の追加もむやみに行わないでください。大いなる責任が伴います。お前らを信用しています。
-				</p>
-				<PaginatedResourceLayout
-					perPage={{
-						label: '表示件数:',
-						name: 'usersPerPage',
-						options: PER_PAGE_OPTIONS,
-						value: query.perPage,
-						onChange: (value) => updateQuery({ perPage: value, page: 1 }),
-					}}
-					sort={{
-						name: 'user_sort_options',
-						options: SORT_OPTIONS,
-						value: query.sort,
-						onChange: (sort) => updateQuery({ sort }),
-					}}
-					pagination={{
-						currentPage: query.page,
-						totalPages: pageCount,
-						totalCount,
-						onPageChange: (page) => updateQuery({ page }),
-					}}
-				>
-					<UserManageList
-						users={users}
-						onUserItemClick={handleSelectUser}
-						isLoading={isPending}
-						error={initialError}
-					/>
-				</PaginatedResourceLayout>
-				<button
-					type="button"
-					className="btn btn-outline"
-					onClick={() => router.push('/admin')}
-				>
-					戻る
-				</button>
-			</div>
-
+			<PaginatedResourceLayout
+				perPage={{
+					label: '表示件数:',
+					name: 'usersPerPage',
+					options: PER_PAGE_OPTIONS,
+					value: query.perPage,
+					onChange: (value) => updateQuery({ perPage: value, page: 1 }),
+				}}
+				sort={{
+					name: 'user_sort_options',
+					options: SORT_OPTIONS,
+					value: query.sort,
+					onChange: (sort) => updateQuery({ sort }),
+				}}
+				pagination={{
+					currentPage: query.page,
+					totalPages: pageCount,
+					totalCount: users.totalCount,
+					onPageChange: (page) => updateQuery({ page }),
+				}}
+			>
+				<UserManageList
+					users={users.users}
+					onUserItemClick={handleSelectUser}
+					isLoading={isPending}
+					headers={headers}
+				/>
+			</PaginatedResourceLayout>
+			<button
+				type="button"
+				className="btn btn-outline"
+				onClick={() => router.push('/admin')}
+			>
+				戻る
+			</button>
 			<UserDetailPopup
 				open={isDetailOpen}
 				onClose={() => setIsDetailOpen(false)}

@@ -1,4 +1,4 @@
-import { getSignedUrlsForGachaImagesAction } from '@/domains/gacha/api/gachaActions'
+import { getSignedUrlsForGachaImagesAction } from '@/domains/gacha/api/actions'
 import { logError } from '@/shared/utils/logger'
 
 export const SIGNED_RESOURCE_TTL_MS = 60 * 60 * 1000

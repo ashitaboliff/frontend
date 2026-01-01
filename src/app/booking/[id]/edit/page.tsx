@@ -1,30 +1,23 @@
 'use server'
 
-import { addDays, subDays } from 'date-fns'
 import type { Metadata, ResolvingMetadata } from 'next'
-import { redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import BookingEdit from '@/app/booking/[id]/edit/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
-import {
-	getBookingByDateAction,
-	getBookingByIdAction,
-} from '@/domains/booking/api/bookingActions'
-import {
-	BOOKING_TIME_LIST,
-	BOOKING_VIEW_RANGE_DAYS,
-} from '@/domains/booking/constants/bookingConstants'
-import BookingDetailNotFound from '@/domains/booking/ui/BookingDetailNotFound'
+import { getBookingByIdAction } from '@/domains/booking/api/actions'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import Loading from '@/domains/booking/ui/BookingDetailLoading'
 import { createMetaData } from '@/shared/hooks/useMetaData'
-import { toDateKey } from '@/shared/utils'
 import { logError } from '@/shared/utils/logger'
+import type { Session } from '@/types/session'
 
-type PageParams = Promise<{ id: string }>
-type PageProps = {
-	params: PageParams
+type Props = {
+	params: Promise<{ id: string }>
 }
 
 export async function generateMetadata(
-	{ params }: { params: PageParams },
+	{ params }: Props,
 	_parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { id } = await params
@@ -49,51 +42,30 @@ export async function generateMetadata(
 	})
 }
 
-const Page = async ({ params }: PageProps) => {
+const Content = async ({ id, session }: { id: string; session: Session }) => {
+	const res = await getBookingByIdAction(id)
+
+	if (!res.ok || !res.data) {
+		logError(
+			`[Booking Edit Page] Failed to fetch booking detail. status: ${res.status}`,
+		)
+		return notFound()
+	}
+
+	return <BookingEdit booking={res.data} session={session} />
+}
+
+const Page = async ({ params }: Props) => {
+	const { id } = await params
 	return (
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
 				const session = authResult.session
-				if (!session) {
-					return null
-				}
-
-				const initialViewDayDate = subDays(new Date(), 1)
-
-				const calendarStartDate = toDateKey(initialViewDayDate)
-				const calendarEndDate = toDateKey(
-					addDays(initialViewDayDate, BOOKING_VIEW_RANGE_DAYS - 1),
-				)
-
-				const { id } = await params
-
-				const [bookingDetail, bookingResponse] = await Promise.all([
-					getBookingByIdAction(id),
-					getBookingByDateAction({
-						startDate: calendarStartDate,
-						endDate: calendarEndDate,
-					}),
-				])
-
-				if (!bookingDetail.ok || !bookingDetail.data) {
-					if (bookingDetail.status === 404) {
-						redirect('/booking')
-					}
-					logError('Failed to get booking detail for edit page', bookingDetail)
-					return <BookingDetailNotFound />
-				}
-
-				const initialBookingResponse = bookingResponse.ok
-					? bookingResponse.data
-					: null
 
 				return (
-					<BookingEdit
-						bookingDetail={bookingDetail.data}
-						session={session}
-						initialBookingResponse={initialBookingResponse}
-						initialViewDay={initialViewDayDate}
-					/>
+					<Suspense fallback={<Loading />}>
+						<Content id={id} session={session} />
+					</Suspense>
 				)
 			}}
 		</AuthPage>

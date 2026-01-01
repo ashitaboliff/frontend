@@ -1,26 +1,21 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { type ReactNode, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { signOutUser as signOutAction } from '@/domains/user/hooks/useSignOut'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import type { Session } from '@/types/session'
 
-interface Props {
+type Props = {
 	readonly session: Session
-	readonly children: ReactNode
 }
 
-const UserPageControls = ({ session, children }: Props) => {
+const UserPageControls = ({ session }: Props) => {
 	const router = useRouter()
 	const signOutFeedback = useFeedback()
 	const [isSigningOut, setIsSigningOut] = useState(false)
 	const signOutMessage = signOutFeedback.feedback
-
-	const handleEditProfile = useCallback(() => {
-		router.push('/user/edit')
-	}, [router])
 
 	const handleNavigateAdmin = useCallback(() => {
 		router.push('/admin')
@@ -54,28 +49,23 @@ const UserPageControls = ({ session, children }: Props) => {
 
 	return (
 		<>
-			<div className="mb-6 flex w-full flex-col gap-3 md:w-1/2 lg:w-1/3">
-				<button
-					type="button"
-					className="btn btn-outline btn-primary"
-					onClick={handleEditProfile}
-				>
-					プロフィールを編集
-				</button>
+			<FeedbackMessage source={signOutMessage} />
+
+			<div className="mt-6 flex w-full flex-col justify-center gap-4 sm:flex-row">
 				{role === 'ADMIN' && (
 					<button
 						type="button"
-						className="btn btn-secondary btn-outline"
+						className="btn btn-secondary btn-outline w-full sm:flex-1"
 						onClick={handleNavigateAdmin}
 					>
 						管理者ページへ
 					</button>
 				)}
 				{role === 'TOPADMIN' && (
-					<div className="flex flex-col gap-2">
+					<div className="flex flex-col gap-2 sm:flex-1 sm:flex-row sm:gap-4">
 						<button
 							type="button"
-							className="btn btn-accent btn-outline"
+							className="btn btn-accent btn-outline w-full"
 							onClick={handleNavigateAdmin}
 						>
 							管理者ページ
@@ -89,18 +79,9 @@ const UserPageControls = ({ session, children }: Props) => {
 						</button>
 					</div>
 				)}
-			</div>
-
-			<div className="w-full">{children}</div>
-
-			<div className="mt-4 w-full md:w-1/2 lg:w-1/3">
-				<FeedbackMessage source={signOutMessage} />
-			</div>
-
-			<div className="mt-6 flex w-full flex-col justify-center gap-4 sm:flex-row md:w-1/2 lg:w-1/3">
 				<button
 					type="button"
-					className="btn btn-error btn-outline w-full sm:w-1/2"
+					className="btn btn-error btn-outline w-full sm:flex-1"
 					onClick={handleSignOut}
 					disabled={isSigningOut}
 				>
@@ -108,7 +89,7 @@ const UserPageControls = ({ session, children }: Props) => {
 				</button>
 				<button
 					type="button"
-					className="btn btn-disabled w-full sm:w-1/2"
+					className="btn btn-disabled w-full sm:flex-1"
 					disabled
 				>
 					アカウントを削除

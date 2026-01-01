@@ -1,9 +1,11 @@
 import UserPageLayout from '@/app/user/_components/UserPageLayout'
 import UserPageTabs from '@/app/user/_components/UserPageTabs'
+import { UserPageParamsSchema } from '@/app/user/schema'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { buildPathWithSearch } from '@/domains/auth/utils/authRedirect'
 import { resolveCarouselPackData } from '@/domains/gacha/services/resolveCarouselPackData'
-import { getUserProfile } from '@/domains/user/api/userActions'
-import type { AccountRole, Profile } from '@/domains/user/model/userTypes'
+import { getUserProfile } from '@/domains/user/api/actions'
+import type { Profile } from '@/domains/user/model/types'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export const metadata = createMetaData({
@@ -12,25 +14,21 @@ export const metadata = createMetaData({
 	url: '/user',
 })
 
-interface UserPageSearchParams {
-	tab?: string
+type Props = {
+	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-const UserPageServer = async ({
-	searchParams,
-}: {
-	searchParams?: Promise<UserPageSearchParams>
-}) => {
+const UserPageServer = async ({ searchParams }: Props) => {
 	const params = await searchParams
-	const initialTab = typeof params?.tab === 'string' ? params.tab : undefined
+	const query = UserPageParamsSchema.parse(params)
+	const tab = query.tab
+	const redirectFrom = buildPathWithSearch('/user', params)
+	const shouldFetchGachaCarousel = tab === 'gacha'
 
 	return (
-		<AuthPage requireProfile={true}>
+		<AuthPage requireProfile={true} redirectFrom={redirectFrom}>
 			{async (authResult) => {
 				const session = authResult.session
-				if (!session) {
-					return null
-				}
 
 				const [profile, gachaCarouselData] = await Promise.all([
 					(async (): Promise<Profile | null> => {
@@ -38,13 +36,10 @@ const UserPageServer = async ({
 						const profileRes = await getUserProfile(session.user.id)
 						return profileRes.ok ? (profileRes.data ?? null) : null
 					})(),
-					resolveCarouselPackData(),
+					shouldFetchGachaCarousel
+						? resolveCarouselPackData()
+						: Promise.resolve([]),
 				])
-
-				const userInfo = {
-					name: session.user.name,
-					role: session.user.role as AccountRole | null,
-				}
 
 				return (
 					<UserPageLayout session={session} profile={profile}>
@@ -52,8 +47,7 @@ const UserPageServer = async ({
 							session={session}
 							gachaCarouselData={gachaCarouselData}
 							profile={profile}
-							userInfo={userInfo}
-							initialTab={initialTab}
+							tab={tab}
 						/>
 					</UserPageLayout>
 				)

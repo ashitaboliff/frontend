@@ -2,7 +2,7 @@
 
 import gsap from 'gsap'
 import { type CSSProperties, useEffect, useRef } from 'react'
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+import type { RarityType } from '@/domains/gacha/model/types'
 
 interface SparkleProps {
 	size: number

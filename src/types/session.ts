@@ -1,6 +1,6 @@
-import type { AccountRole } from '@/domains/user/model/userTypes'
+import type { AccountRole } from '@/domains/user/model/types'
 
-export interface SessionUser {
+export type SessionUser = {
 	id: string
 	name: string | null
 	email?: string | null
@@ -9,7 +9,7 @@ export interface SessionUser {
 	hasProfile: boolean
 }
 
-export interface Session {
+export type Session = {
 	user: SessionUser
 	expires: string
 	error?: string

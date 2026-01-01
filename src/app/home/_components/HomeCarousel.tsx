@@ -57,14 +57,7 @@ const slides: CarouselSlide[] = list.map((image, index) => ({
 }))
 
 const HomeCarousel = () => {
-	return (
-		<Carousel
-			slides={slides}
-			className="relative z-20 rounded-lg bg-black/5 shadow-lg"
-			interval={4500}
-			pauseOnHover
-		/>
-	)
+	return <Carousel slides={slides} interval={4500} pauseOnHover />
 }
 
 export default HomeCarousel

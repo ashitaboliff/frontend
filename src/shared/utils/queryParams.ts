@@ -17,40 +17,6 @@ export type QueryOptions<T extends Record<string, unknown>> = {
 	preserveUnknown?: boolean
 }
 
-export type ParsedQuery<T extends Record<string, unknown>> = {
-	query: T
-	extraSearchParams: string
-	hasChanged: boolean
-}
-
-const toValuesMap = (params: URLSearchParams) => {
-	const grouped = new Map<string, string[]>()
-	params.forEach((value, key) => {
-		const current = grouped.get(key)
-		if (current) {
-			current.push(value)
-		} else {
-			grouped.set(key, [value])
-		}
-	})
-	return grouped
-}
-
-const defaultParse = <T>(defaultValue: T, values: string[]): T => {
-	if (values.length === 0) return defaultValue
-	const latest = values[values.length - 1]
-	if (typeof defaultValue === 'number') {
-		const parsed = Number(latest)
-		return (Number.isFinite(parsed) ? parsed : defaultValue) as T
-	}
-	if (typeof defaultValue === 'boolean') {
-		if (latest === 'true') return true as T
-		if (latest === 'false') return false as T
-		return defaultValue
-	}
-	return latest as unknown as T
-}
-
 const defaultSerialize = <T>(value: T, defaultValue: T): string[] => {
 	if (value === undefined || value === null) return []
 	if (Array.isArray(value)) {
@@ -75,47 +41,6 @@ const cloneSearchParams = (source?: string | URLSearchParams) => {
 	if (!source) return new URLSearchParams()
 	if (typeof source === 'string') return new URLSearchParams(source)
 	return new URLSearchParams(source.toString())
-}
-
-export const parseQueryParams = <T extends Record<string, unknown>>(
-	params: URLSearchParams,
-	options: QueryOptions<T>,
-): ParsedQuery<T> => {
-	const { defaultQuery, definitions, preserveUnknown = true } = options
-	const grouped = toValuesMap(params)
-	const query = { ...defaultQuery }
-	const extra = new URLSearchParams()
-
-	;(Object.keys(defaultQuery) as Array<keyof T>).forEach((key) => {
-		const keyString = String(key)
-		const values = grouped.get(keyString) ?? []
-		const definition = definitions?.[key]
-		const parsed = definition?.parse
-			? definition.parse({ values, defaultValue: defaultQuery[key] })
-			: defaultParse(defaultQuery[key], values)
-		query[key] = parsed
-		if (values.length > 0) {
-			grouped.delete(keyString)
-		}
-	})
-
-	if (preserveUnknown) {
-		for (const [key, values] of grouped.entries()) {
-			values.forEach((value) => {
-				extra.append(key, value)
-			})
-		}
-	}
-
-	const extraString = extra.toString()
-	const normalized = buildQueryParams(query, options, extraString)
-	const hasChanged = normalized.toString().length > 0
-
-	return {
-		query,
-		extraSearchParams: extraString,
-		hasChanged,
-	}
 }
 
 export const buildQueryParams = <T extends Record<string, unknown>>(

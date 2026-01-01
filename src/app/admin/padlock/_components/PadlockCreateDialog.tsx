@@ -3,8 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { padLockFormSchema } from '@/domains/admin/model/adminSchema'
-import type { PadLockFormValues } from '@/domains/admin/model/adminTypes'
+import { padLockFormSchema } from '@/domains/admin/model/schema'
+import type { PadLockFormValues } from '@/domains/admin/model/types'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import Popup from '@/shared/ui/molecules/Popup'
 

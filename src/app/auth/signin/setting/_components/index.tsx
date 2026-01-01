@@ -5,17 +5,24 @@ import { useWatch } from 'react-hook-form'
 import AuthLoadingIndicator from '@/domains/auth/ui/AuthLoadingIndicator'
 import { useProfileForm } from '@/domains/user/hooks/useProfileForm'
 import { signOutUser } from '@/domains/user/hooks/useSignOut'
-import { expectedYearMap } from '@/domains/user/model/profileSchema'
-import { PartOptions } from '@/domains/user/model/userTypes'
+import { expectedYearMap } from '@/domains/user/model/schema'
+import { PartOptionList } from '@/domains/user/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import MultiSelectField from '@/shared/ui/molecules/MultiSelectField'
 
-const SigninSetting = () => {
+interface Props {
+	readonly redirectFrom?: string | null
+}
+
+const SigninSetting = ({ redirectFrom }: Props) => {
 	const router = useRouter()
-	const profileForm = useProfileForm({ mode: 'create' })
+	const profileForm = useProfileForm({
+		mode: 'create',
+		redirectTo: redirectFrom ?? undefined,
+	})
 	const signOutFeedback = useFeedback()
 
 	const { form, onSubmit, feedback } = profileForm
@@ -93,7 +100,7 @@ const SigninSetting = () => {
 				<MultiSelectField
 					name="part"
 					control={control}
-					options={PartOptions}
+					options={PartOptionList}
 					label="使用楽器(複数選択可)"
 					infoDropdown={
 						<>

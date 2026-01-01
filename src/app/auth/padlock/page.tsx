@@ -2,8 +2,9 @@ import PadLockPage from '@/app/auth/padlock/_components'
 import {
 	getPadlockCallbackUrl,
 	getPadlockCsrfToken,
-} from '@/domains/auth/api/authActions'
+} from '@/domains/auth/api/actions'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { getSafeRedirectFrom } from '@/domains/auth/utils/authRedirect'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export const metadata = createMetaData({
@@ -12,14 +13,21 @@ export const metadata = createMetaData({
 	url: '/auth/padlock',
 })
 
-const Page = async () => {
+type PadlockPageProps = {
+	searchParams?: Promise<{ from?: string }>
+}
+
+const Page = async ({ searchParams }: PadlockPageProps) => {
+	const params = await searchParams
+	const redirectFrom = getSafeRedirectFrom(params?.from)
 	const csrfToken = await getPadlockCsrfToken()
-	const callbackUrl = await getPadlockCallbackUrl()
+	const callbackUrl = redirectFrom ?? (await getPadlockCallbackUrl())
 	return (
 		<AuthPage
 			requireProfile={false}
 			allowUnauthenticated={true}
 			redirectIfAuthenticated={true}
+			redirectFrom={redirectFrom ?? undefined}
 		>
 			{() => <PadLockPage csrfToken={csrfToken} callbackUrl={callbackUrl} />}
 		</AuthPage>

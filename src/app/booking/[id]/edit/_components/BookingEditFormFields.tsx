@@ -2,15 +2,15 @@
 
 import type { FormEvent } from 'react'
 import type { FieldErrors, UseFormRegister } from 'react-hook-form'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { BookingEditFormValues } from '@/domains/booking/model/bookingSchema'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { BookingEditFormValues } from '@/domains/booking/model/schema'
 import { Ads } from '@/shared/ui/ads'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import { MdOutlineEditCalendar } from '@/shared/ui/icons'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import type { FeedbackMessageType } from '@/types/feedback'
 
-interface Props {
+type Props = {
 	readonly register: UseFormRegister<BookingEditFormValues>
 	readonly errors: FieldErrors<BookingEditFormValues>
 	readonly isSubmitting: boolean

@@ -2,14 +2,14 @@
 
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { useRouter } from 'next/navigation'
-import type { PlaylistItem, Video } from '@/domains/video/model/videoTypes'
+import type { PlaylistDetail, VideoDetail } from '@/domains/video/model/types'
 import { useWindowOpen } from '@/shared/hooks/useBrowserApis'
 import { gkktt } from '@/shared/lib/fonts'
 import { HiOutlineExternalLink } from '@/shared/ui/icons'
 
 type Props =
-	| { liveOrBand: 'live'; detail: PlaylistItem }
-	| { liveOrBand: 'band'; detail: Video; playlist: PlaylistItem }
+	| { liveOrBand: 'live'; detail: PlaylistDetail }
+	| { liveOrBand: 'band'; detail: VideoDetail; playlist: PlaylistDetail }
 
 const VideoDetailPage = (props: Props) => {
 	const router = useRouter()
@@ -22,12 +22,12 @@ const VideoDetailPage = (props: Props) => {
 		return (
 			<div className="container mx-auto px-2 sm:px-4">
 				<div className="flex flex-col items-center">
-					<div
+					<h2
 						className={`mt-6 mb-4 text-center font-bold text-3xl sm:text-4xl ${gkktt.className}`}
 					>
 						動画詳細
-					</div>
-					<div className="my-2 aspect-[16/9] w-full max-w-xl md:max-w-2xl">
+					</h2>
+					<div className="my-2 aspect-video w-full max-w-xl md:max-w-2xl">
 						{videoId && <YouTubeEmbed videoid={videoId} />}
 					</div>
 					<div className="flex w-full max-w-xl flex-col justify-center px-2 md:max-w-2xl lg:max-w-3xl">
@@ -35,8 +35,8 @@ const VideoDetailPage = (props: Props) => {
 							{detail.title.split('(')[0]}
 						</div>
 						<div className="mt-1 flex flex-col justify-start gap-x-2 text-gray-600 text-xs-custom sm:flex-row sm:items-center sm:text-sm">
-							<div>ライブ: {playlist.title.split('(')[0]}</div>
-							<div>{detail.liveDate}</div>
+							<p>ライブ: {playlist.title.split('(')[0]}</p>
+							<p>{detail.liveDate}</p>
 						</div>
 						<button
 							type="button"
@@ -66,13 +66,13 @@ const VideoDetailPage = (props: Props) => {
 							}
 						}}
 					>
-						<div className="flex flex-row items-center font-bold text-md sm:text-lg">
+						<p className="flex flex-row items-center font-bold text-md sm:text-lg">
 							この動画のあるプレイリスト{' '}
 							<HiOutlineExternalLink size={15} className="ml-1" />
-						</div>
+						</p>
 						<div className="flex w-full flex-col items-center justify-start gap-2 sm:flex-row sm:gap-3">
 							{playlist.videos?.[0]?.videoId && (
-								<div className="aspect-[16/9] w-full flex-shrink-0 overflow-hidden rounded sm:w-1/3 lg:w-1/4">
+								<div className="aspect-video w-full shrink-0 overflow-hidden rounded sm:w-1/3 lg:w-1/4">
 									<YouTubeEmbed videoid={playlist.videos[0].videoId} />
 								</div>
 							)}
@@ -109,7 +109,7 @@ const VideoDetailPage = (props: Props) => {
 				>
 					プレイリスト詳細
 				</div>
-				<div className="my-2 aspect-[16/9] w-full max-w-xl md:max-w-2xl">
+				<div className="my-2 aspect-video w-full max-w-xl md:max-w-2xl">
 					{firstVideoId && <YouTubeEmbed videoid={firstVideoId} />}
 				</div>
 				<div className="flex w-full max-w-xl flex-col justify-center px-2 md:max-w-2xl lg:max-w-3xl">

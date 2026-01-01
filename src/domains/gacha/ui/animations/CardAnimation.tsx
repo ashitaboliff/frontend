@@ -3,18 +3,19 @@
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { type CSSProperties, useId, useMemo, useRef, useState } from 'react'
-import { GachaRarityMap } from '@/domains/gacha/config/gachaConfig'
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+import { GachaRarityMap } from '@/domains/gacha/config/config'
+import type { RarityType } from '@/domains/gacha/model/types'
 import {
 	type AnimationContext,
 	rarityAnimations,
 } from '@/domains/gacha/ui/animations/rarityAnimations'
 import Sparkle from '@/domains/gacha/ui/effects/Sparkle'
-import ImgWithFallback from '@/shared/ui/atoms/ImageWithFallback'
+import Hover3D, { Hover3DCells } from '@/shared/ui/atoms/Hover3D'
+import Img from '@/shared/ui/atoms/ImageWithFallback'
 
 gsap.registerPlugin(useGSAP)
 
-interface CardProps {
+type CardProps = {
 	frontImageSignedUrl: string
 	rarity: RarityType
 	delay?: number
@@ -118,20 +119,18 @@ export const CardAnimation = ({
 	const sizeVariations = [-10, 0, 10, 0]
 
 	return (
-		<div
-			className="relative h-[25rem] w-[18.75rem]"
-			style={{ perspective: '1000px' }}
-		>
+		<div className="relative h-100 w-75" style={{ perspective: '1000px' }}>
 			<div
 				ref={effectContainerRef}
 				className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
 			/>
-			<div
+			<Hover3D
 				ref={cardRef}
-				className="hover-3d transform-style-3d relative h-[25rem] w-[18.75rem]"
+				className="transform-style-3d relative h-100 w-75"
+				noRenderCells={true}
 			>
 				<div className="backface-hidden absolute h-full w-full overflow-hidden rounded-lg">
-					<ImgWithFallback
+					<Img
 						src={frontImageSignedUrl}
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-おもて面`}
 						className="h-full w-full object-cover"
@@ -139,11 +138,8 @@ export const CardAnimation = ({
 						decoding="auto"
 					/>
 				</div>
-				{Array.from({ length: 8 }).map((_, index) => (
-					/* biome-ignore lint: complexity/noArrayIndexKey */
-					<div key={`hover-3d-cell-${index}`} tabIndex={-1} />
-				))}
-				<div className="backface-hidden rotateY-180 !scale-100 absolute h-full w-full overflow-hidden rounded-lg">
+				<Hover3DCells />
+				<div className="backface-hidden rotateY-180 absolute h-full w-full scale-100! overflow-hidden rounded-lg">
 					<img
 						src="/backimage.webp"
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-うら面`}
@@ -152,7 +148,7 @@ export const CardAnimation = ({
 						decoding="auto"
 					/>
 				</div>
-			</div>
+			</Hover3D>
 
 			{['SUPER_RARE', 'SS_RARE', 'ULTRA_RARE', 'SECRET_RARE'].includes(
 				rarity,

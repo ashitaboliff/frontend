@@ -1,14 +1,14 @@
 'use client'
 
 import { useId } from 'react'
-import { gachaConfigs } from '@/domains/gacha/config/gachaConfig'
-import type { GachaData } from '@/domains/gacha/model/gachaTypes'
+import { gachaConfigs } from '@/domains/gacha/config/config'
+import type { Gacha } from '@/domains/gacha/model/types'
 import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
 import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateJa } from '@/shared/utils/dateFormat'
 
-interface Props {
-	readonly gachaItem: GachaData
+type Props = {
+	readonly gachaItem: Gacha
 	readonly count: number
 	readonly open: boolean
 	readonly onClose: () => void
@@ -19,14 +19,14 @@ const GachaPreviewPopup = ({ open, onClose, gachaItem, count }: Props) => {
 	const renderCardContent = () => {
 		if (!gachaItem) {
 			return (
-				<div className="flex h-[25rem] flex-col items-center justify-center">
+				<div className="flex h-100 flex-col items-center justify-center">
 					<p className="text-error">ガチャ情報がありません。</p>
 				</div>
 			)
 		}
 		if (!gachaItem.signedGachaSrc) {
 			return (
-				<div className="flex h-[25rem] flex-col items-center justify-center">
+				<div className="flex h-100 flex-col items-center justify-center">
 					<p className="text-error">画像URLがありません。</p>
 					<p className="text-neutral-content text-xs">({gachaItem.gachaSrc})</p>
 				</div>
@@ -49,24 +49,28 @@ const GachaPreviewPopup = ({ open, onClose, gachaItem, count }: Props) => {
 			maxWidth="3xl"
 			isCloseButton={false}
 		>
-			<div className="flex flex-col justify-center gap-y-2">
-				<div className="my-2 flex h-[25rem] flex-col items-center">
-					{renderCardContent()}
-				</div>
+			<div className="flex flex-col items-center justify-center gap-y-2">
+				{renderCardContent()}
 				{gachaItem && (
-					<>
-						<div className="ml-auto">
-							パック:{' '}
+					<dl className="ml-auto grid w-64 grid-cols-3">
+						<dt className="font-semibold text-sm">パック:</dt>
+						<dd className="col-span-2 text-base">
 							{gachaConfigs[gachaItem.gachaVersion]?.title ||
 								gachaItem.gachaVersion}
-						</div>
-						<div className="ml-auto">所持枚数: {count}枚</div>
-						<div className="ml-auto">
-							引いた日: {formatDateJa(gachaItem.createdAt)}
-						</div>
-					</>
+						</dd>
+						<dt className="font-semibold text-sm">所持枚数:</dt>
+						<dd className="col-span-2 text-base">{count}枚</dd>
+						<dt className="font-semibold text-sm">引いた日:</dt>
+						<dd className="col-span-2 text-base">
+							{formatDateJa(gachaItem.createdAt)}
+						</dd>
+					</dl>
 				)}
-				<button type="button" className="btn btn-outline" onClick={onClose}>
+				<button
+					type="button"
+					className="btn btn-ghost w-full"
+					onClick={onClose}
+				>
 					閉じる
 				</button>
 			</div>

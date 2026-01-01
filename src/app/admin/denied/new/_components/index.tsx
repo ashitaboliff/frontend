@@ -5,15 +5,15 @@ import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { Controller, type UseFormRegister, useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
-import { createDeniedBookingAction } from '@/domains/admin/api/deniedBookingActions'
-import { deniedBookingFormSchema } from '@/domains/admin/model/adminSchema'
+import { createDeniedBookingAction } from '@/domains/admin/api/actions/denied'
+import { deniedBookingFormSchema } from '@/domains/admin/model/schema'
 import {
 	DENIED_BOOKING_TYPE_OPTIONS,
 	type DeniedBookingFormInput,
 	type DeniedBookingFormValues,
 	type DeniedBookingType,
-} from '@/domains/admin/model/adminTypes'
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
+} from '@/domains/admin/model/types'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
 import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 import { DAY_OF_WEEK_OPTIONS } from '@/shared/constants/week'
 import { useFeedback } from '@/shared/hooks/useFeedback'

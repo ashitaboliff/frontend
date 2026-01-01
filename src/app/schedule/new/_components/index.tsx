@@ -5,12 +5,12 @@ import { eachDayOfInterval } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
-import { createScheduleAction } from '@/domains/schedule/api/scheduleActions'
+import { createScheduleAction } from '@/domains/schedule/api/actions'
 import {
 	type ScheduleCreateFormInput,
 	type ScheduleCreateFormValues,
 	scheduleCreateSchema,
-} from '@/domains/schedule/model/createScheduleSchema'
+} from '@/domains/schedule/model/schema'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import CustomDatePicker from '@/shared/ui/atoms/DatePicker'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
@@ -63,16 +63,14 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 		useState<CreatedScheduleSummary | null>(null)
 	const messageFeedback = useFeedback()
 
-	const mentionOptions = useMemo(() => {
-		return Object.entries(initialUsers).reduce<Record<string, string>>(
-			(acc, [id, name]) => {
-				const label = name ? `${name} (${id.slice(0, 4)})` : id
-				acc[label] = id
-				return acc
-			},
-			{},
-		)
-	}, [initialUsers])
+	const mentionOptions = useMemo(
+		() =>
+			Object.entries(initialUsers).map(([id, name]) => ({
+				label: name ? `${name} (${id.slice(0, 4)})` : id,
+				value: id,
+			})),
+		[initialUsers],
+	)
 
 	const userNameById = useMemo(() => initialUsers, [initialUsers])
 
@@ -299,7 +297,8 @@ const ScheduleCreatePage = ({ session, initialUsers }: Props) => {
 									)} - ${formatDateSlashWithWeekday(createdSchedule.endDate, {
 										space: false,
 									})}`}
-									isFullButton
+									label="日程調整を共有"
+									className="btn btn-outline"
 								/>
 							) : (
 								<p className="text-gray-500 text-sm">

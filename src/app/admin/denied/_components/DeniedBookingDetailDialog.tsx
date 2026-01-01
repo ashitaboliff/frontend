@@ -1,14 +1,14 @@
 'use client'
 
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { DeniedBooking } from '@/domains/booking/model/types'
 import Popup from '@/shared/ui/molecules/Popup'
 import {
 	formatDateJa,
 	formatDateTimeJaWithUnits,
 } from '@/shared/utils/dateFormat'
 
-interface DeniedBookingDetailDialogProps {
+type Props = {
 	readonly open: boolean
 	readonly onClose: () => void
 	readonly deniedBooking: DeniedBooking | null
@@ -20,7 +20,7 @@ const DeniedBookingDetailDialog = ({
 	onClose,
 	deniedBooking,
 	onRequestDelete,
-}: DeniedBookingDetailDialogProps) => {
+}: Props) => {
 	return (
 		<Popup
 			id={

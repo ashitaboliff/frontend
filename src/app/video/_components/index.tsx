@@ -3,27 +3,26 @@
 import { Fragment, useMemo } from 'react'
 import { useYoutubeSearchQuery } from '@/domains/video/hooks/useYoutubeSearchQuery'
 import type {
-	PlaylistDoc,
-	Video,
+	SearchResponse,
 	YoutubeSearchQuery,
-} from '@/domains/video/model/videoTypes'
-import { buildYoutubeQueryString } from '@/domains/video/query/youtubeQuery'
+} from '@/domains/video/model/types'
+import {
+	buildYoutubeQueryString,
+	VIDEO_PAGE_DEFAULT_QUERY,
+} from '@/domains/video/query/youtubeQuery'
 import { useAdInsertion } from '@/shared/hooks/useAdInsertion'
-import { gkktt } from '@/shared/lib/fonts'
 import Ads from '@/shared/ui/ads/Ads'
-import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
-import type { ApiError } from '@/types/response'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import VideoItem from './VideoItem'
 import VideoSearchForm from './VideoSearchForm'
 
-interface Props {
-	readonly youtubeDetails: Video[] | PlaylistDoc[]
-	readonly pageMax: number
-	readonly error?: ApiError
-	readonly defaultQuery: YoutubeSearchQuery
-	readonly initialQuery: YoutubeSearchQuery
-	readonly extraSearchParams?: string
+const defaultQuery: YoutubeSearchQuery = {
+	...VIDEO_PAGE_DEFAULT_QUERY,
+}
+
+type Props = {
+	readonly youtubeList: SearchResponse
+	readonly query: YoutubeSearchQuery
 }
 
 const PER_PAGE_OPTIONS: Record<string, number> = {
@@ -39,39 +38,17 @@ const SORT_OPTIONS = [
 
 const MAX_VIDEO_ADS = 3
 
-const VideoListPage = ({
-	youtubeDetails,
-	pageMax,
-	error,
-	defaultQuery,
-	initialQuery,
-	extraSearchParams,
-}: Props) => {
+const VideoListPage = ({ youtubeList, query }: Props) => {
 	const {
 		query: currentQuery,
 		isSearching,
 		updateQuery,
-		isPending,
 	} = useYoutubeSearchQuery({
 		defaultQuery,
-		initialQuery,
-		extraSearchParams,
+		initialQuery: query,
 	})
 
-	const skeletonKeys = useMemo(
-		() =>
-			Array.from(
-				{ length: currentQuery.videoPerPage },
-				(_, idx) => `placeholder-${idx + 1}`,
-			),
-		[currentQuery.videoPerPage],
-	)
-
-	const shareQueryString = buildYoutubeQueryString(
-		currentQuery,
-		defaultQuery,
-		extraSearchParams,
-	)
+	const shareQueryString = buildYoutubeQueryString(currentQuery, defaultQuery)
 
 	const shareUrl = shareQueryString ? `/video?${shareQueryString}` : '/video'
 
@@ -79,21 +56,13 @@ const VideoListPage = ({
 		updateQuery({ ...searchQuery, page: 1 })
 	}
 
-	const isBand = currentQuery.liveOrBand === 'band'
-	const bandDetails = isBand ? (youtubeDetails as Video[]) : []
-	const playlistDetails = !isBand ? (youtubeDetails as PlaylistDoc[]) : []
-
-	const bandIds = useMemo(
-		() => bandDetails.map((detail) => detail.videoId),
-		[bandDetails],
-	)
-	const playlistIds = useMemo(
-		() => playlistDetails.map((detail) => detail.playlistId),
-		[playlistDetails],
+	const ids = useMemo(
+		() => youtubeList.items.map((detail) => detail.videoId),
+		[youtubeList],
 	)
 
 	const { shouldRenderAd: shouldRenderBandAd } = useAdInsertion({
-		ids: bandIds,
+		ids: ids,
 		maxAds: MAX_VIDEO_ADS,
 		seedParts: [
 			'band',
@@ -103,24 +72,8 @@ const VideoListPage = ({
 		],
 	})
 
-	const { shouldRenderAd: shouldRenderPlaylistAd } = useAdInsertion({
-		ids: playlistIds,
-		maxAds: MAX_VIDEO_ADS,
-		seedParts: [
-			'playlist',
-			currentQuery.page,
-			currentQuery.videoPerPage,
-			currentQuery.sort,
-		],
-	})
-
 	return (
-		<div className="container mx-auto px-2 sm:px-4">
-			<div
-				className={`font-bold text-3xl sm:text-4xl ${gkktt.className} mb-6 text-center`}
-			>
-				過去ライブ映像
-			</div>
+		<>
 			<VideoSearchForm
 				currentQuery={currentQuery}
 				isSearching={isSearching}
@@ -143,46 +96,26 @@ const VideoListPage = ({
 					onChange: (sort) => updateQuery({ sort }),
 				}}
 				pagination={
-					pageMax > 1
+					youtubeList.total > 1
 						? {
 								currentPage: currentQuery.page,
-								totalPages: pageMax,
-								totalCount: youtubeDetails.length,
+								totalPages: youtubeList.total
+									? Math.ceil(youtubeList.total / currentQuery.videoPerPage)
+									: 0,
+								totalCount: youtubeList.items.length,
 								onPageChange: (page) => updateQuery({ page }),
 							}
 						: undefined
 				}
 			>
-				<FeedbackMessage source={error} defaultVariant="error" />
-				{isPending ? (
+				{youtubeList?.items.length > 0 ? (
 					<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-						{skeletonKeys.map((placeholderKey) => (
-							<div
-								key={placeholderKey}
-								className="flex w-full flex-col items-center rounded-lg border p-4 shadow-sm"
-							>
-								<div className="skeleton mb-2 aspect-[16/9] w-full"></div>
-								<div className="skeleton mb-1 h-6 w-3/4"></div>
-								<div className="skeleton mb-1 h-5 w-1/2"></div>
-								<div className="skeleton h-5 w-1/3"></div>
-							</div>
+						{youtubeList.items.map((detail, index) => (
+							<Fragment key={detail.videoId}>
+								<VideoItem youtubeDetail={detail} />
+								{shouldRenderBandAd(index) && <Ads placement="Video" />}
+							</Fragment>
 						))}
-					</div>
-				) : youtubeDetails?.length > 0 ? (
-					<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-						{isBand
-							? bandDetails.map((detail, index) => (
-									<Fragment key={detail.videoId}>
-										<VideoItem youtubeDetail={detail} liveOrBand="band" />
-										{shouldRenderBandAd(index) && <Ads placement="Video" />}
-									</Fragment>
-								))
-							: playlistDetails.map((detail, index) => (
-									<Fragment key={detail.playlistId}>
-										<VideoItem youtubeDetail={detail} liveOrBand="live" />
-										{shouldRenderPlaylistAd(index) && <Ads placement="Video" />}
-									</Fragment>
-								))}
 					</div>
 				) : (
 					<div className="w-full py-10 text-center text-base-content">
@@ -190,7 +123,7 @@ const VideoListPage = ({
 					</div>
 				)}
 			</PaginatedResourceLayout>
-		</div>
+		</>
 	)
 }
 

@@ -2,12 +2,20 @@
 
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { buildAuthRedirectPath } from '@/domains/auth/utils/authRedirect'
 import PublicEnv from '@/shared/lib/env/public'
 import { nicomoji } from '@/shared/lib/fonts'
 import { getImageUrl } from '@/shared/lib/r2'
 
-const SigninPage = () => {
+interface Props {
+	readonly redirectFrom?: string | null
+}
+
+const SigninPage = ({ redirectFrom }: Props) => {
 	const router = useRouter()
+	const padlockPath = buildAuthRedirectPath('/auth/padlock', {
+		from: redirectFrom,
+	})
 
 	return (
 		<div className="flex flex-col items-center justify-center">
@@ -29,7 +37,7 @@ const SigninPage = () => {
 					<button
 						type="button"
 						className="btn btn-primary"
-						onClick={async () => router.push('/auth/padlock')}
+						onClick={async () => router.push(padlockPath)}
 					>
 						LINEで登録
 					</button>

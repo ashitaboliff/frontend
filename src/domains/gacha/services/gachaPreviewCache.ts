@@ -1,13 +1,13 @@
-import type { GachaData } from '@/domains/gacha/model/gachaTypes'
+import type { Gacha } from '@/domains/gacha/model/types'
 
 export const PREVIEW_CACHE_TTL_MS = 60 * 60 * 1000
 
 export type PreviewCachePayload = {
-	gacha: GachaData | null
+	gacha: Gacha | null
 	totalCount: number
 } | null
 
-export interface GachaPreviewCacheEntry {
+export type GachaPreviewCacheEntry = {
 	data: PreviewCachePayload
 	expiresAt: number
 	updatedAt: number

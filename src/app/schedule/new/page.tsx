@@ -1,6 +1,6 @@
 import ScheduleCreatePage from '@/app/schedule/new/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
-import { getUserIdWithNames } from '@/domains/schedule/api/scheduleActions'
+import { getUserIdWithNames } from '@/domains/schedule/api/actions'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { logError } from '@/shared/utils/logger'
 
@@ -14,9 +14,6 @@ const Page = async () => {
 		<AuthPage requireProfile={true}>
 			{async (authResult) => {
 				const session = authResult.session
-				if (!session) {
-					return null
-				}
 
 				const usersRes = await getUserIdWithNames()
 				let initialUsers: Record<string, string> = {}

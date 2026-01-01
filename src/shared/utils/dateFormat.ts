@@ -176,3 +176,13 @@ export const formatWeekday = (
 	const label = WEEKDAY_JA[date.getDay()]
 	return options?.enclosed ? `(${label})` : label
 }
+
+export const extractDateKey = (value: string): string | null => {
+	const match = value.match(/^(\d{4}-\d{2}-\d{2})/)
+	return match?.[1] ?? null
+}
+
+export const getUtcDayOfWeek = (dateKey: string): number | null => {
+	const date = new Date(dateKey)
+	return Number.isNaN(date.getTime()) ? null : date.getUTCDay()
+}

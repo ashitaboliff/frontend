@@ -3,6 +3,7 @@ import {
 	FaRegUserCircle,
 	FaYoutube,
 	LuLockKeyhole,
+	LuShieldAlert,
 	RiQuestionLine,
 	RxCrossCircled,
 } from '@/shared/ui/icons'
@@ -36,6 +37,14 @@ const adminLinks = [
 	},
 ] as const
 
+const debugLinks = [
+	{
+		href: '/admin/error-demo',
+		label: 'エラーハンドラー動作確認',
+		icon: <LuShieldAlert size={iconSize} />,
+	},
+] as const
+
 const AdminMain = () => {
 	return (
 		<div className="flex flex-col items-center justify-center">
@@ -53,6 +62,18 @@ const AdminMain = () => {
 								</td>
 							</tr>
 						))}
+						{process.env.NODE_ENV !== 'production'
+							? debugLinks.map((link) => (
+									<tr key={link.href} className="hover:bg-base-200">
+										<td className="w-12">{link.icon}</td>
+										<td>
+											<Link href={link.href} className="text-lg text-warning">
+												{link.label}
+											</Link>
+										</td>
+									</tr>
+								))
+							: null}
 					</tbody>
 				</table>
 			</div>

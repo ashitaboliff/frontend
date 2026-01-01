@@ -1,61 +1,81 @@
+import { Suspense } from 'react'
 import AdminUserPage from '@/app/admin/user/_components'
-import { getAllUserDetailsAction } from '@/domains/admin/api/adminActions'
-import {
-	ADMIN_USER_DEFAULT_QUERY,
-	buildAdminUserQueryString,
-	parseAdminUserQuery,
-} from '@/domains/admin/query/adminUserQuery'
-import type { UserDetail } from '@/domains/user/model/userTypes'
-import type { ApiError } from '@/types/response'
+import PageLayout from '@/app/admin/user/_components/PageLayout'
+import { AdminUserPageParamsSchema } from '@/app/admin/user/schema'
+import { getUserDetailsListAction } from '@/domains/admin/api/actions'
+import PaginatedErrorView from '@/shared/ui/organisms/PaginatedErrorView'
+import PaginatedTableSkeleton from '@/shared/ui/organisms/PaginatedTableSkeleton'
+import { logError } from '@/shared/utils/logger'
+
+const headers = [
+	{ key: 'lineName', label: 'LINE名' },
+	{ key: 'fullName', label: '本名' },
+	{ key: 'studentId', label: '学籍番号' },
+	{ key: 'studentStatus', label: '学籍状況' },
+	{ key: 'role', label: '役割' },
+]
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-const Page = async ({ searchParams }: Props) => {
-	const urlParams = new URLSearchParams()
-	for (const [key, value] of Object.entries(await searchParams)) {
-		if (typeof value === 'string') {
-			urlParams.set(key, value)
-		} else if (Array.isArray(value)) {
-			value.forEach((v) => {
-				urlParams.append(key, v)
-			})
-		}
-	}
+const Content = async ({ searchParams }: Props) => {
+	const params = await searchParams
+	const parsed = AdminUserPageParamsSchema.safeParse({
+		page: params.page,
+		perPage: params.perPage,
+		sort: params.sort,
+	})
 
-	const { query, extraSearchParams } = parseAdminUserQuery(
-		urlParams,
-		ADMIN_USER_DEFAULT_QUERY,
-	)
-	const searchParamsString = buildAdminUserQueryString(
-		query,
-		ADMIN_USER_DEFAULT_QUERY,
-		extraSearchParams,
-	)
+	const query = parsed.success
+		? parsed.data
+		: AdminUserPageParamsSchema.parse({})
 
-	let users: UserDetail[] = []
-	let totalCount = 0
-	let error: ApiError | undefined
+	const response = await getUserDetailsListAction({
+		page: query.page,
+		perPage: query.perPage,
+		sort: query.sort,
+	})
 
-	const response = await getAllUserDetailsAction(query)
 	if (response.ok) {
-		users = response.data.users
-		totalCount = response.data.totalCount
+		return (
+			<AdminUserPage users={response.data} query={query} headers={headers} />
+		)
 	} else {
-		error = response
+		logError('AdminUserPage', 'Content', 'getUserDetailsListAction', response)
+		return (
+			<PaginatedErrorView
+				error={response}
+				link="/admin"
+				perPageLabel="表示件数:"
+				showSort
+				sortOptionCount={2}
+				showPagination
+			/>
+		)
 	}
+}
 
+const Loading = () => {
 	return (
-		<AdminUserPage
-			key={searchParamsString}
-			users={users}
-			totalCount={totalCount}
-			defaultQuery={ADMIN_USER_DEFAULT_QUERY}
-			initialQuery={query}
-			extraSearchParams={extraSearchParams}
-			initialError={error}
+		<PaginatedTableSkeleton
+			headers={headers}
+			rows={8}
+			perPageLabel="表示件数:"
+			showSort
+			sortOptionCount={2}
+			showPagination
 		/>
+	)
+}
+
+const Page = async ({ searchParams }: Props) => {
+	return (
+		<PageLayout>
+			<Suspense fallback={<Loading />}>
+				<Content searchParams={searchParams} />
+			</Suspense>
+		</PageLayout>
 	)
 }
 

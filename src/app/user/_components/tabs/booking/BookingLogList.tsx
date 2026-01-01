@@ -1,12 +1,12 @@
 'use client'
 
-import { BOOKING_TIME_LIST } from '@/domains/booking/constants/bookingConstants'
-import type { Booking } from '@/domains/booking/model/bookingTypes'
+import { BOOKING_TIME_LIST } from '@/domains/booking/constants'
+import type { Booking } from '@/domains/booking/model/types'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 import { formatDateSlashWithWeekday } from '@/shared/utils/dateFormat'
 import type { FeedbackMessageType } from '@/types/feedback'
 
-interface Props {
+type Props = {
 	readonly bookings?: Booking[]
 	readonly isLoading: boolean
 	readonly error?: FeedbackMessageType | null
@@ -42,7 +42,6 @@ const BookingLogList = ({
 			renderCells={renderBookingCells}
 			onRowClick={onBookingItemClick}
 			itemKeyExtractor={(booking) => booking.id}
-			loadingMessage="予約履歴を読み込み中..."
 			emptyDataMessage="予約履歴はありません。"
 		/>
 	)

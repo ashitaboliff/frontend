@@ -2,9 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { MAX_GACHA_PLAYS_PER_DAY } from '@/domains/gacha/config/gachaConfig'
-import { FORCE_GACHA_PENDING } from '@/domains/gacha/config/gachaDebugConfig'
-import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
+import { MAX_GACHA_PLAYS_PER_DAY } from '@/domains/gacha/config/config'
+import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import { executeGachaPlay } from '@/domains/gacha/services/executeGachaPlay'
 import GachaConfirm from '@/domains/gacha/ui/GachaConfirm'
 import GachaPending from '@/domains/gacha/ui/GachaPending'
@@ -19,7 +18,7 @@ import type { Session } from '@/types/session'
 
 type GachaStep = 'select' | 'confirm' | 'pending' | 'result'
 
-interface Props {
+type Props = {
 	readonly session: Session
 	readonly gachaPlayCountToday: number
 	readonly onGachaPlayedSuccessfully: () => void
@@ -107,7 +106,6 @@ const GachaController = ({
 			void executeGachaPlay({
 				version: selectedVersion,
 				userId: session.user.id,
-				currentPlayCount: gachaPlayCountToday,
 				ignorePlayCountLimit,
 			}).then((result) => {
 				if (executionIdRef.current !== executionId) return
@@ -128,7 +126,6 @@ const GachaController = ({
 			})
 		},
 		[
-			gachaPlayCountToday,
 			ignorePlayCountLimit,
 			onGachaPlayedSuccessfully,
 			selectedRect,
@@ -196,13 +193,13 @@ const GachaController = ({
 					<div className="flex w-full max-w-xl flex-col pt-20">
 						<GachaResult state={gachaResultState} />
 						<div className="relative">
-							<div className="fixed absolute bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
+							<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
 								<button
 									type="button"
 									className="btn btn-outline"
 									onClick={handleResultBackToSelect}
 								>
-									パック選択に戻る
+									パックを選ぶ
 								</button>
 							</div>
 						</div>
@@ -216,9 +213,6 @@ const GachaController = ({
 	const shouldShowOverlay = open && currentStep !== 'select'
 
 	useEffect(() => {
-		if (FORCE_GACHA_PENDING) {
-			return
-		}
 		if (
 			currentStep === 'pending' &&
 			pendingAnimationDone &&

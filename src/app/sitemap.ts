@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
-import { getBookingIds } from '@/domains/booking/api/bookingActions'
-import { getYoutubeIds } from '@/domains/video/api/videoActions'
+import { getBookingIds } from '@/domains/booking/api/actions'
+import { getYoutubeIds } from '@/domains/video/api/actions'
 import PublicEnv from '@/shared/lib/env/public'
 
 const URL = PublicEnv.NEXT_PUBLIC_APP_URL
@@ -66,6 +66,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			url: `${URL}/blogs`,
 			lastModified: new Date(),
 			priority: 0.8,
+		},
+		{
+			url: `${URL}/changelog`,
+			lastModified: new Date(),
+			priority: 0.7,
 		},
 		...bookingsMap,
 		...youtubeMap,

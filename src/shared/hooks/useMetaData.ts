@@ -1,5 +1,14 @@
 import PublicEnv from '@/shared/lib/env/public'
 
+type Options = {
+	title: string
+	url?: string // Keep for static pages or as a base
+	description?: string
+	image?: string
+	keywords?: string[]
+	pathname?: string
+}
+
 export const createMetaData = ({
 	title,
 	url: initialUrl,
@@ -19,17 +28,9 @@ export const createMetaData = ({
 		'信大',
 		'コマ表',
 	],
-	pathname, // Changed from params to pathname for clarity and flexibility
-}: {
-	title: string
-	url?: string // Keep for static pages or as a base
-	description?: string
-	image?: string
-	keywords?: string[]
-	pathname?: string // To construct the full URL for dynamic pages
-}) => {
+	pathname,
+}: Options) => {
 	title = `${title} | あしたぼホームページ`
-	// Construct URL: if pathname is provided, use it directly. Otherwise, use initialUrl.
 	const finalPath = pathname || initialUrl || ''
 	const url = `${PublicEnv.NEXT_PUBLIC_APP_URL}${finalPath.startsWith('/') ? '' : '/'}${finalPath}` // Ensure leading slash
 

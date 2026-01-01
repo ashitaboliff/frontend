@@ -49,7 +49,7 @@ const PadLockPage = ({ csrfToken, callbackUrl }: Props) => {
 				/>
 				<input type="hidden" name="padlockToken" defaultValue="" />
 			</form>
-			<div className="card my-6 h-[30rem] w-96 bg-white shadow-lg">
+			<div className="card my-6 h-120 w-96 bg-white shadow-lg">
 				<figure>
 					<Image
 						src={getImageUrl('/utils/padlock.webp')}

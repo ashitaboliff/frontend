@@ -1,10 +1,11 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 import { getImageUrl } from '@/shared/lib/r2'
 
-export const metadata: Metadata = {
-	title: '404',
-}
+export const metadata = createMetaData({
+	title: '404 Not Found',
+	description: 'お探しのページは見つかりませんでした。',
+})
 
 const NotFoundImages: { id: number; src: string; score: number }[] = [
 	{ id: 1, src: '/error/404/01.webp', score: 150 },
@@ -36,15 +37,14 @@ export default async function NotFound() {
 	const selectedImage = await selectImage()
 
 	return (
-		<div className="flex flex-col items-center justify-center text-center">
-			<div className="mb-8">
-				<img
-					src={getImageUrl(selectedImage)}
-					alt="404 Not Found"
-					width={400}
-					height={225}
-				/>
-			</div>
+		<div className="flex flex-col justify-center text-center">
+			<img
+				src={getImageUrl(selectedImage)}
+				alt="404 Not Found"
+				width={400}
+				height={225}
+				className="mb-8 rounded-xl"
+			/>
 			<h1 className="mb-4 font-bold text-4xl">Page Not Found</h1>
 			<p className="mb-2 text-lg">お探しのページは見つかりませんでした。</p>
 			<p className="mb-6 text-xxs">

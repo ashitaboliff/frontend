@@ -5,13 +5,15 @@ import {
 	type KeyboardEvent,
 	type ReactNode,
 	useEffect,
+	useMemo,
 	useState,
 } from 'react'
 import { type Control, Controller, type UseFormSetValue } from 'react-hook-form'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 import { HiMiniXMark } from '@/shared/ui/icons'
+import { classNames } from '@/shared/ui/utils/classNames'
 
-type TagInputFieldProps = {
+export type TagInputFieldProps = {
 	name: string
 	label?: string
 	labelId?: string
@@ -21,11 +23,16 @@ type TagInputFieldProps = {
 	control?: Control<any>
 	defaultValue?: string[]
 	// biome-ignore lint/suspicious/noExplicitAny: react-hook-form setter uses form-specific generics
-	setValue?: UseFormSetValue<any> // setValueは直接使用されていないため、将来的な用途がなければ削除も検討
+	setValue?: UseFormSetValue<any>
 	onChange?: (tags: string[]) => void
+	className?: string
+	inputClassName?: string
 }
 
-const TagInputField = ({
+const dedupeTags = (tags: string[]) =>
+	Array.from(new Set(tags.map((t) => t.trim()).filter(Boolean)))
+
+const TagsInputField = ({
 	name,
 	label,
 	labelId,
@@ -34,44 +41,31 @@ const TagInputField = ({
 	control,
 	defaultValue = [],
 	onChange,
+	className,
+	inputClassName,
 }: TagInputFieldProps) => {
-	// tagsステートは、controlがない場合、またはdefaultValueの初期値として使用
-	const [tags, setTags] = useState<string[]>(defaultValue || [])
+	const [tags, setTags] = useState<string[]>(dedupeTags(defaultValue))
 	const [inputValue, setInputValue] = useState<string>('')
 
-	// defaultValueが変更された場合、かつcontrolがない場合にtagsを更新
 	useEffect(() => {
 		if (!control) {
-			// defaultValueが実際に変更された場合のみtagsを更新する
-			// JSON.stringifyはパフォーマンスに影響する可能性があるため、より効率的な比較方法も検討できる
-			if (JSON.stringify(defaultValue) !== JSON.stringify(tags)) {
-				setTags(defaultValue || [])
-			}
+			setTags(dedupeTags(defaultValue))
 		}
-		// controlがある場合は、field.valueが優先されるため、このuseEffectでの更新は不要
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [defaultValue, control, tags]) // controlを依存配列に追加
-
-	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setInputValue(e.target.value)
-	}
+	}, [control, defaultValue])
 
 	const addTagInternal = (
 		tagValue: string,
 		currentTags: string[],
 		fieldOnChange?: (value: string[]) => void,
 	) => {
-		const newTag = tagValue.trim()
-		if (newTag && !currentTags.includes(newTag)) {
-			const newTagsArray = [...currentTags, newTag]
-			if (fieldOnChange) {
-				fieldOnChange(newTagsArray)
-			} else if (onChange) {
-				setTags(newTagsArray)
-				onChange(newTagsArray)
-			} else {
-				setTags(newTagsArray)
-			}
+		const newTagsArray = dedupeTags([...currentTags, tagValue])
+		if (fieldOnChange) {
+			fieldOnChange(newTagsArray)
+		} else if (onChange) {
+			setTags(newTagsArray)
+			onChange(newTagsArray)
+		} else {
+			setTags(newTagsArray)
 		}
 		setInputValue('')
 	}
@@ -92,16 +86,63 @@ const TagInputField = ({
 		}
 	}
 
-	return (
-		<div>
-			{label && (
-				<LabelInputField
-					label={label}
-					infoDropdown={infoDropdown}
-					labelId={labelId}
-				/>
-			)}
-			{control ? (
+	const inputPlaceholder = placeholder
+	const renderTag = (tag: string, removeFn: (tag: string) => void) => (
+		<div
+			key={tag}
+			className="badge badge-info badge-outline gap-1 text-xs-custom sm:text-sm"
+		>
+			<span>{tag}</span>
+			<button
+				type="button"
+				onClick={() => removeFn(tag)}
+				className="text-error"
+				aria-label={`タグ ${tag} を削除`}
+			>
+				<HiMiniXMark aria-hidden />
+			</button>
+		</div>
+	)
+
+	const handleKeyDown = (
+		e: KeyboardEvent<HTMLInputElement>,
+		currentTags: string[],
+		fieldOnChange?: (value: string[]) => void,
+	) => {
+		if (e.key === 'Enter' || e.key === ',') {
+			e.preventDefault()
+			addTagInternal(inputValue, currentTags, fieldOnChange)
+		}
+		if (e.key === 'Backspace' && inputValue === '' && currentTags.length) {
+			removeTagInternal(
+				currentTags[currentTags.length - 1],
+				currentTags,
+				fieldOnChange,
+			)
+		}
+	}
+
+	const commonInputProps = {
+		id: labelId,
+		placeholder: inputPlaceholder,
+		className: classNames(
+			'input min-w-[150px] flex-grow bg-white text-sm sm:text-base',
+			inputClassName,
+		),
+	}
+
+	const Controlled = useMemo(() => control !== undefined, [control])
+
+	if (Controlled && control) {
+		return (
+			<div className={classNames('flex flex-col', className)}>
+				{label ? (
+					<LabelInputField
+						label={label}
+						infoDropdown={infoDropdown}
+						labelId={labelId}
+					/>
+				) : null}
 				<Controller
 					name={name}
 					control={control}
@@ -109,55 +150,30 @@ const TagInputField = ({
 					render={({ field }) => {
 						const currentControlledTags = field.value || []
 
-						const handleKeyDownController = (
-							e: KeyboardEvent<HTMLInputElement>,
-						) => {
-							if (e.key === 'Enter' || e.key === ',') {
-								e.preventDefault()
-								addTagInternal(
-									inputValue,
-									currentControlledTags,
-									field.onChange,
-								)
-							}
-						}
-
 						return (
 							<div className="flex flex-wrap items-center gap-2 rounded-md py-2">
 								<div className="flex flex-wrap gap-2">
-									{currentControlledTags.map((tag: string) => (
-										<div
-											key={tag}
-											className="badge badge-info badge-outline gap-1 text-xs-custom sm:text-sm"
-										>
-											<span>{tag}</span>
-											<button
-												type="button"
-												onClick={() =>
-													removeTagInternal(
-														tag,
-														currentControlledTags,
-														field.onChange,
-													)
-												}
-												className="text-error"
-												aria-label={`タグ ${tag} を削除`}
-											>
-												<HiMiniXMark />
-											</button>
-										</div>
-									))}
+									{currentControlledTags.map((tag: string) =>
+										renderTag(tag, (t) =>
+											removeTagInternal(
+												t,
+												currentControlledTags,
+												field.onChange,
+											),
+										),
+									)}
 								</div>
 								<input
-									id={labelId}
 									type="text"
 									value={inputValue}
-									onChange={handleInputChange}
-									onKeyDown={handleKeyDownController}
-									placeholder={placeholder}
-									className="input min-w-[150px] flex-grow bg-white text-sm sm:text-base"
+									onChange={(e: ChangeEvent<HTMLInputElement>) =>
+										setInputValue(e.target.value)
+									}
+									onKeyDown={(e) =>
+										handleKeyDown(e, currentControlledTags, field.onChange)
+									}
+									{...commonInputProps}
 									onBlur={() => {
-										// 入力値がある場合のみタグを追加
 										if (inputValue.trim()) {
 											addTagInternal(
 												inputValue,
@@ -171,49 +187,43 @@ const TagInputField = ({
 						)
 					}}
 				/>
-			) : (
-				// controlがない場合のレンダリング (ローカルのtagsステートを使用)
-				<div className="flex flex-wrap items-center gap-2 rounded-md py-2">
-					<div className="flex flex-wrap gap-2">
-						{tags.map((tag) => (
-							<div
-								key={tag}
-								className="badge badge-info badge-outline gap-1 text-xs-custom sm:text-sm"
-							>
-								<span>{tag}</span>
-								<button
-									type="button"
-									onClick={() => removeTagInternal(tag, tags, onChange)}
-									className="text-error"
-									aria-label={`タグ ${tag} を削除`}
-								>
-									<HiMiniXMark />
-								</button>
-							</div>
-						))}
-					</div>
-					<input
-						type="text"
-						value={inputValue}
-						onChange={handleInputChange}
-						onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-							if (e.key === 'Enter' || e.key === ',') {
-								e.preventDefault()
-								addTagInternal(inputValue, tags, onChange)
-							}
-						}}
-						placeholder={placeholder}
-						className="input min-w-[150px] flex-grow bg-white text-sm sm:text-base"
-						onBlur={() => {
-							if (inputValue.trim()) {
-								addTagInternal(inputValue, tags, onChange)
-							}
-						}}
-					/>
+			</div>
+		)
+	}
+
+	// Uncontrolled (local state)
+	return (
+		<div className={classNames('flex flex-col', className)}>
+			{label ? (
+				<LabelInputField
+					label={label}
+					infoDropdown={infoDropdown}
+					labelId={labelId}
+				/>
+			) : null}
+			<div className="flex flex-wrap items-center gap-2 rounded-md py-2">
+				<div className="flex flex-wrap gap-2">
+					{tags.map((tag) =>
+						renderTag(tag, (t) => removeTagInternal(t, tags, onChange)),
+					)}
 				</div>
-			)}
+				<input
+					type="text"
+					value={inputValue}
+					onChange={(e: ChangeEvent<HTMLInputElement>) =>
+						setInputValue(e.target.value)
+					}
+					onKeyDown={(e) => handleKeyDown(e, tags, onChange)}
+					{...commonInputProps}
+					onBlur={() => {
+						if (inputValue.trim()) {
+							addTagInternal(inputValue, tags, onChange)
+						}
+					}}
+				/>
+			</div>
 		</div>
 	)
 }
 
-export default TagInputField
+export default TagsInputField

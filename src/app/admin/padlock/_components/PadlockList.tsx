@@ -1,9 +1,9 @@
 'use client'
 
-import type { PadLock } from '@/domains/admin/model/adminTypes'
+import type { PadLock } from '@/domains/auth/model/types'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
-import PaginatedResourceLayout from '@/shared/ui/molecules/PaginatedResourceLayout'
+import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import { formatDateTimeJaWithUnits } from '@/shared/utils/dateFormat'
 
 const PER_PAGE_OPTIONS_LABELS: Record<string, number> = {
@@ -12,25 +12,20 @@ const PER_PAGE_OPTIONS_LABELS: Record<string, number> = {
 	'30件': 30,
 }
 
-interface PadlockListProps {
+type PadlockListProps = {
 	readonly padLocks: PadLock[]
 	readonly perPage: number
 	readonly onPerPageChange: (perPage: number) => void
 	readonly onSelect: (padLock: PadLock) => void
+	readonly headers: Array<{ key: string; label: string }>
 }
-
-const headers = [
-	{ key: 'status', label: '' },
-	{ key: 'name', label: '管理名' },
-	{ key: 'created', label: '作成日' },
-	{ key: 'updated', label: '更新日' },
-]
 
 const PadlockList = ({
 	padLocks,
 	perPage,
 	onPerPageChange,
 	onSelect,
+	headers,
 }: PadlockListProps) => {
 	return (
 		<PaginatedResourceLayout
@@ -47,7 +42,6 @@ const PadlockList = ({
 				data={padLocks}
 				isLoading={false}
 				emptyDataMessage="パスワードが登録されていません。"
-				loadingMessage="パスワード一覧を読み込み中です..."
 				onRowClick={onSelect}
 				itemKeyExtractor={(padLock) => padLock.id}
 				rowClassName="cursor-pointer"

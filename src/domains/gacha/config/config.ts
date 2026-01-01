@@ -1,0 +1,98 @@
+import type { RarityType } from '@/domains/gacha/model/types'
+
+export const MAX_GACHA_PLAYS_PER_DAY = 3
+
+export const GachaRarityMap: { [key in RarityType]: string } = {
+	COMMON: 'コモン',
+	RARE: 'レア',
+	SUPER_RARE: 'スーパーレア',
+	SS_RARE: 'ダブルスーパーレア',
+	ULTRA_RARE: 'ウルトラレア',
+	SECRET_RARE: 'シークレットレア',
+}
+
+export type GachaCategoryConfig = {
+	name: RarityType
+	probability: number
+	count: number
+	prefix: string
+}
+
+export type GachaVersionConfig = {
+	categories: GachaCategoryConfig[]
+	title: string
+	packKey: string
+}
+
+export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
+	version1: {
+		categories: [
+			{ name: 'COMMON', probability: 22500, count: 20, prefix: 'C' },
+			{ name: 'RARE', probability: 20000, count: 15, prefix: 'R' },
+			{ name: 'SUPER_RARE', probability: 17000, count: 10, prefix: 'SR' },
+			{ name: 'SS_RARE', probability: 13000, count: 5, prefix: 'SSR' },
+			{ name: 'ULTRA_RARE', probability: 5000, count: 2, prefix: 'UR' },
+			{ name: 'SECRET_RARE', probability: 1, count: 1, prefix: 'SECRET' },
+		],
+		title: 'OBのいる島',
+		packKey: 'pack/version1.webp',
+	},
+	version2: {
+		categories: [
+			{ name: 'COMMON', probability: 200, count: 20, prefix: 'C' },
+			{ name: 'RARE', probability: 160, count: 15, prefix: 'R' },
+			{ name: 'SUPER_RARE', probability: 150, count: 10, prefix: 'SR' },
+			{ name: 'SS_RARE', probability: 125, count: 4, prefix: 'SSR' },
+			{ name: 'ULTRA_RARE', probability: 100, count: 1, prefix: 'UR' },
+		],
+		title: '卒業生の暴獣',
+		packKey: 'pack/version2.webp',
+	},
+	version3: {
+		categories: [
+			{ name: 'COMMON', probability: 20, count: 20, prefix: 'C' },
+			{ name: 'RARE', probability: 16, count: 15, prefix: 'R' },
+			{ name: 'SUPER_RARE', probability: 14, count: 10, prefix: 'SR' },
+			{ name: 'SS_RARE', probability: 12, count: 5, prefix: 'SSR' },
+			{ name: 'ULTRA_RARE', probability: 8, count: 1, prefix: 'UR' },
+		],
+		title: 'コスプレガーデン',
+		packKey: 'pack/version3.webp',
+	},
+	version4: {
+		categories: [
+			{ name: 'COMMON', probability: 27000, count: 20, prefix: 'C' },
+			{ name: 'RARE', probability: 25000, count: 15, prefix: 'R' },
+			{ name: 'SUPER_RARE', probability: 20000, count: 10, prefix: 'SR' },
+			{ name: 'SS_RARE', probability: 15000, count: 3, prefix: 'SSR' },
+			{ name: 'ULTRA_RARE', probability: 5000, count: 1, prefix: 'UR' },
+			{ name: 'SECRET_RARE', probability: 1, count: 2, prefix: 'SECRET' },
+		],
+		title: 'ポケモンジャングル',
+		packKey: 'pack/version4.webp',
+	},
+}
+
+const VERSION_PREFIX = 'version'
+
+const toVersionNumber = (key: string): number | null => {
+	if (!key.startsWith(VERSION_PREFIX)) {
+		return null
+	}
+	const suffix = key.slice(VERSION_PREFIX.length)
+	const parsed = Number.parseInt(suffix, 10)
+	return Number.isFinite(parsed) ? parsed : null
+}
+
+const resolveLatestGachaVersion = (): string => {
+	const keys = Object.keys(gachaConfigs)
+	if (keys.length === 0) {
+		throw new Error('gachaConfigs is empty')
+	}
+	const sorted = keys
+		.map((key) => ({ key, versionNumber: toVersionNumber(key) ?? 0 }))
+		.sort((a, b) => b.versionNumber - a.versionNumber)
+	return sorted[0]?.key ?? keys[0]
+}
+
+export const LATEST_GACHA_VERSION = resolveLatestGachaVersion()

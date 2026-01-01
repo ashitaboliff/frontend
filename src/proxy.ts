@@ -1,4 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server'
+import {
+	type AuthRedirectReason,
+	buildAuthFlashValue,
+	buildAuthRedirectPath,
+} from '@/domains/auth/utils/authRedirect'
+import {
+	FLASH_MESSAGE_COOKIE_OPTIONS,
+	FLASH_MESSAGE_KEYS,
+} from '@/shared/constants/flashMessage'
 
 export const config = {
 	matcher: [
@@ -62,6 +71,23 @@ export const hasAuthCookie = (request: NextRequest): boolean =>
 const redirect = (request: NextRequest, path: string, status = 302) =>
 	NextResponse.redirect(new URL(path, request.url), { status })
 
+const redirectWithFlash = (
+	request: NextRequest,
+	path: string,
+	reason?: AuthRedirectReason,
+	status = 302,
+) => {
+	const response = redirect(request, path, status)
+	if (reason) {
+		response.cookies.set(
+			FLASH_MESSAGE_KEYS.auth,
+			buildAuthFlashValue(reason),
+			FLASH_MESSAGE_COOKIE_OPTIONS.auth,
+		)
+	}
+	return response
+}
+
 const handleMaintenance = (
 	request: NextRequest,
 	options: { maintenanceMode: boolean; whitelist: string[] },
@@ -114,7 +140,9 @@ const handleProtectedRoutes = (request: NextRequest): NextResponse | null => {
 
 	if (matchesRoute(pathname, PROFILE_REQUIRED_ROUTES)) {
 		if (!hasAuthCookie(request)) {
-			return redirect(request, '/auth/signin')
+			const from = `${pathname}${request.nextUrl.search}`
+			const target = buildAuthRedirectPath('/auth/signin', { from })
+			return redirectWithFlash(request, target, 'login-required')
 		}
 		return NextResponse.next()
 	}
