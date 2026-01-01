@@ -47,10 +47,6 @@ const nextConfig = {
 	},
 	turbopack: {},
 	reactCompiler: true,
-	output: 'standalone',
-	experimental: {
-		serverActions: true,
-	},
 }
 
 export default withBundleAnalyzer(nextConfig)
