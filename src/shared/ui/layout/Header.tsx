@@ -6,6 +6,7 @@ import {
 	FaRegUserCircle,
 	FaYoutube,
 	IoHomeOutline,
+	LuCalendarSync,
 	LuMenu,
 	MdOutlineEditCalendar,
 	RxCountdownTimer,
@@ -21,6 +22,12 @@ const MenuLinks = [
 		icon: MdOutlineEditCalendar,
 	},
 	{ id: 'video', href: '/video', label: '過去動画', icon: FaYoutube },
+	{
+		id: 'changelog',
+		href: '/changelog',
+		label: 'ロードマップ',
+		icon: LuCalendarSync,
+	},
 	{
 		id: 'log',
 		href: '/booking/logs',

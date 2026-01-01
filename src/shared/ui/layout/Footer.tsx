@@ -21,6 +21,10 @@ const list = [
 				url: '/blogs',
 				title: 'お知らせ',
 			},
+			{
+				url: '/changelog',
+				title: 'ロードマップ',
+			},
 		],
 	},
 	{

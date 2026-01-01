@@ -1,0 +1,46 @@
+name: PR Release Summary Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+    branches:
+      - master
+
+jobs:
+  release-summary:
+    if: github.event.pull_request.base.ref == 'master'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+    steps:
+      - name: Validate Release Summary
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = (context.payload.pull_request.body || '').trim();
+            const headerRegex = /#{2,3}\s*(Release Summary|リリースサマリー|変更内容|更新内容)\s*[\r\n]+([\s\S]*)/i;
+
+            const extractSection = (text) => {
+              const match = text.match(headerRegex);
+              if (!match) return '';
+              const remainder = match[2];
+              const nextHeadingIndex = remainder.search(/\n#{2,3}\s+/);
+              return nextHeadingIndex === -1 ? remainder : remainder.slice(0, nextHeadingIndex);
+            };
+
+            const summarySection = extractSection(body);
+            const cleaned = summarySection
+              .split('\n')
+              .map((line) => line.trim())
+              .filter((line) => line.length > 0)
+              .filter((line) => !line.startsWith('<!--'))
+              .filter((line) => !/^_.*_$/.test(line))
+              .filter((line) => line !== '-')
+              .filter((line) => !/^-\s*\[ \]/.test(line))
+              .join('\n')
+              .trim();
+
+            if (!summarySection || cleaned.length < 20) {
+              core.setFailed('Release Summary が不足しています。PRテンプレートの「Release Summary」欄に20文字以上で記載してください。');
+            }

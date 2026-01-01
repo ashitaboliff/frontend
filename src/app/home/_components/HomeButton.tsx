@@ -73,13 +73,13 @@ const HomeButton = async () => {
 					<HomePageButton
 						color="lightBlue"
 						text="comingsoon"
-						link="/comingsoon"
+						link="/changelog"
 						patting="pb-4"
 					/>
 					<HomePageButton
 						color="lightred"
 						text="comingsoon"
-						link="/comingsoon"
+						link="/changelog"
 						patting="pb-4"
 					/>
 				</div>
