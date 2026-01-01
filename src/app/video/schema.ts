@@ -1,6 +1,6 @@
+import * as z from 'zod'
 import { SortSchema } from '@/domains/shared/model/schema'
 import { liveOrBandSchema } from '@/domains/video/model/schema'
-import * as z from 'zod'
 import { VIDEO_PAGE_DEFAULT_QUERY } from '@/domains/video/query/youtubeQuery'
 
 export const YoutubeSearchQuerySchema = z.object({
