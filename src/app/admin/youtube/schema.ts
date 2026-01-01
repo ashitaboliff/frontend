@@ -6,13 +6,15 @@ export const AdminYoutubePageParamsSchema = z.object({
 		.number()
 		.int()
 		.positive()
-		.default(ADMIN_YOUTUBE_DEFAULT_PARAMS.page),
+		.default(ADMIN_YOUTUBE_DEFAULT_PARAMS.page)
+		.catch(ADMIN_YOUTUBE_DEFAULT_PARAMS.page),
 	videoPerPage: z.coerce
 		.number()
 		.int()
 		.min(1)
 		.max(200)
-		.default(ADMIN_YOUTUBE_DEFAULT_PARAMS.videoPerPage),
+		.default(ADMIN_YOUTUBE_DEFAULT_PARAMS.videoPerPage)
+		.catch(ADMIN_YOUTUBE_DEFAULT_PARAMS.videoPerPage),
 })
 
 export type AdminYoutubePageParams = z.infer<

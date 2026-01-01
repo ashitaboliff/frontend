@@ -28,14 +28,7 @@ export const searchYoutubeAction = async (
 	query: YoutubeSearchQuery,
 ): Promise<ApiResponse<SearchResponse>> => {
 	const res = await apiGet('/video/search', {
-		searchParams: {
-			liveOrBand: query.liveOrBand,
-			bandName: query.bandName,
-			liveName: query.liveName,
-			sort: query.sort,
-			page: query.page.toString(),
-			videoPerPage: query.videoPerPage.toString(),
-		},
+		searchParams: query,
 		next: {
 			revalidate: 60 * 60,
 			tags: ['videos', `video-search-${recordJoinSorted(query)}`],

@@ -1,31 +1,38 @@
 import { Suspense } from 'react'
 import VideoListPage from '@/app/video/_components'
+import VideoPageLayout from '@/app/video/_components/PageLayout'
+import Loading from '@/app/video/_components/VideoSearchLoading'
+import { YoutubeSearchQuerySchema } from '@/app/video/schema'
 import { searchYoutubeAction } from '@/domains/video/api/actions'
-import { YoutubeSearchQuerySchema } from '@/domains/video/model/schema'
-import type { SearchResponse } from '@/domains/video/model/types'
-import { VIDEO_PAGE_DEFAULT_QUERY } from '@/domains/video/query/youtubeQuery'
-import Loading from '@/shared/ui/atoms/Loading'
+import type { YoutubeSearchQuery } from '@/domains/video/model/types'
+import PaginatedErrorView from '@/shared/ui/organisms/PaginatedErrorView'
 import { logError } from '@/shared/utils/logger'
-import type { ApiError } from '@/types/response'
-
-const safeSearchParamsSchema = YoutubeSearchQuerySchema.catch(() => ({
-	liveOrBand: VIDEO_PAGE_DEFAULT_QUERY.liveOrBand,
-	bandName: VIDEO_PAGE_DEFAULT_QUERY.bandName,
-	liveName: VIDEO_PAGE_DEFAULT_QUERY.liveName,
-	sort: VIDEO_PAGE_DEFAULT_QUERY.sort,
-	page: VIDEO_PAGE_DEFAULT_QUERY.page,
-	videoPerPage: VIDEO_PAGE_DEFAULT_QUERY.videoPerPage,
-}))
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-const _UNEXPECTED_ERROR_MESSAGE = '予期せぬエラーが発生しました。'
+const Content = async ({ query }: { query: YoutubeSearchQuery }) => {
+	const res = await searchYoutubeAction(query)
+
+	if (res.ok) {
+		return <VideoListPage youtubeList={res.data} query={query} />
+	} else {
+		logError('Video Page', 'Content', 'searchYoutubeAction', res)
+		return (
+			<PaginatedErrorView
+				error={res}
+				link="/video"
+				sortOptionCount={2}
+				showPagination
+			/>
+		)
+	}
+}
 
 const Page = async ({ searchParams }: Props) => {
 	const params = await searchParams
-	const query = safeSearchParamsSchema.parse({
+	const query = YoutubeSearchQuerySchema.parse({
 		liveOrBand: params.liveOrBand,
 		bandName: params.bandName,
 		liveName: params.liveName,
@@ -34,27 +41,12 @@ const Page = async ({ searchParams }: Props) => {
 		videoPerPage: params.videoPerPage,
 	})
 
-	let youtubeList: SearchResponse = { items: [], total: 0 }
-	let error: ApiError | undefined
-
-	const response = await searchYoutubeAction(query)
-	if (response.ok) {
-		youtubeList = response.data
-	} else {
-		logError('Video Page', '動画の検索に失敗しました。', response)
-		error = response
-	}
-
 	return (
-		<Suspense fallback={<Loading />}>
-			<VideoListPage
-				key={params.toString()}
-				youtubeList={youtubeList}
-				error={error}
-				defaultQuery={VIDEO_PAGE_DEFAULT_QUERY}
-				initialQuery={query}
-			/>
-		</Suspense>
+		<VideoPageLayout>
+			<Suspense fallback={<Loading perPage={query.videoPerPage} />}>
+				<Content query={query} />
+			</Suspense>
+		</VideoPageLayout>
 	)
 }
 

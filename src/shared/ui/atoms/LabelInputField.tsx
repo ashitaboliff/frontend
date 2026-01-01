@@ -38,8 +38,8 @@ const LabelInputField = ({
 					>
 						<InfoIcon className="h-4 w-4" aria-hidden="true" />
 					</button>
-					<div className="card dropdown-content card-sm z-10 w-48 rounded-box bg-white p-2 shadow">
-						<p className="text-sm">{infoDropdown}</p>
+					<div className="card dropdown-content z-10 w-48 rounded-box bg-white p-2 shadow">
+						<p className="text-wrap text-sm">{infoDropdown}</p>
 					</div>
 				</div>
 			) : null}

@@ -7,14 +7,14 @@ export const createYoutubeQueryOptions = (
 	defaultQuery,
 })
 
-export const VIDEO_PAGE_DEFAULT_QUERY: YoutubeSearchQuery = {
+export const VIDEO_PAGE_DEFAULT_QUERY = {
 	liveOrBand: 'band',
 	bandName: '',
 	liveName: '',
 	sort: 'new',
 	page: 1,
 	videoPerPage: 15,
-}
+} as const
 
 export const ADMIN_YOUTUBE_DEFAULT_PARAMS = {
 	page: 1,

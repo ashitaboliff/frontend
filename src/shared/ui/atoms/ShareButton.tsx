@@ -6,6 +6,7 @@ import {
 	useWindowAlert,
 } from '@/shared/hooks/useBrowserApis'
 import { IoShareSocialSharp } from '@/shared/ui/icons'
+import { logError } from '@/shared/utils/logger'
 
 type Props = {
 	url: string
@@ -48,8 +49,9 @@ const ShareButton = ({
 		try {
 			const shareUrl = resolveShareUrl(url)
 			await navigatorShare({ title, text, url: shareUrl })
-		} catch (_error) {
+		} catch (error) {
 			alertUser('このブラウザは共有機能に対応していません。')
+			logError('ShareButton', 'handleShare', 'navigator.share failed', error)
 		}
 	}, [alertUser, navigatorShare, text, title, url])
 

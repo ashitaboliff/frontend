@@ -26,7 +26,7 @@ const VideoItem = ({ youtubeDetail }: Props) => {
 			{videoId && (
 				<button
 					type="button"
-					className="w-full shrink-0 cursor-pointer text-left"
+					className="w-full text-left"
 					onClick={() => router.push(detailHref)}
 					aria-label={`${displayTitle}の詳細を見る`}
 				>
@@ -35,7 +35,7 @@ const VideoItem = ({ youtubeDetail }: Props) => {
 					</div>
 				</button>
 			)}
-			<div className="flex w-full flex-col gap-y-2">
+			<div className="flex w-full flex-col gap-2">
 				<button
 					type="button"
 					className="link link-hover text-left font-bold text-lg xl:text-xl"
@@ -43,19 +43,15 @@ const VideoItem = ({ youtubeDetail }: Props) => {
 				>
 					{displayTitle}
 				</button>
-				{playlistTitle && (
-					<div className="text-sm">ライブ名: {playlistTitle}</div>
-				)}
-				<div className="text-sm">{youtubeDetail.liveDate}</div>
-				<div className="mt-2 flex flex-wrap gap-2">
-					<button
-						className="btn btn-outline btn-sm whitespace-nowrap text-xs-custom xl:text-sm"
-						onClick={() => router.push(detailHref)}
-						type="button"
-					>
-						詳細を見る
-					</button>
-				</div>
+				{playlistTitle && <p className="text-sm">ライブ名: {playlistTitle}</p>}
+				<p className="text-sm">{youtubeDetail.liveDate}</p>
+				<button
+					className="btn btn-outline btn-sm mt-2 whitespace-nowrap text-xs-custom xl:text-sm"
+					onClick={() => router.push(detailHref)}
+					type="button"
+				>
+					詳細を見る
+				</button>
 			</div>
 		</div>
 	)

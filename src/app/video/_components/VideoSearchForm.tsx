@@ -48,23 +48,27 @@ const VideoSearchForm = ({
 
 	return (
 		<>
-			<div className="flex flex-row items-center justify-center gap-x-2 py-2">
+			<div className="flex items-center justify-center gap-2 py-2">
 				<button
 					className="btn btn-ghost w-16"
 					onClick={() => setIsUsagePopupOpen(true)}
 					type="button"
+					aria-haspopup="dialog"
+					aria-controls={usagePopupId}
+					aria-expanded={isUsagePopupOpen}
 				>
 					<RiQuestionLine size={25} />
 				</button>
 				<button
-					className={`btn btn-outline w-60 ${isSearching ? 'btn-accent' : ''}`}
+					className={`btn btn-outline inline-flex w-60 items-center justify-center gap-2 ${isSearching ? 'btn-accent' : ''}`}
 					onClick={() => setIsPopupOpen(true)}
 					type="button"
+					aria-haspopup="dialog"
+					aria-controls={searchPopupId}
+					aria-expanded={isPopupOpen}
 				>
-					<div className="flex flex-row items-center space-x-2">
-						<BiSearch size={25} />
-						条件検索
-					</div>
+					<BiSearch size={25} />
+					条件検索
 				</button>
 				<ShareButton
 					title="ライブ映像をシェアする"
@@ -84,15 +88,15 @@ const VideoSearchForm = ({
 				<form
 					key={formKey}
 					onSubmit={handleSubmit}
-					className="m-auto flex max-w-sm flex-col justify-center gap-y-2"
+					className="m-auto flex max-w-sm flex-col justify-center gap-2"
 				>
-					<div className="flex flex-row justify-center gap-x-2">
+					<fieldset className="flex justify-center gap-2" aria-label="検索対象">
 						<input
 							type="radio"
 							name="liveOrBand"
 							value="live"
 							defaultChecked={currentQuery.liveOrBand === 'live'}
-							className={`btn checked:btn-accent btn-outline w-5/12`}
+							className="btn checked:btn-accent btn-outline flex-1"
 							aria-label="再生リスト"
 						/>
 						<input
@@ -100,10 +104,10 @@ const VideoSearchForm = ({
 							name="liveOrBand"
 							value="band"
 							defaultChecked={currentQuery.liveOrBand === 'band'}
-							className={`btn checked:btn-accent btn-outline w-5/12`}
+							className="btn checked:btn-accent btn-outline flex-1"
 							aria-label="動画"
 						/>
-					</div>
+					</fieldset>
 					<TextSearchField
 						label="バンド名"
 						infoDropdown="Youtubeの動画タイトルになっているバンド名での検索です"
@@ -121,17 +125,17 @@ const VideoSearchForm = ({
 					<button type="submit" className="btn btn-primary mt-2">
 						検索
 					</button>
-					<div className="flex flex-row justify-center gap-x-2">
+					<div className="flex justify-center gap-2">
 						<button
 							type="button"
-							className="btn btn-outline w-1/2"
+							className="btn btn-outline flex-1"
 							onClick={handleReset}
 						>
 							リセット
 						</button>
 						<button
 							type="button"
-							className="btn btn-outline w-1/2"
+							className="btn btn-outline flex-1"
 							onClick={() => setIsPopupOpen(false)}
 						>
 							閉じる
@@ -145,24 +149,18 @@ const VideoSearchForm = ({
 				open={isUsagePopupOpen}
 				onClose={() => setIsUsagePopupOpen(false)}
 			>
-				<div className="flex flex-col gap-y-2">
-					<div className="gap text-base">
-						<div className="my-2">
-							<p className="font-bold text-lg">ライブ名: </p>
+				<div className="flex flex-col gap-2">
+					<dl className="text-base">
+						<dt className="font-bold text-lg">ライブ名</dt>
+						<dd className="mt-1">
 							Youtubeのプレイリストタイトルになっているライブ名での検索です
-						</div>
-						<div className="my-2">
-							<p className="font-bold text-lg">バンド名: </p>
+						</dd>
+						<dt className="mt-3 font-bold text-lg">バンド名</dt>
+						<dd className="mt-1">
 							Youtubeの動画タイトルになっているバンド名での検索です
-						</div>
-						<div className="my-2">
-							<p className="font-bold text-lg">タグ: </p>
-							みんなのつけたタグによる検索です。自分の名前やバンドの正式名称、
-							「<span className="text-info">#わたべのお気に入り</span>
-							」など好きな名前をつけて共有してみるといいです
-						</div>
-					</div>
-					<div className="flex flex-row justify-center gap-x-2">
+						</dd>
+					</dl>
+					<div className="flex justify-center">
 						<button
 							type="button"
 							className="btn btn-outline"

@@ -6,21 +6,23 @@ import type {
 	SearchResponse,
 	YoutubeSearchQuery,
 } from '@/domains/video/model/types'
-import { buildYoutubeQueryString } from '@/domains/video/query/youtubeQuery'
+import {
+	buildYoutubeQueryString,
+	VIDEO_PAGE_DEFAULT_QUERY,
+} from '@/domains/video/query/youtubeQuery'
 import { useAdInsertion } from '@/shared/hooks/useAdInsertion'
-import { gkktt } from '@/shared/lib/fonts'
 import Ads from '@/shared/ui/ads/Ads'
-import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
-import type { ApiError } from '@/types/response'
 import VideoItem from './VideoItem'
 import VideoSearchForm from './VideoSearchForm'
 
+const defaultQuery: YoutubeSearchQuery = {
+	...VIDEO_PAGE_DEFAULT_QUERY,
+}
+
 type Props = {
 	readonly youtubeList: SearchResponse
-	readonly error?: ApiError
-	readonly defaultQuery: YoutubeSearchQuery
-	readonly initialQuery: YoutubeSearchQuery
+	readonly query: YoutubeSearchQuery
 }
 
 const PER_PAGE_OPTIONS: Record<string, number> = {
@@ -36,30 +38,15 @@ const SORT_OPTIONS = [
 
 const MAX_VIDEO_ADS = 3
 
-const VideoListPage = ({
-	youtubeList,
-	error,
-	defaultQuery,
-	initialQuery,
-}: Props) => {
+const VideoListPage = ({ youtubeList, query }: Props) => {
 	const {
 		query: currentQuery,
 		isSearching,
 		updateQuery,
-		isPending,
 	} = useYoutubeSearchQuery({
 		defaultQuery,
-		initialQuery,
+		initialQuery: query,
 	})
-
-	const skeletonKeys = useMemo(
-		() =>
-			Array.from(
-				{ length: currentQuery.videoPerPage },
-				(_, idx) => `placeholder-${idx + 1}`,
-			),
-		[currentQuery.videoPerPage],
-	)
 
 	const shareQueryString = buildYoutubeQueryString(currentQuery, defaultQuery)
 
@@ -86,12 +73,7 @@ const VideoListPage = ({
 	})
 
 	return (
-		<div className="container mx-auto px-2 sm:px-4">
-			<div
-				className={`font-bold text-3xl sm:text-4xl ${gkktt.className} mb-6 text-center`}
-			>
-				過去ライブ映像
-			</div>
+		<>
 			<VideoSearchForm
 				currentQuery={currentQuery}
 				isSearching={isSearching}
@@ -126,22 +108,7 @@ const VideoListPage = ({
 						: undefined
 				}
 			>
-				<FeedbackMessage source={error} defaultVariant="error" />
-				{isPending ? (
-					<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-						{skeletonKeys.map((placeholderKey) => (
-							<div
-								key={placeholderKey}
-								className="flex w-full flex-col items-center rounded-lg border p-4 shadow-sm"
-							>
-								<div className="skeleton mb-2 aspect-video w-full"></div>
-								<div className="skeleton mb-1 h-6 w-3/4"></div>
-								<div className="skeleton mb-1 h-5 w-1/2"></div>
-								<div className="skeleton h-5 w-1/3"></div>
-							</div>
-						))}
-					</div>
-				) : youtubeList?.items.length > 0 ? (
+				{youtubeList?.items.length > 0 ? (
 					<div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{youtubeList.items.map((detail, index) => (
 							<Fragment key={detail.videoId}>
@@ -156,7 +123,7 @@ const VideoListPage = ({
 					</div>
 				)}
 			</PaginatedResourceLayout>
-		</div>
+		</>
 	)
 }
 
