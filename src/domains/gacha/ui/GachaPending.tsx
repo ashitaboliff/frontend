@@ -1,12 +1,12 @@
 'use client'
 
 import { useCallback, useMemo, useRef } from 'react'
-import type { CarouselPackDataItem } from '@/domains/gacha/model/gachaTypes'
+import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import { usePackOpeningAnimation } from '@/domains/gacha/ui/animations/usePackOpeningAnimation'
 import type { PackSelectionPayload } from '@/domains/gacha/ui/GachaSelectPopup'
-import { ImageWithFallback } from '@/shared/ui/atoms/ImageWithFallback'
+import { Image } from '@/shared/ui/atoms/ImageWithFallback'
 
-interface GachaPendingProps {
+type Props = {
 	readonly pack: CarouselPackDataItem
 	readonly packRect: PackSelectionPayload['rect']
 	readonly onAnimationComplete: () => void
@@ -22,7 +22,7 @@ const GachaPending = ({
 	packRect,
 	onAnimationComplete,
 	showBlockingLoader,
-}: GachaPendingProps) => {
+}: Props) => {
 	const animatedPackRef = useRef<HTMLDivElement | null>(null)
 	const topSliceRef = useRef<HTMLDivElement | null>(null)
 	const cutLineRef = useRef<HTMLDivElement | null>(null)
@@ -71,7 +71,7 @@ const GachaPending = ({
 				className="relative drop-shadow-[0_25px_25px_rgba(0,0,0,0.75)]"
 			>
 				<div ref={topSliceRef} className="absolute top-0 left-0 h-full w-full">
-					<ImageWithFallback
+					<Image
 						src={pack.signedPackImageUrl}
 						fallback="/version1.webp"
 						alt={`${pack.version} pack top`}
@@ -82,7 +82,7 @@ const GachaPending = ({
 					/>
 				</div>
 				<div className="absolute bottom-0 left-0 h-full w-full">
-					<ImageWithFallback
+					<Image
 						src={pack.signedPackImageUrl}
 						fallback="/version1.webp"
 						alt={`${pack.version} pack bottom`}
@@ -153,7 +153,7 @@ const GachaPending = ({
 				</div>
 			</div>
 			<div className="relative">
-				<div className="fixed absolute bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4" />
+				<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4" />
 				{showBlockingLoader && (
 					<div className="absolute inset-0 top-40 bottom-0 z-40 flex items-center justify-center bg-white/75">
 						<div className="loading loading-spinner loading-lg" />

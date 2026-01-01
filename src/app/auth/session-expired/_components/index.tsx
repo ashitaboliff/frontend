@@ -4,14 +4,22 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useSession } from '@/domains/auth/hooks/useSession'
 import AuthIssueLayout from '@/domains/auth/ui/AuthIssueLayout'
+import { buildAuthRedirectPath } from '@/domains/auth/utils/authRedirect'
 import { signOutUser } from '@/domains/user/hooks/useSignOut'
 import { LuClockAlert } from '@/shared/ui/icons'
 import { logError } from '@/shared/utils/logger'
 
-const SessionExpiredClient = () => {
+interface Props {
+	readonly redirectFrom?: string | null
+}
+
+const SessionExpiredClient = ({ redirectFrom }: Props) => {
 	const router = useRouter()
 	const { status, update } = useSession()
 	const [isLoading, setIsLoading] = useState(false)
+	const padlockPath = buildAuthRedirectPath('/auth/padlock', {
+		from: redirectFrom,
+	})
 
 	const handleLogout = async () => {
 		setIsLoading(true)
@@ -33,10 +41,10 @@ const SessionExpiredClient = () => {
 		try {
 			await signOutUser()
 			await update()
-			router.push('/auth/padlock')
+			router.push(padlockPath)
 		} catch (error) {
 			logError('再ログイン処理中にエラーが発生しました', error)
-			router.push('/auth/padlock')
+			router.push(padlockPath)
 		} finally {
 			setIsLoading(false)
 		}

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import BookingLogs from '@/app/booking/logs/_components'
-import { getAllBookingAction } from '@/domains/booking/api/bookingActions'
+import { getAllBookingAction } from '@/domains/booking/api/actions'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export const metadata = createMetaData({
@@ -8,11 +8,11 @@ export const metadata = createMetaData({
 	url: '/booking/logs',
 })
 
-const BookingLog = async () => {
-	const bookingLog = await getAllBookingAction()
-	if (!bookingLog.ok) return notFound()
+const Page = async () => {
+	const res = await getAllBookingAction()
+	if (!res.ok) return notFound()
 
-	return <BookingLogs bookingLog={bookingLog.data} />
+	return <BookingLogs booking={res.data} />
 }
 
-export default BookingLog
+export default Page

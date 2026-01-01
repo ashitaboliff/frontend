@@ -35,9 +35,7 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 				<AdSenseScript adsId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''} />
 				<AdSenseProvider clientId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''}>
 					<Header />
-					<main className="container mx-auto mt-24 h-full max-w-screen-lg px-2">
-						{children}
-					</main>
+					<main className="mx-auto mt-24 max-w-screen-lg px-3">{children}</main>
 					<Ads placement="Field" />
 					<Footer />
 				</AdSenseProvider>

@@ -1,12 +1,12 @@
 'use client'
 
-import type { DeniedBooking } from '@/domains/booking/model/bookingTypes'
+import type { DeniedBooking } from '@/domains/booking/model/types'
 import FeedbackMessage, {
 	type MessageSource,
 } from '@/shared/ui/molecules/FeedbackMessage'
 import Popup from '@/shared/ui/molecules/Popup'
 
-interface DeniedBookingDeleteDialogProps {
+type Props = {
 	readonly open: boolean
 	readonly onClose: () => void
 	readonly deniedBooking: DeniedBooking | null
@@ -24,7 +24,7 @@ const DeniedBookingDeleteDialog = ({
 	onConfirm,
 	feedbackSource,
 	onClearFeedback,
-}: DeniedBookingDeleteDialogProps) => {
+}: Props) => {
 	return (
 		<Popup
 			id={

@@ -2,13 +2,13 @@
 
 import Image from 'next/image'
 import { memo, useCallback, useEffect, useId, useState } from 'react'
-import { getUsersForSelect } from '@/domains/user/api/userActions'
+import { getUsersForSelect } from '@/domains/user/api/actions'
 import {
 	type Part,
 	PartMap,
 	type UserForSelect,
-} from '@/domains/user/model/userTypes'
-import InstIcon from '@/shared/ui/atoms/InstIcon'
+} from '@/domains/user/model/types'
+import InstIcon from '@/domains/user/ui/InstIcon'
 import { LuCheck, LuUserRound } from '@/shared/ui/icons'
 import Popup from '@/shared/ui/molecules/Popup'
 import TextSearchField from '@/shared/ui/molecules/TextSearchField'

@@ -1,44 +1,47 @@
 'use client'
 
 import { addDays } from 'date-fns'
-import { useCallback, useEffect, useId } from 'react'
+import { useId, useMemo } from 'react'
 import type { UseFormSetValue } from 'react-hook-form'
+import useSWR from 'swr'
 import {
-	useBookingCalendarData,
-	useBookingWeekNavigation,
-} from '@/domains/booking/hooks/bookingHooks'
-import type { BookingEditFormValues } from '@/domains/booking/model/bookingSchema'
-import type { BookingResponse } from '@/domains/booking/model/bookingTypes'
+	bookingRangeFetcher,
+	buildBookingRangeKey,
+	buildEmptyBookingResponse,
+} from '@/domains/booking/api/fetcher'
+import {
+	BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
+	BOOKING_VIEW_RANGE_DAYS,
+} from '@/domains/booking/constants'
+import { useBookingWeekNavigation } from '@/domains/booking/hooks'
+import type { BookingEditFormValues } from '@/domains/booking/model/schema'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import Popup from '@/shared/ui/molecules/Popup'
+import { getCurrentJSTDateString } from '@/shared/utils'
 import type { ApiError } from '@/types/response'
-import BookingEditCalendar from './BookingEditCalendar'
+import BookingEditCalendar, {
+	type BookingEditCalendarSelection,
+} from './BookingEditCalendar'
 
-interface Props {
+type Props = {
 	readonly open: boolean
 	readonly onClose: () => void
-	readonly initialViewDay: Date
-	readonly initialBookingResponse: BookingResponse | null
-	readonly actualBookingDate: string
-	readonly actualBookingTime: number
-	readonly bookingDate: string
-	readonly bookingTime: number
+	readonly calendarSelection: BookingEditCalendarSelection
 	readonly setValue: UseFormSetValue<BookingEditFormValues>
 }
 
 const BookingEditCalendarPopup = ({
 	open,
 	onClose,
-	initialViewDay,
-	initialBookingResponse,
-	actualBookingDate,
-	actualBookingTime,
-	bookingDate,
-	bookingTime,
+	calendarSelection,
 	setValue,
 }: Props) => {
 	const calendarFeedback = useFeedback()
+	const initialDate = useMemo(
+		() => new Date(getCurrentJSTDateString({ offsetDays: -1 })),
+		[],
+	)
 
 	const {
 		viewDate,
@@ -47,36 +50,47 @@ const BookingEditCalendarPopup = ({
 		goNextWeek,
 		canGoPrevWeek,
 		canGoNextWeek,
-		setViewDate,
 	} = useBookingWeekNavigation({
-		initialDate: initialViewDay,
+		initialDate: initialDate,
+		viewRangeDays: BOOKING_VIEW_RANGE_DAYS,
+		minOffsetDays: BOOKING_MAIN_VIEW_MIN_OFFSET_DAYS,
 	})
 
-	useEffect(() => {
-		setViewDate(initialViewDay)
-	}, [initialViewDay, setViewDate])
+	const key = useMemo(
+		() => buildBookingRangeKey(viewDate, viewRangeDays),
+		[viewDate, viewRangeDays],
+	)
 
-	const { data: bookingCalendarData, isLoading } = useBookingCalendarData({
-		viewDate,
-		viewRangeDays,
-		fallbackData: initialBookingResponse,
-		config: {
-			onError: (err: ApiError) => calendarFeedback.showApiError(err),
-		},
-	})
+	const emptyBookingData = useMemo(
+		() => buildEmptyBookingResponse(viewDate, viewRangeDays),
+		[viewDate, viewRangeDays],
+	)
 
-	const bookingResponse = bookingCalendarData ?? null
+	const Content = () => {
+		const { data, isValidating } = useSWR(key, bookingRangeFetcher, {
+			revalidateOnFocus: false,
+			keepPreviousData: true,
+			onError: (err: ApiError) => {
+				calendarFeedback.showApiError(err)
+			},
+			suspense: false,
+			fallbackData: emptyBookingData,
+		})
+
+		const isLoading = data === emptyBookingData && isValidating
+
+		return (
+			<BookingEditCalendar
+				data={data}
+				calendarSelection={calendarSelection}
+				setCalendarOpen={onClose}
+				setValue={setValue}
+				className={isLoading ? 'opacity-30' : undefined}
+			/>
+		)
+	}
+
 	const popupId = useId()
-
-	useEffect(() => {
-		if (bookingResponse) {
-			calendarFeedback.clearFeedback()
-		}
-	}, [bookingResponse, calendarFeedback])
-
-	const handleSelectClose = useCallback(() => {
-		onClose()
-	}, [onClose])
 
 	return (
 		<Popup
@@ -85,14 +99,15 @@ const BookingEditCalendarPopup = ({
 			maxWidth="lg"
 			open={open}
 			onClose={onClose}
+			noPadding
 		>
-			<div className="flex flex-col items-center justify-center gap-y-2">
-				<div className="flex flex-row items-center gap-2">
+			<div className="flex flex-col items-center gap-y-2 sm:p-2">
+				<div className="mx-auto flex w-full items-center justify-between px-2">
 					<button
 						type="button"
-						className="btn btn-outline btn-sm sm:btn-md"
+						className="btn btn-outline"
 						onClick={goPrevWeek}
-						disabled={!canGoPrevWeek || isLoading}
+						disabled={!canGoPrevWeek}
 					>
 						{'<'}
 					</button>
@@ -102,30 +117,15 @@ const BookingEditCalendarPopup = ({
 					</div>
 					<button
 						type="button"
-						className="btn btn-outline btn-sm sm:btn-md"
+						className="btn btn-outline"
 						onClick={goNextWeek}
-						disabled={!canGoNextWeek || isLoading}
+						disabled={!canGoNextWeek}
 					>
 						{'>'}
 					</button>
 				</div>
 				<FeedbackMessage source={calendarFeedback.feedback} />
-				{bookingResponse ? (
-					<BookingEditCalendar
-						bookingResponse={bookingResponse}
-						actualBookingDate={actualBookingDate}
-						actualBookingTime={actualBookingTime}
-						bookingDate={bookingDate}
-						bookingTime={bookingTime}
-						setCalendarOpen={handleSelectClose}
-						setValue={setValue}
-						className={isLoading ? 'opacity-30' : undefined}
-					/>
-				) : (
-					<p className="text-center text-error text-sm">
-						予約枠を取得できませんでした。時間をおいて再度お試しください。
-					</p>
-				)}
+				<Content />
 				<div className="flex justify-center space-x-2">
 					<button type="button" className="btn btn-outline" onClick={onClose}>
 						閉じる

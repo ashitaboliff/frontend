@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import HomePageHeader from '@/shared/ui/molecules/HomePageHeader'
+import AuthRedirectFlashMessage from '@/domains/auth/ui/AuthRedirectFlashMessage'
+import HomePageHeader from '@/shared/ui/organisms/HomePageHeader'
 
 export default function Layout({
 	children,
@@ -9,6 +10,7 @@ export default function Layout({
 	return (
 		<>
 			<HomePageHeader />
+			<AuthRedirectFlashMessage />
 			{children}
 		</>
 	)

@@ -1,10 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-	padLockAction,
-	revalidateUserAction,
-} from '@/domains/auth/api/authActions'
+import { padLockAction, revalidateUserAction } from '@/domains/auth/api/actions'
 import { useCsrfToken } from '@/domains/auth/hooks/useCsrfToken'
 import { usePasswordForm } from '@/domains/auth/hooks/usePasswordForm'
 import { useFeedback } from '@/shared/hooks/useFeedback'

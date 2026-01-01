@@ -9,7 +9,8 @@
       "tsconfig.json",
       "package.json",
       "next-env.d.ts",
-      "!src/app/globals.css"
+      "!src/app/globals.css",
+      "!.next"
     ]
   },
   "formatter": {

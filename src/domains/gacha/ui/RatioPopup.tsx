@@ -5,8 +5,9 @@ import { Fragment, useId, useState } from 'react'
 import {
 	type GachaCategoryConfig,
 	gachaConfigs,
-} from '@/domains/gacha/config/gachaConfig'
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+} from '@/domains/gacha/config/config'
+import type { RarityType } from '@/domains/gacha/model/types'
+import { gkktt } from '@/shared/lib/fonts'
 import { getImageUrl } from '@/shared/lib/r2'
 import { Tab, Tabs } from '@/shared/ui/atoms/Tabs'
 import Popup from '@/shared/ui/molecules/Popup'
@@ -57,7 +58,7 @@ const calculateProbabilities = (categories: GachaCategoryConfig[]) => {
 	})
 }
 
-const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
+const RatioPopup = () => {
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 
 	const versionEntries = Object.entries(gachaConfigs)
@@ -68,7 +69,7 @@ const RatioPopup = ({ gkktt }: { gkktt: { className: string } }) => {
 		<>
 			<button
 				type="button"
-				className="btn btn-outline w-full sm:w-auto"
+				className="btn btn-outline w-full sm:flex-1"
 				onClick={() => setIsPopupOpen(true)}
 			>
 				提供割合

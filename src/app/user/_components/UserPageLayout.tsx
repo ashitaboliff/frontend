@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
 import ProfileDisplay from '@/app/user/_components/ProfileDisplay'
-import type { Profile } from '@/domains/user/model/userTypes'
+import type { Profile } from '@/domains/user/model/types'
 import type { Session } from '@/types/session'
 import UserPageControls from './UserPageControls'
 
-interface Props {
+type Props = {
 	readonly session: Session
 	readonly profile: Profile | null
 	readonly children: ReactNode
@@ -12,9 +12,10 @@ interface Props {
 
 const UserPageLayout = ({ session, profile, children }: Props) => {
 	return (
-		<div className="container mx-auto flex flex-col items-center p-4">
+		<div className="container mx-auto flex flex-col items-center">
 			<ProfileDisplay session={session} profile={profile} />
-			<UserPageControls session={session}>{children}</UserPageControls>
+			{children}
+			<UserPageControls session={session} />
 		</div>
 	)
 }

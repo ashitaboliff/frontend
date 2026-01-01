@@ -8,8 +8,9 @@ import {
 	useMemo,
 	useRef,
 } from 'react'
+import { classNames } from '@/shared/ui/utils/classNames'
 
-type PopupProps = {
+export type PopupProps = {
 	id: string
 	title: string
 	children?: ReactNode
@@ -41,6 +42,9 @@ const TAILWIND_MAXW = new Set([
 	'prose',
 ])
 
+/**
+ * ネイティブ `<dialog>` ベースのポップアップ。フォーカスを戻し、閉じると onClose を発火する。
+ */
 const Popup = ({
 	id,
 	title,
@@ -114,13 +118,21 @@ const Popup = ({
 			aria-labelledby={titleId}
 			aria-modal={open ? true : undefined}
 		>
-			<div
-				className={`modal-box relative mx-auto overflow-y-auto overflow-x-hidden bg-base-100 ${maxWClass} ${noPadding ? 'paddingless' : ''} ${className ?? ''}`}
+			<section
+				className={classNames(
+					'modal-box relative mx-auto overflow-y-auto overflow-x-hidden bg-base-100',
+					maxWClass,
+					noPadding && 'px-0! py-2!',
+					className,
+				)}
 				style={maxWStyle}
 			>
 				<h2
 					id={titleId}
-					className={`mb-4 text-center font-bold text-xl ${noPadding ? 'pt-6' : ''}`}
+					className={classNames(
+						'mb-4 text-center font-bold text-xl',
+						noPadding && 'pt-6',
+					)}
 				>
 					{title}
 				</h2>
@@ -140,7 +152,7 @@ const Popup = ({
 					</form>
 				)}
 				{children}
-			</div>
+			</section>
 			<form method="dialog" className="modal-backdrop" onSubmit={closeDialog}>
 				<button type="submit" aria-label="閉じる">
 					<span className="sr-only">閉じる</span>

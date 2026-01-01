@@ -11,38 +11,38 @@ export type MessageSource =
 	| null
 	| undefined
 
-interface FeedbackMessageProps {
+export type FeedbackMessageProps = {
 	source?: MessageSource
 	defaultVariant?: MessageVariant
 	className?: string
 	showIcon?: boolean
 	iconClassName?: string
+	/** ApiError の details を表示するかどうか */
+	showDetails?: boolean
 }
 
-const isFeedbackMessage = (value: unknown): value is FeedbackMessageType => {
-	return (
-		typeof value === 'object' &&
-		value !== null &&
-		'kind' in value &&
-		'message' in value
-	)
-}
+const isFeedbackMessage = (value: unknown): value is FeedbackMessageType =>
+	typeof value === 'object' &&
+	value !== null &&
+	'kind' in value &&
+	'message' in value
 
-const isApiError = (value: unknown): value is ApiError => {
-	return (
-		typeof value === 'object' &&
-		value !== null &&
-		'status' in value &&
-		'message' in value
-	)
-}
+const isApiError = (value: unknown): value is ApiError =>
+	typeof value === 'object' &&
+	value !== null &&
+	'status' in value &&
+	'message' in value
 
+/**
+ * API エラーやドメインの FeedbackMessageType、任意の ReactNode を包んで表示するメッセージ。
+ */
 const FeedbackMessage = ({
 	source,
 	defaultVariant = 'info',
 	className,
 	showIcon = true,
 	iconClassName,
+	showDetails = true,
 }: FeedbackMessageProps) => {
 	if (
 		source === null ||
@@ -55,9 +55,9 @@ const FeedbackMessage = ({
 
 	if (isApiError(source)) {
 		const details =
-			typeof source.details === 'string'
+			showDetails && typeof source.details === 'string'
 				? source.details
-				: source.details
+				: showDetails && source.details
 					? JSON.stringify(source.details)
 					: null
 		return (
@@ -73,7 +73,7 @@ const FeedbackMessage = ({
 					{source.message}
 				</p>
 				{details ? (
-					<p className="break-words text-xs opacity-80">{details}</p>
+					<p className="wrap-break-word text-xs opacity-80">{details}</p>
 				) : null}
 			</Message>
 		)
@@ -91,7 +91,7 @@ const FeedbackMessage = ({
 			>
 				{source.message}
 				{source.details ? (
-					<p className="break-words text-xs opacity-80">{source.details}</p>
+					<p className="wrap-break-word text-xs opacity-80">{source.details}</p>
 				) : null}
 			</Message>
 		)

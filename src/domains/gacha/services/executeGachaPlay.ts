@@ -1,13 +1,13 @@
 'use client'
 
-import { toSignedImageKey } from '@/domains/gacha/api/dto'
 import {
 	createUserGachaResultAction,
 	getSignedUrlForGachaImageAction,
-} from '@/domains/gacha/api/gachaActions'
+} from '@/domains/gacha/api/actions'
 import { invalidateGachaPreviewCache } from '@/domains/gacha/hooks/useGachaPreview'
-import type { RarityType } from '@/domains/gacha/model/gachaTypes'
+import type { RarityType } from '@/domains/gacha/model/types'
 import Gacha, { type GachaItem } from '@/domains/gacha/services/gacha'
+import { toSignedImageKey } from '@/domains/gacha/utils'
 
 export type ExecuteGachaPlayErrorType =
 	| 'missing-src'
@@ -19,7 +19,6 @@ export type ExecuteGachaPlayErrorType =
 export interface ExecuteGachaPlayParams {
 	version: string
 	userId: string
-	currentPlayCount: number
 	ignorePlayCountLimit?: boolean
 	skipCacheInvalidation?: boolean
 }
@@ -53,7 +52,6 @@ const mapUnhandledError = (message?: string): ExecuteGachaPlayError => ({
 export const executeGachaPlay = async ({
 	version,
 	userId,
-	currentPlayCount,
 	ignorePlayCountLimit,
 	skipCacheInvalidation,
 }: ExecuteGachaPlayParams): Promise<ExecuteGachaPlayResult> => {
@@ -84,7 +82,6 @@ export const executeGachaPlay = async ({
 				gachaVersion: version,
 				gachaRarity: name,
 				gachaSrc: data.src,
-				currentPlayCount,
 				ignorePlayCountLimit,
 			}),
 			getSignedUrlForGachaImageAction({ r2Key }),

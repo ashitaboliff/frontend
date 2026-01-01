@@ -1,75 +1,84 @@
-import type { ReactNode } from 'react'
+import {
+	type ChangeEvent,
+	forwardRef,
+	type ReactNode,
+	type TextareaHTMLAttributes,
+} from 'react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
+import { classNames } from '@/shared/ui/utils/classNames'
+import { composeRefs } from '@/shared/ui/utils/refs'
+
+export type TextareaInputFieldProps = {
+	readonly label?: string
+	readonly labelId?: string
+	readonly infoDropdown?: ReactNode
+	readonly register?: UseFormRegisterReturn
+	readonly errorMessage?: string
+	readonly wrapperClassName?: string
+} & Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children'>
 
 /**
- * テキスト入力フィールド
- * @param register react-hook-formのregister
- * @param placeholder プレースホルダー
- * @param type 入力タイプ
- * @param label ラベル
- * @param infoDropdown ドロップダウンの情報
- * @param disabled フィールドの無効化
- * @param errorMessage エラーメッセージ
- * @param className クラス名
- * @param value 値
- * @param onChange 値の変更時の関数
- * @param defaultValue デフォルト値
+ * ラベル・エラー表示付き textarea。ネイティブ属性をすべて透過し、register/onChange を合成する。
  */
+const TextareaInputField = forwardRef<
+	HTMLTextAreaElement,
+	TextareaInputFieldProps
+>(
+	(
+		{
+			label,
+			labelId,
+			infoDropdown,
+			register,
+			errorMessage,
+			className,
+			wrapperClassName,
+			onChange,
+			...rest
+		},
+		ref,
+	) => {
+		const {
+			onChange: registerOnChange,
+			ref: registerRef,
+			...registerRest
+		} = register ?? {}
 
-type TextareaInputFieldProps = {
-	name?: string
-	register?: UseFormRegisterReturn
-	placeholder?: string
-	label?: string
-	labelId?: string
-	infoDropdown?: ReactNode
-	disabled?: boolean
-	errorMessage?: string
-	className?: string
-	value?: string
-	defaultValue?: string
-}
+		const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+			registerOnChange?.(event)
+			onChange?.(event)
+		}
 
-const TextareaInputField = ({
-	name,
-	register,
-	placeholder,
-	label,
-	labelId,
-	infoDropdown,
-	disabled,
-	errorMessage,
-	className,
-	value,
-	defaultValue, // 追加: defaultValue をサポート
-	...props
-}: TextareaInputFieldProps) => {
-	return (
-		<div className="flex w-full flex-col">
-			{label && (
-				<LabelInputField
-					label={label}
-					infoDropdown={infoDropdown}
-					labelId={labelId}
+		const errorId = errorMessage
+			? `${labelId ?? rest.name ?? 'textarea'}-error`
+			: undefined
+
+		return (
+			<div className={classNames('flex w-full flex-col', wrapperClassName)}>
+				{label ? (
+					<LabelInputField
+						label={label}
+						infoDropdown={infoDropdown}
+						labelId={labelId}
+					/>
+				) : null}
+				<textarea
+					id={labelId}
+					className={classNames('textarea w-full bg-white pr-10', className)}
+					onChange={handleChange}
+					ref={composeRefs(ref, registerRef)}
+					aria-describedby={errorId}
+					{...registerRest}
+					{...rest}
 				/>
-			)}
-			<textarea
-				id={labelId}
-				name={name}
-				placeholder={placeholder}
-				className={`textarea w-full bg-white pr-10 ${className}`}
-				disabled={disabled}
-				value={value}
-				defaultValue={defaultValue} // 追加: defaultValue を設定
-				{...register}
-				{...props}
-			/>
+				<InputFieldError id={errorId} errorMessage={errorMessage} />
+			</div>
+		)
+	},
+)
 
-			<InputFieldError errorMessage={errorMessage} />
-		</div>
-	)
-}
+TextareaInputField.displayName = 'TextareaInputField'
 
 export default TextareaInputField

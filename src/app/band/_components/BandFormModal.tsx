@@ -3,15 +3,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import {
-	createBandAction,
-	updateBandAction,
-} from '@/domains/band/api/bandActions'
+import { createBandAction, updateBandAction } from '@/domains/band/api/actions'
 import {
 	type BandFormValues,
 	bandFormSchema,
-} from '@/domains/band/model/bandSchema'
-import type { BandDetails } from '@/domains/band/model/bandTypes'
+} from '@/domains/band/model/schema'
+import type { BandDetails } from '@/domains/band/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'

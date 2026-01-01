@@ -10,13 +10,13 @@ import {
 	removeBandMemberAction,
 	searchUsersForBandAction,
 	updateBandMemberAction,
-} from '@/domains/band/api/bandActions'
+} from '@/domains/band/api/actions'
 import type {
 	BandDetails,
 	BandMemberDetails,
-	Part,
 	UserWithProfile,
-} from '@/domains/band/model/bandTypes'
+} from '@/domains/band/model/types'
+import type { Part } from '@/domains/user/model/types'
 import Message from '@/shared/ui/atoms/Message'
 import SelectField from '@/shared/ui/atoms/SelectField'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
@@ -349,7 +349,7 @@ export default function MemberManagementModal({
 											onClick={() => {
 												setSelectedUserForAdd(user)
 												setSearchResults([])
-												setSearchQuery(user.name || user.userId || '')
+												setSearchQuery(user.name || user.id || '')
 											}}
 											className="flex w-full items-center gap-2 rounded-md p-2 text-left hover:bg-base-300"
 										>
@@ -361,7 +361,7 @@ export default function MemberManagementModal({
 													height={32}
 													className="rounded-full"
 												/>
-												<span>{user.name || user.userId}</span>
+												<span>{user.name || user.id}</span>
 												{user.profile?.part?.length ? (
 													<span className="text-xs opacity-70">
 														({user.profile.part.join(', ')})
@@ -377,11 +377,10 @@ export default function MemberManagementModal({
 
 					{selectedUserForAdd && (
 						<div className="flex items-end gap-2">
-							<div className="flex-grow">
+							<div className="grow">
 								<div className="label">
 									<span className="label-text">
-										選択中:{' '}
-										{selectedUserForAdd.name || selectedUserForAdd.userId}
+										選択中: {selectedUserForAdd.name || selectedUserForAdd.id}
 									</span>
 								</div>
 								<SelectField
@@ -434,7 +433,7 @@ export default function MemberManagementModal({
 									key={member.id}
 									className="flex flex-col items-start justify-between gap-2 rounded-md border p-3 sm:flex-row sm:items-center"
 								>
-									<div className="flex flex-grow items-center gap-3">
+									<div className="flex grow items-center gap-3">
 										<Image
 											src={member.user.image || '/utils/default-avatar.png'}
 											alt={member.user.name || 'avatar'}
@@ -444,7 +443,7 @@ export default function MemberManagementModal({
 										/>
 										<div>
 											<span className="font-medium">
-												{member.user.name || member.user.userId}
+												{member.user.name || member.user.id}
 											</span>
 											{editingMember?.id === member.id ? (
 												<SelectField
@@ -470,7 +469,7 @@ export default function MemberManagementModal({
 											)}
 										</div>
 									</div>
-									<div className="mt-2 flex flex-shrink-0 gap-2 sm:mt-0">
+									<div className="mt-2 flex shrink-0 gap-2 sm:mt-0">
 										{editingMember?.id === member.id ? (
 											<>
 												<button
@@ -514,7 +513,7 @@ export default function MemberManagementModal({
 											onClick={() =>
 												handleRemoveMember(
 													member.id,
-													member.user.name || member.user.userId,
+													member.user.name || member.user.id,
 												)
 											}
 											className="btn btn-sm btn-outline btn-error"

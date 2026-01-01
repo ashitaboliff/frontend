@@ -1,0 +1,99 @@
+name: Auto Generate Changelog Entry
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  add-changelog:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Create changelog entry
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          MERGED_AT: ${{ github.event.pull_request.merged_at }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const prNumber = process.env.PR_NUMBER || '0';
+          const title = process.env.PR_TITLE || 'Update';
+          const body = process.env.PR_BODY || '';
+          const mergedAt = process.env.MERGED_AT;
+
+          const toDateLabel = (value) => {
+            const date = value ? new Date(value) : new Date();
+            if (Number.isNaN(date.getTime())) {
+              return new Date().toISOString().slice(0, 10);
+            }
+            return date.toISOString().slice(0, 10);
+          };
+
+          const extractSection = (text) => {
+            const headerRegex = /#{2,3}\s*(Release Summary|リリースサマリー|変更内容|更新内容)\s*[\r\n]+([\s\S]*)/i;
+            const match = text.match(headerRegex);
+            if (!match) return '';
+            const remainder = match[2];
+            const nextHeadingIndex = remainder.search(/\n#{2,3}\s+/);
+            return nextHeadingIndex === -1 ? remainder : remainder.slice(0, nextHeadingIndex);
+          };
+
+          const normalizeSummary = (text) => {
+            const cleaned = text
+              .split('\n')
+              .map((line) => line.trim())
+              .filter((line) => line.length > 0)
+              .filter((line) => !line.startsWith('<!--'))
+              .filter((line) => !/^_.*_$/.test(line))
+              .filter((line) => line !== '-')
+              .filter((line) => !/^-\s*\[ \]/.test(line));
+            return cleaned.join('\n').trim();
+          };
+
+          const summarySection = normalizeSummary(extractSection(body));
+          const fallbackSummary = normalizeSummary(body) || '更新情報の詳細が記載されていません。';
+          const summary = summarySection.length > 0 ? summarySection : fallbackSummary;
+
+          const dateLabel = toDateLabel(mergedAt);
+          const outputDir = path.join(process.cwd(), 'src', 'content', 'changelog');
+          fs.mkdirSync(outputDir, { recursive: true });
+
+          let fileName = `${dateLabel}.mdx`;
+          if (fs.existsSync(path.join(outputDir, fileName))) {
+            fileName = `${dateLabel}-pr-${prNumber}.mdx`;
+          }
+
+          const content = `# ${title} (PR #${prNumber})\n\n${summary}\n`;
+          fs.writeFileSync(path.join(outputDir, fileName), content, 'utf8');
+          console.log(`Created ${fileName}`);
+          NODE
+
+      - name: Commit and push
+        run: |
+          git config user.name "changelog-bot"
+          git config user.email "changelog-bot@users.noreply.github.com"
+          git add src/content/changelog/*.mdx
+          if git diff --staged --quiet; then
+            echo "No changelog changes."
+            exit 0
+          fi
+          git commit -m "chore(changelog): add entry for PR #${{ github.event.pull_request.number }}"
+          git push

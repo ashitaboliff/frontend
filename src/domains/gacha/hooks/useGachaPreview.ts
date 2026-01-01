@@ -2,9 +2,8 @@
 
 import { useMemo, useState } from 'react'
 import useSWR, { mutate as mutateGlobal } from 'swr'
-import { toSignedImageKey } from '@/domains/gacha/api/dto'
-import { getGachaByGachaSrcAction } from '@/domains/gacha/api/gachaActions'
-import type { GachaData } from '@/domains/gacha/model/gachaTypes'
+import { getGachaByGachaSrcAction } from '@/domains/gacha/api/actions'
+import type { Gacha } from '@/domains/gacha/model/types'
 import {
 	clearPreviewCacheEntry,
 	getPreviewCacheEntry,
@@ -19,6 +18,7 @@ import {
 	setSignedResourceEntry,
 	shouldRefreshSignedResource,
 } from '@/domains/gacha/services/signedGachaResourceCache'
+import { toSignedImageKey } from '@/domains/gacha/utils'
 import { logError } from '@/shared/utils/logger'
 import type { Session } from '@/types/session'
 
@@ -26,7 +26,7 @@ interface UseGachaPreviewProps {
 	session: Session
 }
 
-type PreviewPayload = { gacha: GachaData | null; totalCount: number } | null
+type PreviewPayload = { gacha: Gacha | null; totalCount: number } | null
 
 type PreviewKey = readonly ['gacha-preview', string, string]
 
@@ -85,7 +85,7 @@ const loadGachaPreview = async ({
 			if (signedUrl !== baseData.gacha.signedGachaSrc) {
 				baseData.gacha = {
 					...baseData.gacha,
-					signedGachaSrc: signedUrl ?? null,
+					signedGachaSrc: signedUrl ?? undefined,
 				}
 			}
 		}

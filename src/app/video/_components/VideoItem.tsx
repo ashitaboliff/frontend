@@ -2,30 +2,22 @@
 
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { useRouter } from 'next/navigation'
-import type { PlaylistDoc, Video } from '@/domains/video/model/videoTypes'
+import type { PlaylistDoc, VideoDoc } from '@/domains/video/model/types'
 
-type BandItemProps = {
-	liveOrBand: 'band'
-	youtubeDetail: Video
+type Props = {
+	youtubeDetail: VideoDoc | PlaylistDoc
 }
 
-type LiveItemProps = {
-	liveOrBand: 'live'
-	youtubeDetail: PlaylistDoc
-}
-
-type Props = BandItemProps | LiveItemProps
-
-const VideoItem = ({ youtubeDetail, liveOrBand }: Props) => {
+const VideoItem = ({ youtubeDetail }: Props) => {
 	const router = useRouter()
 	const videoId = youtubeDetail.videoId
 	const displayTitle = youtubeDetail.title.split('(')[0]
 	const playlistTitle =
-		liveOrBand === 'band'
+		youtubeDetail.type === 'video'
 			? youtubeDetail.playlistTitle.split('(')[0]
 			: undefined
 	const detailHref =
-		liveOrBand === 'band'
+		youtubeDetail.type === 'video'
 			? `/video/band/${youtubeDetail.videoId}`
 			: `/video/live/${youtubeDetail.playlistId}`
 
@@ -34,16 +26,16 @@ const VideoItem = ({ youtubeDetail, liveOrBand }: Props) => {
 			{videoId && (
 				<button
 					type="button"
-					className="w-full flex-shrink-0 cursor-pointer text-left"
+					className="w-full text-left"
 					onClick={() => router.push(detailHref)}
 					aria-label={`${displayTitle}の詳細を見る`}
 				>
-					<div className="aspect-[16/9] overflow-hidden rounded">
+					<div className="aspect-video overflow-hidden rounded">
 						<YouTubeEmbed videoid={videoId} />
 					</div>
 				</button>
 			)}
-			<div className="flex w-full flex-col gap-y-2">
+			<div className="flex w-full flex-col gap-2">
 				<button
 					type="button"
 					className="link link-hover text-left font-bold text-lg xl:text-xl"
@@ -51,19 +43,15 @@ const VideoItem = ({ youtubeDetail, liveOrBand }: Props) => {
 				>
 					{displayTitle}
 				</button>
-				{playlistTitle && (
-					<div className="text-sm">ライブ名: {playlistTitle}</div>
-				)}
-				<div className="text-sm">{youtubeDetail.liveDate}</div>
-				<div className="mt-2 flex flex-wrap gap-2">
-					<button
-						className="btn btn-outline btn-sm whitespace-nowrap text-xs-custom xl:text-sm"
-						onClick={() => router.push(detailHref)}
-						type="button"
-					>
-						詳細を見る
-					</button>
-				</div>
+				{playlistTitle && <p className="text-sm">ライブ名: {playlistTitle}</p>}
+				<p className="text-sm">{youtubeDetail.liveDate}</p>
+				<button
+					className="btn btn-outline btn-sm mt-2 whitespace-nowrap text-xs-custom xl:text-sm"
+					onClick={() => router.push(detailHref)}
+					type="button"
+				>
+					詳細を見る
+				</button>
 			</div>
 		</div>
 	)

@@ -1,13 +1,17 @@
 name: Deploy (production)
 
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: ["Auto Generate Changelog Entry"]
+    types: [completed]
 
 jobs:
   Deploy:
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    permissions: 
+      contents: read
+      packages: read
     concurrency:
       group: frontend-prod-${{ github.ref }}
       cancel-in-progress: true
@@ -15,17 +19,33 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: pnpm
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+        env: 
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to Vercel
-        run: vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --confirm --scope ${{ secrets.VERCEL_ORG_ID }}
+        run: pnpm dlx vercel@latest --prod --token ${{ secrets.VERCEL_TOKEN }} --confirm --scope ${{ secrets.VERCEL_ORG_ID }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

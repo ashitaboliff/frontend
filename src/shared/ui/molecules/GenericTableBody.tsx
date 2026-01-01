@@ -3,13 +3,14 @@
 import type { ReactNode } from 'react'
 import type { MessageSource } from '@/shared/ui/molecules/FeedbackMessage'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import { classNames } from '@/shared/ui/utils/classNames'
 
-interface TableHeader {
+type TableHeader = {
 	key: string
 	label: ReactNode
 }
 
-interface GenericTableProps<T extends object> {
+type GenericTableProps<T extends object> = {
 	headers: TableHeader[]
 	data?: T[]
 	isLoading: boolean
@@ -19,10 +20,10 @@ interface GenericTableProps<T extends object> {
 	tableClassName?: string
 	rowClassName?: string
 	clickableRowClassName?: string
-	loadingMessage?: string
 	emptyDataMessage?: string
 	itemKeyExtractor: (item: T) => string | number
 	colSpan?: number
+	ariaLabel?: string
 }
 
 const GenericTable = <T extends object>({
@@ -35,16 +36,33 @@ const GenericTable = <T extends object>({
 	tableClassName = 'table-sm w-full',
 	rowClassName = '',
 	clickableRowClassName = 'cursor-pointer hover:bg-base-200',
-	loadingMessage = '読み込み中...',
 	emptyDataMessage = 'データはありません。',
 	itemKeyExtractor,
 	colSpan,
+	ariaLabel,
 }: GenericTableProps<T>) => {
 	const effectiveColSpan = colSpan ?? Math.max(headers.length, 1)
 
+	const handleRowKeyDown =
+		(item: T) => (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+			if (!onRowClick) return
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault()
+				onRowClick(item)
+			}
+		}
+
 	return (
-		<div className="w-full overflow-x-auto rounded-box border border-base-content/5 bg-white">
-			<table className={`table ${tableClassName}`}>
+		<div
+			className={classNames(
+				'w-full overflow-x-auto rounded-box border border-base-content/5 bg-white',
+				isLoading && 'text-muted transition-colors',
+			)}
+		>
+			<table
+				className={classNames('table', tableClassName)}
+				aria-label={ariaLabel}
+			>
 				<thead>
 					<tr>
 						{headers.map((header) => (
@@ -55,13 +73,7 @@ const GenericTable = <T extends object>({
 					</tr>
 				</thead>
 				<tbody>
-					{isLoading ? (
-						<tr>
-							<td colSpan={effectiveColSpan} className="py-10 text-center">
-								{loadingMessage}
-							</td>
-						</tr>
-					) : error ? (
+					{error ? (
 						<tr>
 							<td colSpan={effectiveColSpan} className="py-6">
 								<FeedbackMessage source={error} />
@@ -77,8 +89,14 @@ const GenericTable = <T extends object>({
 						data.map((item) => (
 							<tr
 								key={itemKeyExtractor(item)}
-								className={`${rowClassName} ${onRowClick ? clickableRowClassName : ''}`.trim()}
+								className={classNames(
+									rowClassName,
+									onRowClick && clickableRowClassName,
+								)}
 								onClick={onRowClick ? () => onRowClick(item) : undefined}
+								onKeyDown={handleRowKeyDown(item)}
+								role={onRowClick ? 'button' : undefined}
+								tabIndex={onRowClick ? 0 : undefined}
 							>
 								{renderCells(item)}
 							</tr>

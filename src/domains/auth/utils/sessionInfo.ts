@@ -2,8 +2,8 @@ import type {
 	AuthDetails,
 	AuthIssue,
 	AuthStatus,
-} from '@/domains/auth/model/authTypes'
-import type { AccountRole } from '@/domains/user/model/userTypes'
+} from '@/domains/auth/model/types'
+import type { AccountRole } from '@/domains/user/model/types'
 import type { Session } from '@/types/session'
 
 const isRole = (value: unknown): value is AccountRole =>

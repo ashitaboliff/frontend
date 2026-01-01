@@ -3,14 +3,14 @@ import { buildRandomAdPositions, buildSeedKey } from '@/shared/lib/ads'
 
 type SeedValue = string | number | boolean | undefined | null
 
-interface UseAdInsertionOptions {
+type UseAdInsertionOptions = {
 	readonly ids: readonly string[]
 	readonly maxAds?: number
 	readonly seedKey?: string
 	readonly seedParts?: ReadonlyArray<SeedValue>
 }
 
-interface UseAdInsertionResult {
+type UseAdInsertionResult = {
 	readonly positions: number[]
 	readonly shouldRenderAd: (index: number) => boolean
 }

@@ -9,21 +9,20 @@ import PadlockList from '@/app/admin/padlock/_components/PadlockList'
 import {
 	createPadLockAction,
 	deletePadLockAction,
-} from '@/domains/admin/api/adminActions'
-import type {
-	PadLock,
-	PadLockFormValues,
-} from '@/domains/admin/model/adminTypes'
+} from '@/domains/admin/api/actions'
+import type { PadLockFormValues } from '@/domains/admin/model/types'
+import type { PadLock } from '@/domains/auth/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
 import Pagination from '@/shared/ui/atoms/Pagination'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 
-interface Props {
+type Props = {
 	readonly padLocks: PadLock[]
+	readonly headers: Array<{ key: string; label: string }>
 }
 
-const PadLockManagement = ({ padLocks }: Props) => {
+const PadLockManagement = ({ padLocks, headers }: Props) => {
 	const router = useRouter()
 	const feedback = useFeedback()
 	const [selectedPadLock, setSelectedPadLock] = useState<PadLock | null>(null)
@@ -101,14 +100,7 @@ const PadLockManagement = ({ padLocks }: Props) => {
 	}, [feedback, router, selectedPadLock])
 
 	return (
-		<div className="flex flex-col items-center justify-center gap-y-3">
-			<h1 className="font-bold text-2xl">ログイン用パスワード管理</h1>
-			<p className="text-center text-sm">
-				このページではアカウント新規作成時のログイン用パスワードを管理できます。
-				<br />
-				部室の4桁パスワードを年間で管理するほか、OB・OG
-				用のパスワード発行にも利用できます。
-			</p>
+		<>
 			<button
 				type="button"
 				className="btn btn-primary btn-outline"
@@ -125,6 +117,7 @@ const PadLockManagement = ({ padLocks }: Props) => {
 				perPage={perPage}
 				onPerPageChange={handlePerPageChange}
 				onSelect={handleSelectPadLock}
+				headers={headers}
 			/>
 			{pageCount > 1 ? (
 				<Pagination
@@ -160,7 +153,7 @@ const PadLockManagement = ({ padLocks }: Props) => {
 				onSubmit={handleCreatePadLock}
 				isSubmitting={isSubmitting}
 			/>
-		</div>
+		</>
 	)
 }
 

@@ -5,7 +5,7 @@ import VideoDetailPage from '@/app/video/[slug]/[id]/_components'
 import {
 	getPlaylistByIdAction,
 	getVideoByIdAction,
-} from '@/domains/video/api/videoActions'
+} from '@/domains/video/api/actions'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 type Params = Promise<{ slug: 'live' | 'band'; id: string }>

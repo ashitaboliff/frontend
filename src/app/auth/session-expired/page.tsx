@@ -1,6 +1,6 @@
-import { redirect } from 'next/navigation'
 import SessionExpiredClient from '@/app/auth/session-expired/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { getSafeRedirectFrom } from '@/domains/auth/utils/authRedirect'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function generateMetadata() {
@@ -11,20 +11,21 @@ export async function generateMetadata() {
 	})
 }
 
-const Page = async () => {
+type SessionExpiredPageProps = {
+	searchParams?: Promise<{ from?: string }>
+}
+
+const Page = async ({ searchParams }: SessionExpiredPageProps) => {
+	const params = await searchParams
+	const redirectFrom = getSafeRedirectFrom(params?.from)
 	return (
-		<AuthPage allowUnauthenticated={true}>
-			{(authResult) => {
-				if (authResult.hasProfile) {
-					redirect('/user')
-				}
-
-				if (authResult.needsProfile) {
-					redirect('/auth/signin/setting')
-				}
-
-				return <SessionExpiredClient />
-			}}
+		<AuthPage
+			requireProfile={false}
+			allowUnauthenticated={true}
+			redirectIfAuthenticated={true}
+			redirectFrom={redirectFrom ?? undefined}
+		>
+			{() => <SessionExpiredClient redirectFrom={redirectFrom} />}
 		</AuthPage>
 	)
 }

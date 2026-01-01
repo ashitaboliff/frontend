@@ -7,8 +7,9 @@ import { useForm } from 'react-hook-form'
 import {
 	createProfileAction,
 	putProfileAction,
-} from '@/domains/auth/api/authActions'
+} from '@/domains/auth/api/actions'
 import { useSession } from '@/domains/auth/hooks/useSession'
+import { resolveRedirectTarget } from '@/domains/auth/utils/authRedirect'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
 import {
 	getAutoExpectedYear,
@@ -16,8 +17,8 @@ import {
 	profileDefaultValues,
 	profileSchema,
 	toProfileFormValues,
-} from '@/domains/user/model/profileSchema'
-import type { Profile } from '@/domains/user/model/userTypes'
+} from '@/domains/user/model/schema'
+import type { Profile } from '@/domains/user/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { logError } from '@/shared/utils/logger'
 import { StatusCode } from '@/types/response'
@@ -27,9 +28,14 @@ export type ProfileFormMode = 'create' | 'edit'
 interface UseProfileFormOptions {
 	mode: ProfileFormMode
 	profile?: Profile | null
+	redirectTo?: string | null
 }
 
-export const useProfileForm = ({ mode, profile }: UseProfileFormOptions) => {
+export const useProfileForm = ({
+	mode,
+	profile,
+	redirectTo,
+}: UseProfileFormOptions) => {
 	const router = useRouter()
 	const session = useSession()
 	const feedback = useFeedback()
@@ -102,7 +108,8 @@ export const useProfileForm = ({ mode, profile }: UseProfileFormOptions) => {
 						: 'プロフィールを更新しました。',
 				)
 				if (mode === 'create') {
-					router.push('/user')
+					const target = resolveRedirectTarget(redirectTo, '/user')
+					router.push(target)
 				}
 				if (mode === 'edit') {
 					router.refresh()

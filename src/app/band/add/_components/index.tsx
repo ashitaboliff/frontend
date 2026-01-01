@@ -5,12 +5,14 @@ import { useCallback, useId, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import UserSelectPopup from '@/domains/band/ui/UserSelectPopup'
-import { type Part, PartOptions } from '@/domains/user/model/userTypes'
+import { type Part, PartOptionList } from '@/domains/user/model/types'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import MultiSelectField from '@/shared/ui/molecules/MultiSelectField'
 import Popup from '@/shared/ui/molecules/Popup'
 
 // import { createBandAction } from './actions'
+
+const partValues = PartOptionList.map((p) => p.value) as [Part, ...Part[]]
 
 const bandAddFormSchema = zod.object({
 	bandName: zod
@@ -20,7 +22,7 @@ const bandAddFormSchema = zod.object({
 		.max(100, 'バンド名は100文字以内で入力してください'),
 	part: zod
 		.array(
-			zod.enum(Object.values(PartOptions) as [Part, ...Part[]], {
+			zod.enum(partValues, {
 				message: '不正なパートが選択されました',
 			}),
 		)
@@ -86,7 +88,7 @@ const BandAddForm = () => {
 			<MultiSelectField
 				name="part"
 				label="パート"
-				options={PartOptions}
+				options={PartOptionList}
 				control={control}
 				errorMessage={errors.part?.message}
 			/>
