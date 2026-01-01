@@ -1,5 +1,5 @@
-import { SortSchema } from '@ashitaboliff/types/modules/shared/schema'
-import { liveOrBandSchema } from '@ashitaboliff/types/modules/video/schema'
+import { SortSchema } from '@/domains/shared/model/schema'
+import { liveOrBandSchema } from '@/domains/video/model/schema'
 import * as z from 'zod'
 import { VIDEO_PAGE_DEFAULT_QUERY } from '@/domains/video/query/youtubeQuery'
 
