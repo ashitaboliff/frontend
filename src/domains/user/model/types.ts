@@ -2,7 +2,7 @@ import type {
 	UserAccountRole as AccountRole,
 	UserPart as Part,
 	UserRole as Role,
-} from '@ashitaboliff/types/modules/user/types'
+} from '@ashitabo/types/modules/user/types'
 import type { z } from 'zod'
 import type { UserDetailForAdminSchema } from './schema'
 
@@ -71,4 +71,4 @@ export type {
 	UserRole as Role,
 	UserSelectList,
 	UserWithProfile,
-} from '@ashitaboliff/types/modules/user/types'
+} from '@ashitabo/types/modules/user/types'

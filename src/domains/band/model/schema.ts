@@ -10,4 +10,4 @@ export const bandFormSchema = z.object({
 
 export type BandFormValues = z.infer<typeof bandFormSchema>
 
-export * from '@ashitaboliff/types/modules/band/schema'
+export * from '@ashitabo/types/modules/band/schema'

@@ -2,7 +2,7 @@ import type {
 	Band,
 	BandMember,
 	BandSearchResult,
-} from '@ashitaboliff/types/modules/band/types'
+} from '@ashitabo/types/modules/band/types'
 import type { Part } from '@/domains/user/model/types'
 import type { ApiResponse } from '@/types/response'
 
@@ -26,4 +26,4 @@ export type AddBandMemberResponse = ApiResponse<null>
 export type UpdateBandMemberResponse = ApiResponse<null>
 export type RemoveBandMemberResponse = ApiResponse<null>
 
-export * from '@ashitaboliff/types/modules/band/types'
+export * from '@ashitabo/types/modules/band/types'

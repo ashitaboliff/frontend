@@ -1,4 +1,4 @@
-import type { PublicBooking } from '@ashitaboliff/types/modules/booking/types'
+import type { PublicBooking } from '@ashitabo/types/modules/booking/types'
 
 export type BookingSummary = Omit<
 	PublicBooking,
@@ -18,4 +18,4 @@ export type {
 	BookingUpdate,
 	DeniedBooking,
 	PublicBooking as Booking,
-} from '@ashitaboliff/types/modules/booking/types'
+} from '@ashitabo/types/modules/booking/types'

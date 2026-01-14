@@ -15,4 +15,4 @@ export type {
 	GachaQuery,
 	GachaSort,
 	RarityType,
-} from '@ashitaboliff/types/modules/gacha/types'
+} from '@ashitabo/types/modules/gacha/types'

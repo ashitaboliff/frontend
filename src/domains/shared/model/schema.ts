@@ -1,1 +1,1 @@
-export * from '@ashitaboliff/types/modules/shared/schema'
+export * from '@ashitabo/types/modules/shared/schema'

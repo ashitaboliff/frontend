@@ -9,7 +9,7 @@ import MockAdSense from './MockAdSense'
 /**
  * AdSenseコンポーネントのプロパティ
  */
-interface AdSenseProps {
+type AdSenseProps = {
 	/** AdSenseクライアントID（例: ca-pub-XXXXXXXXXXXXXXXX） - 省略時はAdSenseProviderから取得 */
 	clientId?: string
 	/** 広告スロットID */

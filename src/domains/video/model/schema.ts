@@ -1,1 +1,1 @@
-export * from '@ashitaboliff/types/modules/video/schema'
+export * from '@ashitabo/types/modules/video/schema'

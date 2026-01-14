@@ -74,4 +74,4 @@ export const toSchedulePayload = (values: ScheduleCreateFormValues) => {
 	}
 }
 
-export * from '@ashitaboliff/types/modules/schedule/schema'
+export * from '@ashitabo/types/modules/schedule/schema'

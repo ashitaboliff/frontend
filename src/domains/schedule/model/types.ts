@@ -67,4 +67,4 @@ export type {
 	Schedule,
 	ScheduleInput,
 	UserWithName,
-} from '@ashitaboliff/types/modules/schedule/types'
+} from '@ashitabo/types/modules/schedule/types'

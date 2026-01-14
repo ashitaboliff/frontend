@@ -54,7 +54,7 @@ const ADS_CONFIG = {
 
 export type AdPlacement = keyof typeof ADS_CONFIG
 
-interface AdsProps {
+type AdsProps = {
 	readonly placement: AdPlacement
 	readonly clientId?: string
 	readonly className?: string
