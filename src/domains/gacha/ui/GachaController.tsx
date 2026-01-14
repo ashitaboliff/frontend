@@ -190,18 +190,16 @@ const GachaController = ({
 				)
 			case 'result':
 				return (
-					<div className="flex w-full max-w-xl flex-col pt-20">
+					<div className="mt-24 flex w-full max-w-xl flex-col items-center">
 						<GachaResult state={gachaResultState} />
-						<div className="relative">
-							<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
-								<button
-									type="button"
-									className="btn btn-outline"
-									onClick={handleResultBackToSelect}
-								>
-									パックを選ぶ
-								</button>
-							</div>
+						<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
+							<button
+								type="button"
+								className="btn btn-outline"
+								onClick={handleResultBackToSelect}
+							>
+								パックを選ぶ
+							</button>
 						</div>
 					</div>
 				)

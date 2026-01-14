@@ -15,8 +15,14 @@ type Props = {
 
 const PACK_RATIO = 684 / 360
 const PACK_TOP_TRIM_RATIO = 2.4 / 19
-const RIBBON_CLIP_PATH =
-	'path("M28.913 1.52588e-05L34.9132 0C32.1185 4.61393 29.3759 9.09718 26.729 13.424C0.962214 55.5441 -11.2336 98.3356 21.4128 87C56.9128 68.5 39.9129 136 39.9129 136L34.9132 134.5L36.4129 128V122C36.4129 122 48.9128 70.6393 21.4128 76.5C-21.5872 85.664 10.4132 26 28.913 1.52588e-05Z")'
+const RIBBON_CLIP_PATHS = [
+	'path("M28.913 1.52588e-05L34.9132 0C32.1185 4.61393 29.3759 9.09718 26.729 13.424C0.962214 55.5441 -11.2336 98.3356 21.4128 87C56.9128 68.5 39.9129 136 39.9129 136L34.9132 134.5L36.4129 128V122C36.4129 122 48.9128 70.6393 21.4128 76.5C-21.5872 85.664 10.4132 26 28.913 1.52588e-05Z")',
+	'path("M26 0L36 0C33.2 6.2 30.2 12 27.4 17C6 52 -6 94 21 85C52 68 38 132 38 132L33 130.8L34.6 124.6V118.2C34.6 118.2 45 70 21 76C-15 85 12 30 26 0Z")',
+	'path("M30 0L35.5 0C33.6 5.8 30.6 12 27.8 17.6C5 54 -8 96 23 86C55 69 40 134 40 134L35 132.4L36.2 126.6V121.2C36.2 121.2 47 72 22.8 77.5C-18 86.5 11 28 30 0Z")',
+] as const
+
+const getRibbonClipPath = (index: number) =>
+	RIBBON_CLIP_PATHS[index % RIBBON_CLIP_PATHS.length]
 const GachaPending = ({
 	pack,
 	packRect,
@@ -119,32 +125,35 @@ const GachaPending = ({
 							style={{ backgroundColor: spec.color }}
 						></span>
 					))}
-					{ribbonSpecs.map((spec, index) => (
-						<span
-							key={`ribbon-${spec.color}-${index}`}
-							ref={(node) => {
-								ribbonRefs.current[index] = node
-							}}
-							className="-translate-x-1/2 absolute left-1/2 inline-block h-32 w-48 opacity-0"
-							style={{
-								background: spec.color,
-								boxShadow: '0 0 10px rgba(0,0,0,0.2)',
-								clipPath: RIBBON_CLIP_PATH,
-								WebkitClipPath: RIBBON_CLIP_PATH,
-								transformOrigin: '50% 50%',
-							}}
-						></span>
-					))}
+					{ribbonSpecs.map((spec, index) => {
+						const clipPath = getRibbonClipPath(index)
+						return (
+							<span
+								key={`ribbon-${spec.color}-${index}`}
+								ref={(node) => {
+									ribbonRefs.current[index] = node
+								}}
+								className="-translate-x-1/2 absolute left-1/2 inline-block h-28 w-40 opacity-0"
+								style={{
+									background: spec.color,
+									boxShadow: '0 0 6px rgba(0,0,0,0.18)',
+									clipPath,
+									WebkitClipPath: clipPath,
+									transformOrigin: '50% 50%',
+								}}
+							></span>
+						)
+					})}
 					{lightBeamSpecs.map((spec, index) => (
 						<span
 							key={`light-${spec.rotation}-${index}`}
 							ref={(node) => {
 								lightRefs.current[index] = node
 							}}
-							className="-translate-x-1/2 absolute left-1/2 z-10 inline-block h-32 w-2 opacity-0"
+							className="-translate-x-1/2 absolute left-1/2 z-10 inline-block h-28 w-1 opacity-0"
 							style={{
 								background:
-									'linear-gradient(180deg, rgba(255,255,50,0.9), rgba(255,255,50,0))',
+									'linear-gradient(180deg, rgba(255,255,120,0.8), rgba(255,255,120,0))',
 								transformOrigin: 'center top',
 								rotate: `${spec.rotation}deg`,
 							}}

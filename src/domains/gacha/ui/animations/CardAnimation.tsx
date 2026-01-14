@@ -21,13 +21,14 @@ type CardProps = {
 	delay?: number
 }
 
+type SparkleStyle = CSSProperties & Record<`--${string}`, string | number>
+
 export const CardAnimation = ({
 	frontImageSignedUrl,
 	rarity,
 	delay,
 }: CardProps) => {
 	const cardRef = useRef<HTMLDivElement>(null)
-	const effectContainerRef = useRef<HTMLDivElement>(null)
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0)
 	const id = useId()
 
@@ -35,34 +36,14 @@ export const CardAnimation = ({
 		setImagesLoaded((prev) => prev + 1)
 	}
 
-	const cleanupEffects = () => {
-		if (cardRef.current) {
-			gsap.killTweensOf(cardRef.current)
-		}
-		if (effectContainerRef.current) {
-			gsap.killTweensOf(
-				effectContainerRef.current.querySelectorAll('.sparkle-star'),
-			)
-			gsap.killTweensOf(
-				effectContainerRef.current.querySelectorAll('.light-ray-effect'),
-			)
-			gsap.killTweensOf(
-				effectContainerRef.current.querySelectorAll('.particle-effect'),
-			)
-			effectContainerRef.current.innerHTML = ''
-		}
-	}
-
 	useGSAP(
 		() => {
 			const cardElement = cardRef.current
-			const effectsContainer = effectContainerRef.current
-			if (!cardElement || !effectsContainer || imagesLoaded < 2) {
+			if (!cardElement || imagesLoaded < 2) {
 				return
 			}
 
 			const initialDelay = delay ?? 0
-			cleanupEffects()
 
 			const timeline = gsap.timeline()
 
@@ -73,7 +54,6 @@ export const CardAnimation = ({
 			const animationContext: AnimationContext = {
 				timeline,
 				card: cardElement,
-				effectsContainer,
 				initialDelay,
 			}
 
@@ -81,26 +61,28 @@ export const CardAnimation = ({
 
 			return () => {
 				timeline.kill()
-				cleanupEffects()
+				gsap.killTweensOf(cardElement)
+				gsap.killTweensOf(cardElement?.querySelectorAll('.backface-hidden'))
 			}
 		},
 		{ dependencies: [rarity, imagesLoaded, delay], scope: cardRef },
 	)
 
-	const starBaseSize = rarity === 'SUPER_RARE' ? 15 : 20
+	const starBaseSize =
+		rarity === 'SUPER_RARE' ? 12 : rarity === 'SS_RARE' ? 14 : 16
 	const starColor = rarity === 'SECRET_RARE' ? '#000' : '#FFD700'
 
 	const fixedStarPositions = useMemo(() => {
-		const positions: Array<{ style: CSSProperties; id: string }> = []
+		const positions: Array<{ style: SparkleStyle; id: string }> = []
 		const numStars =
 			rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE'
-				? 60
+				? 28
 				: rarity === 'SS_RARE'
-					? 50
-					: 40
+					? 22
+					: 16
 		for (let i = 0; i < numStars; i++) {
 			const side = Math.floor(Math.random() * 4)
-			let style: CSSProperties = {}
+			let style: SparkleStyle = {}
 			const offset = `${Math.random() * 25}%`
 			const mainPos = `${Math.random() * 100}%`
 
@@ -108,22 +90,30 @@ export const CardAnimation = ({
 			else if (side === 1) style = { bottom: offset, left: mainPos }
 			else if (side === 2) style = { left: offset, top: mainPos }
 			else style = { right: offset, top: mainPos }
+			const twinkleDelay = `${Math.random() * 1.1}s`
+			const twinkleDuration = `${1.3 + Math.random() * 1.1}s`
+			const twinkleScale = 1.1 + Math.random() * 0.7
+			const twinkleOpacity = 0.4 + Math.random() * 0.4
+			const twinkleRotate = `${Math.random() * 30 - 15}deg`
 			positions.push({
-				style,
+				style: {
+					...style,
+					'--sparkle-scale': twinkleScale,
+					'--sparkle-rotate': twinkleRotate,
+					'--sparkle-opacity': twinkleOpacity,
+					animationDelay: twinkleDelay,
+					animationDuration: twinkleDuration,
+				},
 				id: `${side}-${offset}-${mainPos}-${Math.random().toString(36).slice(2)}`,
 			})
 		}
 		return positions
 	}, [rarity])
 
-	const sizeVariations = [-10, 0, 10, 0]
+	const sizeVariations = [-6, 0, 6, 0]
 
 	return (
 		<div className="relative h-100 w-75" style={{ perspective: '1000px' }}>
-			<div
-				ref={effectContainerRef}
-				className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
-			/>
 			<Hover3D
 				ref={cardRef}
 				className="transform-style-3d relative h-100 w-75"
@@ -186,7 +176,6 @@ export const CardAnimation = ({
 										...positionStyle,
 										opacity: 0,
 									}}
-									className="sparkle-star"
 									rarity={rarity}
 								/>
 							)
