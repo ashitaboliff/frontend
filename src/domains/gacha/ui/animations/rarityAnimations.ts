@@ -1,4 +1,4 @@
-import type { RarityType } from '@/domains/gacha/model/types'
+import type { GachaRarity } from '@/domains/gacha/model/types'
 
 export type AnimationContext = {
 	timeline: gsap.core.Timeline
@@ -203,7 +203,7 @@ const animateSecretRare: RarityAnimation = ({
 		)
 }
 
-export const rarityAnimations: Record<RarityType, RarityAnimation> = {
+export const rarityAnimations: Record<GachaRarity, RarityAnimation> = {
 	COMMON: animateCommon,
 	RARE: animateRare,
 	SUPER_RARE: animateSuperRare,

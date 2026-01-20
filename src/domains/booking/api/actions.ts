@@ -10,20 +10,20 @@ import {
 } from '@/domains/booking/api/errorMessages'
 import {
 	BookingAccessTokenResponseSchema,
-	BookingByUserResponseSchema,
+	BookingCreateRequestSchema,
 	BookingCreateResponseSchema,
-	BookingCreateSchema,
-	BookingDeleteSchema,
-	BookingIdsSchema,
-	BookingPasswordSchema,
-	BookingUpdateSchema,
-	BookingUserQuerySchema,
-	PublicBookingSchema,
+	BookingDeleteRequestSchema,
+	BookingIdsResponseSchema,
+	BookingPasswordVerifyRequestSchema,
+	BookingPublicSchema,
+	BookingUpdateRequestSchema,
+	BookingUserListQuerySchema,
+	BookingUserListResponseSchema,
 } from '@/domains/booking/model/schema'
 import type {
 	Booking,
 	BookingAccessGrant,
-	BookingByUserResponse,
+	BookingUserListResponse,
 } from '@/domains/booking/model/types'
 import {
 	buildFlashMessageValue,
@@ -53,7 +53,7 @@ export const getAllBookingAction = async (): Promise<
 	const res = await apiGet('/booking/logs', {
 		next: { revalidate: 60 * 60, tags: ['booking'] },
 		schemas: {
-			response: PublicBookingSchema.array(),
+			response: BookingPublicSchema.array(),
 		},
 	})
 
@@ -74,7 +74,7 @@ export const getBookingByIdAction = async (
 				tags: [`booking-detail-${bookingId}`],
 			},
 			schemas: {
-				response: PublicBookingSchema,
+				response: BookingPublicSchema,
 			},
 		})
 
@@ -98,7 +98,7 @@ export const getBookingByUserIdAction = async ({
 	page: number
 	perPage: number
 	sort: 'new' | 'old'
-}): Promise<ApiResponse<BookingByUserResponse>> => {
+}): Promise<ApiResponse<BookingUserListResponse>> => {
 	const res = await apiGet(`/booking/user/${userId}`, {
 		searchParams: {
 			page,
@@ -107,8 +107,8 @@ export const getBookingByUserIdAction = async ({
 		},
 		next: { revalidate: 24 * 60 * 60, tags: [`booking-user-${userId}`] },
 		schemas: {
-			searchParams: BookingUserQuerySchema,
-			response: BookingByUserResponseSchema,
+			searchParams: BookingUserListQuerySchema,
+			response: BookingUserListResponseSchema,
 		},
 	})
 
@@ -142,7 +142,7 @@ export const createBookingAction = async ({
 			today,
 		},
 		schemas: {
-			body: BookingCreateSchema,
+			body: BookingCreateRequestSchema,
 			response: BookingCreateResponseSchema,
 		},
 	})
@@ -184,7 +184,7 @@ export const updateBookingAction = async ({
 			authToken: authToken ?? undefined,
 		},
 		schemas: {
-			body: BookingUpdateSchema,
+			body: BookingUpdateRequestSchema,
 		},
 	})
 
@@ -216,7 +216,7 @@ export const deleteBookingAction = async ({
 			authToken: authToken ?? undefined,
 		},
 		schemas: {
-			body: BookingDeleteSchema,
+			body: BookingDeleteRequestSchema,
 		},
 	})
 
@@ -254,7 +254,7 @@ export const authBookingAction = async ({
 	const res = await apiPost(`/booking/${bookingId}/verify`, {
 		body: { password },
 		schemas: {
-			body: BookingPasswordSchema,
+			body: BookingPasswordVerifyRequestSchema,
 			response: BookingAccessTokenResponseSchema,
 		},
 	})
@@ -280,7 +280,7 @@ export const getBookingIds = async (): Promise<string[]> => {
 	const response = await apiGet('/booking/ids', {
 		next: { revalidate: 24 * 60 * 60, tags: ['booking'] },
 		schemas: {
-			response: BookingIdsSchema,
+			response: BookingIdsResponseSchema,
 		},
 	})
 

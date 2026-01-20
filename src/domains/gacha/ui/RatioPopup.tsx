@@ -6,13 +6,13 @@ import {
 	type GachaCategoryConfig,
 	gachaConfigs,
 } from '@/domains/gacha/config/config'
-import type { RarityType } from '@/domains/gacha/model/types'
+import type { GachaRarity } from '@/domains/gacha/model/types'
 import { gkktt } from '@/shared/lib/fonts'
 import { getImageUrl } from '@/shared/lib/r2'
 import { Tab, Tabs } from '@/shared/ui/atoms/Tabs'
 import Popup from '@/shared/ui/molecules/Popup'
 
-const rarityDisplayNameMap: Record<RarityType, string> = {
+const rarityDisplayNameMap: Record<GachaRarity, string> = {
 	COMMON: 'COMMON',
 	RARE: 'RARE',
 	SUPER_RARE: 'SUPER RARE',
@@ -21,7 +21,7 @@ const rarityDisplayNameMap: Record<RarityType, string> = {
 	SECRET_RARE: 'SECRET RARE',
 }
 
-const rarityImageMap: Record<RarityType, string> = {
+const rarityImageMap: Record<GachaRarity, string> = {
 	COMMON: 'Common',
 	RARE: 'Rare',
 	SUPER_RARE: 'SR',
@@ -94,10 +94,10 @@ const RatioPopup = () => {
 								<div className="flex max-h-[60vh] flex-col items-center space-y-2 overflow-y-auto p-1 text-sm">
 									{processedCategories.map((category, catIndex) => {
 										const displayName =
-											rarityDisplayNameMap[category.name as RarityType] ||
+											rarityDisplayNameMap[category.name as GachaRarity] ||
 											category.name
 										const imageName =
-											rarityImageMap[category.name as RarityType] || 'Common' // Fallback image
+											rarityImageMap[category.name as GachaRarity] || 'Common' // Fallback image
 										const titleClassName = `bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} ${catIndex > 0 ? 'mt-4' : ''}`
 										const detailsGapClass =
 											category.name === 'COMMON' || category.name === 'RARE'

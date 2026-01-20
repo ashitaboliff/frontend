@@ -1,12 +1,12 @@
 'use client'
 
-import type { RarityType } from '@/domains/gacha/model/types'
+import type { GachaRarity } from '@/domains/gacha/model/types'
 import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
 
 export type GachaResultViewState =
 	| { status: 'idle' }
 	| { status: 'loading'; message?: string }
-	| { status: 'success'; rarity: RarityType; signedUrl: string }
+	| { status: 'success'; rarity: GachaRarity; signedUrl: string }
 	| { status: 'error'; message: string }
 
 interface GachaResultProps {

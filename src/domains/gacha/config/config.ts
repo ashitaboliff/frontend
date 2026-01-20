@@ -1,8 +1,8 @@
-import type { RarityType } from '@/domains/gacha/model/types'
+import type { GachaRarity } from '@/domains/gacha/model/types'
 
 export const MAX_GACHA_PLAYS_PER_DAY = 3
 
-export const GachaRarityMap: { [key in RarityType]: string } = {
+export const GachaRarityMap: { [key in GachaRarity]: string } = {
 	COMMON: 'コモン',
 	RARE: 'レア',
 	SUPER_RARE: 'スーパーレア',
@@ -12,7 +12,7 @@ export const GachaRarityMap: { [key in RarityType]: string } = {
 }
 
 export type GachaCategoryConfig = {
-	name: RarityType
+	name: GachaRarity
 	probability: number
 	count: number
 	prefix: string

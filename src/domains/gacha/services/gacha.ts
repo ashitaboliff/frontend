@@ -3,7 +3,7 @@ import {
 	type GachaVersionConfig,
 	gachaConfigs,
 } from '@/domains/gacha/config/config'
-import type { RarityType } from '@/domains/gacha/model/types'
+import type { GachaRarity } from '@/domains/gacha/model/types'
 
 /**
  * ガチャで獲得可能なアイテムを表すクラス
@@ -21,7 +21,7 @@ export class GachaItem {
  */
 class GachaCategory {
 	constructor(
-		public name: RarityType, // カテゴリー名（レアリティ）
+		public name: GachaRarity, // カテゴリー名（レアリティ）
 		public probability: number, // 出現確率
 		public items: GachaItem[], // カテゴリーに属するアイテム一覧
 	) {}
@@ -90,7 +90,7 @@ export default class Gacha {
 	 * ランダムにアイテムを1つ選択
 	 * @returns 選択されたアイテムとそのレアリティ
 	 */
-	public pickRandomImage(): { data: GachaItem; name: RarityType } {
+	public pickRandomImage(): { data: GachaItem; name: GachaRarity } {
 		// 重み付き抽選のために確率の合計を計算
 		const totalProbability = this.categories.reduce(
 			(sum, category) => sum + category.probability,

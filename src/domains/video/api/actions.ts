@@ -3,21 +3,21 @@
 import { revalidateTag } from 'next/cache'
 import { getSyncPlaylistErrorMessage } from '@/domains/video/api/errorMessage'
 import {
-	AdminSyncPayloadSchema,
-	AdminSyncQueuedResponseSchema,
-	PlaylistDetailSchema,
-	SearchResponseSchema,
-	VideoDetailSchema,
+	PlaylistDetailResponseSchema,
+	VideoAdminSyncQueuedResponseSchema,
+	VideoAdminSyncRequestSchema,
+	VideoDetailResponseSchema,
 	VideoIdsQuerySchema,
 	VideoIdsResponseSchema,
-	YoutubeSearchQuerySchema,
+	VideoSearchQuerySchema,
+	VideoSearchResponseSchema,
 } from '@/domains/video/model/schema'
 import type {
-	AdminSyncQueuedResponse,
 	PlaylistDetail,
-	SearchResponse,
+	VideoAdminSyncQueuedResponse,
 	VideoDetail,
-	YoutubeSearchQuery,
+	VideoSearchQuery,
+	VideoSearchResponse,
 } from '@/domains/video/model/types'
 import { okResponse, withFallbackMessage } from '@/shared/lib/api/helper'
 import { apiGet, apiPost } from '@/shared/lib/api/v2/crud'
@@ -25,8 +25,8 @@ import { recordJoinSorted } from '@/shared/utils/cacheTag'
 import type { ApiResponse } from '@/types/response'
 
 export const searchYoutubeAction = async (
-	query: YoutubeSearchQuery,
-): Promise<ApiResponse<SearchResponse>> => {
+	query: VideoSearchQuery,
+): Promise<ApiResponse<VideoSearchResponse>> => {
 	const res = await apiGet('/video/search', {
 		searchParams: query,
 		next: {
@@ -34,8 +34,8 @@ export const searchYoutubeAction = async (
 			tags: ['videos', `video-search-${recordJoinSorted(query)}`],
 		},
 		schemas: {
-			searchParams: YoutubeSearchQuerySchema,
-			response: SearchResponseSchema,
+			searchParams: VideoSearchQuerySchema,
+			response: VideoSearchResponseSchema,
 		},
 	})
 
@@ -55,7 +55,7 @@ export const getVideoByIdAction = async (
 			tags: ['videos', `video-${videoId}`],
 		},
 		schemas: {
-			response: VideoDetailSchema,
+			response: VideoDetailResponseSchema,
 		},
 	})
 
@@ -75,7 +75,7 @@ export const getPlaylistByIdAction = async (
 			tags: ['videos', `playlist-${playlistId}`],
 		},
 		schemas: {
-			response: PlaylistDetailSchema,
+			response: PlaylistDetailResponseSchema,
 		},
 	})
 
@@ -89,13 +89,13 @@ export const getPlaylistByIdAction = async (
 const YOUTUBE_IDS_TAG = (type: 'video' | 'playlist') => `youtube-${type}-ids`
 
 export const postSyncPlaylistAction = async (): Promise<
-	ApiResponse<AdminSyncQueuedResponse>
+	ApiResponse<VideoAdminSyncQueuedResponse>
 > => {
 	const res = await apiPost('/video/webhook', {
 		body: {},
 		schemas: {
-			body: AdminSyncPayloadSchema,
-			response: AdminSyncQueuedResponseSchema,
+			body: VideoAdminSyncRequestSchema,
+			response: VideoAdminSyncQueuedResponseSchema,
 		},
 	})
 

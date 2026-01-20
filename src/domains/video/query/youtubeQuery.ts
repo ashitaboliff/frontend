@@ -1,9 +1,9 @@
-import type { YoutubeSearchQuery } from '@/domains/video/model/types'
+import type { VideoSearchQuery } from '@/domains/video/model/types'
 import { buildQueryString, type QueryOptions } from '@/shared/utils/queryParams'
 
 export const createYoutubeQueryOptions = (
-	defaultQuery: YoutubeSearchQuery,
-): QueryOptions<YoutubeSearchQuery> => ({
+	defaultQuery: VideoSearchQuery,
+): QueryOptions<VideoSearchQuery> => ({
 	defaultQuery,
 })
 
@@ -21,7 +21,7 @@ export const ADMIN_YOUTUBE_DEFAULT_PARAMS = {
 	videoPerPage: 20,
 } as const
 
-export const ADMIN_YOUTUBE_DEFAULT_QUERY: YoutubeSearchQuery = {
+export const ADMIN_YOUTUBE_DEFAULT_QUERY: VideoSearchQuery = {
 	liveOrBand: 'live',
 	bandName: '',
 	liveName: '',
@@ -31,8 +31,8 @@ export const ADMIN_YOUTUBE_DEFAULT_QUERY: YoutubeSearchQuery = {
 } as const
 
 export const buildYoutubeQueryString = (
-	query: YoutubeSearchQuery,
-	defaultQuery: YoutubeSearchQuery,
+	query: VideoSearchQuery,
+	defaultQuery: VideoSearchQuery,
 	extraSearchParams?: string,
 ) =>
 	buildQueryString(

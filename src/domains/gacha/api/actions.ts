@@ -6,13 +6,13 @@ import {
 	getGachaImageErrorMessage,
 } from '@/domains/gacha/api/errorMessages'
 import {
-	GachaBySrcResponseSchema,
-	GachaCreateWithOverrideSchema,
+	GachaBySourceResponseSchema,
+	GachaCreateWithOverrideRequestSchema,
 	GachaImageProxyRequestSchema,
 	GachaImageProxyResponseSchema,
-	GachaSrcQuerySchema,
+	GachaSourceQuerySchema,
 } from '@/domains/gacha/model/schema'
-import type { Gacha, RarityType } from '@/domains/gacha/model/types'
+import type { Gacha, GachaRarity } from '@/domains/gacha/model/types'
 import {
 	createdResponse,
 	okResponse,
@@ -34,8 +34,8 @@ export const getGachaByGachaSrcAction = async ({
 		},
 		next: { revalidate: 60 * 60, tags: [`gacha-id-${userId}-${gachaSrc}`] },
 		schemas: {
-			searchParams: GachaSrcQuerySchema,
-			response: GachaBySrcResponseSchema,
+			searchParams: GachaSourceQuerySchema,
+			response: GachaBySourceResponseSchema,
 		},
 	})
 
@@ -55,7 +55,7 @@ export const createUserGachaResultAction = async ({
 }: {
 	userId: string
 	gachaVersion: string
-	gachaRarity: RarityType
+	gachaRarity: GachaRarity
 	gachaSrc: string
 	ignorePlayCountLimit?: boolean
 }): Promise<ApiResponse<string>> => {
@@ -68,7 +68,7 @@ export const createUserGachaResultAction = async ({
 			ignoreLimit: ignorePlayCountLimit ?? false,
 		},
 		schemas: {
-			body: GachaCreateWithOverrideSchema,
+			body: GachaCreateWithOverrideRequestSchema,
 		},
 	})
 

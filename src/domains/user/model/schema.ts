@@ -124,4 +124,4 @@ export const getAutoExpectedYear = (studentId?: string) => {
 	return expectedYearValues.includes(expectedYear) ? expectedYear : undefined
 }
 
-export * from '@ashitabo/types/modules/user/schema'
+export * from '@ashitabo/types/user/schema'

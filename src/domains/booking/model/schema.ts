@@ -1,7 +1,7 @@
 import * as zod from 'zod'
 
-export * from '@ashitabo/types/modules/booking/schema/booking'
-export * from '@ashitabo/types/modules/booking/schema/denied'
+export * from '@ashitabo/types/booking/schema/booking'
+export * from '@ashitabo/types/booking/schema/denied'
 
 export const bookingAuthSchema = zod.object({
 	password: zod.string().min(1, 'パスワードを入力してください'),

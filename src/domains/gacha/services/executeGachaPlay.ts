@@ -5,7 +5,7 @@ import {
 	getSignedUrlForGachaImageAction,
 } from '@/domains/gacha/api/actions'
 import { invalidateGachaPreviewCache } from '@/domains/gacha/hooks/useGachaPreview'
-import type { RarityType } from '@/domains/gacha/model/types'
+import type { GachaRarity } from '@/domains/gacha/model/types'
 import Gacha, { type GachaItem } from '@/domains/gacha/services/gacha'
 import { toSignedImageKey } from '@/domains/gacha/utils'
 
@@ -25,7 +25,7 @@ export interface ExecuteGachaPlayParams {
 
 export interface ExecuteGachaPlaySuccess {
 	ok: true
-	rarity: RarityType
+	rarity: GachaRarity
 	gachaItem: GachaItem
 	gachaSrc: string
 	signedUrl: string

@@ -2,9 +2,9 @@ import type {
 	UserAccountRole as AccountRole,
 	UserPart as Part,
 	UserRole as Role,
-} from '@ashitabo/types/modules/user/types'
+} from '@ashitabo/types/user/types'
 import type { z } from 'zod'
-import type { UserDetailForAdminSchema } from './schema'
+import type { AdminUserDetailSchema } from './schema'
 
 type RoleEnum = '卒業生' | '現役生'
 
@@ -54,21 +54,21 @@ export const AccountRoleMap: Record<AccountRole, string> = {
 	TOPADMIN: '管理者',
 }
 
-export type UserDetail = z.infer<typeof UserDetailForAdminSchema>
+export type UserDetail = z.infer<typeof AdminUserDetailSchema>
 
 export type {
-	ProfileInput,
+	AdminUserDetail as UserForAdmin,
+	AdminUserListResponse as UserListForAdmin,
 	ProfileModel as Profile,
 	ProfileResponse,
-	UpdateUserRole,
+	ProfileUpsertRequest as ProfileInput,
 	UserAccountRole as AccountRole,
-	UserForAdmin,
-	UserForSelect,
-	UserListForAdmin,
+	UserListQuery as UserQuery,
 	UserModel,
 	UserPart as Part,
-	UserQuery,
 	UserRole as Role,
-	UserSelectList,
+	UserRoleUpdateRequest as UpdateUserRole,
+	UserSelectItem as UserForSelect,
+	UserSelectResponse as UserSelectList,
 	UserWithProfile,
-} from '@ashitabo/types/modules/user/types'
+} from '@ashitabo/types/user/types'

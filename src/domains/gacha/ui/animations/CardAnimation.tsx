@@ -4,7 +4,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { type CSSProperties, useId, useMemo, useRef, useState } from 'react'
 import { GachaRarityMap } from '@/domains/gacha/config/config'
-import type { RarityType } from '@/domains/gacha/model/types'
+import type { GachaRarity } from '@/domains/gacha/model/types'
 import {
 	type AnimationContext,
 	rarityAnimations,
@@ -17,7 +17,7 @@ gsap.registerPlugin(useGSAP)
 
 type CardProps = {
 	frontImageSignedUrl: string
-	rarity: RarityType
+	rarity: GachaRarity
 	delay?: number
 }
 

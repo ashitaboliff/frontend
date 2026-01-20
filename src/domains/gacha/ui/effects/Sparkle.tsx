@@ -1,14 +1,14 @@
 'use client'
 
 import { type CSSProperties, useMemo, useRef } from 'react'
-import type { RarityType } from '@/domains/gacha/model/types'
+import type { GachaRarity } from '@/domains/gacha/model/types'
 
 interface SparkleProps {
 	size: number
 	color: string
 	style?: CSSProperties
 	className?: string
-	rarity: RarityType
+	rarity: GachaRarity
 	gradientId: string
 }
 

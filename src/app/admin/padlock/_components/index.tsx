@@ -11,21 +11,21 @@ import {
 	deletePadLockAction,
 } from '@/domains/admin/api/actions'
 import type { PadLockFormValues } from '@/domains/admin/model/types'
-import type { PadLock } from '@/domains/auth/model/types'
+import type { Padlock } from '@/domains/auth/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
 import Pagination from '@/shared/ui/atoms/Pagination'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 
 type Props = {
-	readonly padLocks: PadLock[]
+	readonly padLocks: Padlock[]
 	readonly headers: Array<{ key: string; label: string }>
 }
 
 const PadLockManagement = ({ padLocks, headers }: Props) => {
 	const router = useRouter()
 	const feedback = useFeedback()
-	const [selectedPadLock, setSelectedPadLock] = useState<PadLock | null>(null)
+	const [selectedPadLock, setSelectedPadLock] = useState<Padlock | null>(null)
 	const [isDetailOpen, setIsDetailOpen] = useState(false)
 	const [isCreateOpen, setIsCreateOpen] = useState(false)
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -48,7 +48,7 @@ const PadLockManagement = ({ padLocks, headers }: Props) => {
 		return padLocks.slice(start, start + perPage)
 	}, [padLocks, page, perPage])
 
-	const handleSelectPadLock = useCallback((padLock: PadLock) => {
+	const handleSelectPadLock = useCallback((padLock: Padlock) => {
 		setSelectedPadLock(padLock)
 		setIsDetailOpen(true)
 	}, [])

@@ -6,13 +6,13 @@ export type CarouselPackDataItem = {
 
 export type {
 	Gacha,
-	GachaBySrcResponse,
-	GachaCreate,
-	GachaCreateWithOverride,
+	GachaBySourceResponse,
+	GachaCreateRequest,
+	GachaCreateWithOverrideRequest,
 	GachaImageProxyRequest,
 	GachaImageProxyResponse,
+	GachaListQuery,
 	GachaListResponse,
-	GachaQuery,
-	GachaSort,
-	RarityType,
-} from '@ashitabo/types/modules/gacha/types'
+	GachaRarity,
+	GachaSortOrder,
+} from '@ashitabo/types/gacha/types'

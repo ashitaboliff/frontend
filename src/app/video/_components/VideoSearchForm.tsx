@@ -1,16 +1,16 @@
 'use client'
 
 import { type FormEvent, useId, useState } from 'react'
-import type { YoutubeSearchQuery } from '@/domains/video/model/types'
+import type { VideoSearchQuery } from '@/domains/video/model/types'
 import ShareButton from '@/shared/ui/atoms/ShareButton'
 import { BiSearch, RiQuestionLine } from '@/shared/ui/icons'
 import Popup from '@/shared/ui/molecules/Popup'
 import TextSearchField from '@/shared/ui/molecules/TextSearchField'
 
 type Props = {
-	currentQuery: YoutubeSearchQuery
+	currentQuery: VideoSearchQuery
 	isSearching: boolean
-	onSearch: (query: Partial<YoutubeSearchQuery>) => void
+	onSearch: (query: Partial<VideoSearchQuery>) => void
 	onReset: () => void
 	shareUrl: string
 }
@@ -32,7 +32,7 @@ const VideoSearchForm = ({
 		setIsPopupOpen(false)
 		event.preventDefault()
 		const formData = new FormData(event.currentTarget)
-		const newQuery: Partial<YoutubeSearchQuery> = {
+		const newQuery: Partial<VideoSearchQuery> = {
 			liveOrBand: formData.get('liveOrBand') as 'live' | 'band',
 			bandName: formData.get('bandName') as string,
 			liveName: formData.get('liveName') as string,
