@@ -61,6 +61,9 @@ const ChangeLogPage = ({ roadmap, changelogEntries }: Props) => {
 		if (status.includes('検討')) {
 			return 'badge-ghost'
 		}
+		if (status.includes('失敗')) {
+			return 'badge-error'
+		}
 
 		const normalized = status.toLowerCase()
 		if (normalized.includes('progress')) {
@@ -114,6 +117,12 @@ const ChangeLogPage = ({ roadmap, changelogEntries }: Props) => {
 				<h2 className="font-bold text-2xl text-neutral-content">更新履歴</h2>
 				<p className="mt-1 text-neutral-content/70 text-sm">
 					マージ済みPRごとの変更点です。最新のものから表示しています。
+					<br />
+					アップデートの詳細や技術的な内容については、
+					<Link className="ml-1 text-primary/70 underline" href="/blogs">
+						ブログ記事
+					</Link>
+					もご覧ください。
 				</p>
 				<div className="mt-6 space-y-4">
 					{changelogEntries.map((entry) => {
@@ -151,9 +160,6 @@ const ChangeLogPage = ({ roadmap, changelogEntries }: Props) => {
 					})}
 				</div>
 			</section>
-			<Link href="/home" type="button" className="btn btn-ghost w-full">
-				ホームに戻る
-			</Link>
 		</div>
 	)
 }

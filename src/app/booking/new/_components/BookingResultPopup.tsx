@@ -40,7 +40,7 @@ const BookingResultPopup = ({
 			</h3>
 			<BookingDetailCard booking={booking} is3DHover={false} />
 			<GachaResult state={gachaResultState} />
-			<div className="flex justify-center gap-2 pt-2">
+			<div className="flex justify-center gap-2 pt-4">
 				<AddBookingToCalendar
 					booking={{
 						bookingDate: booking.bookingDate,

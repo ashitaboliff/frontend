@@ -156,7 +156,7 @@ const BookingCreate = ({ session, query }: Props) => {
 
 	return (
 		<div className="mx-auto max-w-md">
-			<div className="card my-4 bg-white shadow-xl">
+			<div className="card my-4 bg-white shadow-md">
 				<div className="card-body">
 					<input
 						type="hidden"

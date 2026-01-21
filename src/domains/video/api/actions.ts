@@ -6,6 +6,7 @@ import {
 	PlaylistDetailResponseSchema,
 	VideoAdminSyncQueuedResponseSchema,
 	VideoAdminSyncRequestSchema,
+	VideoAdminSyncStatusResponseSchema,
 	VideoDetailResponseSchema,
 	VideoIdsQuerySchema,
 	VideoIdsResponseSchema,
@@ -15,6 +16,7 @@ import {
 import type {
 	PlaylistDetail,
 	VideoAdminSyncQueuedResponse,
+	VideoAdminSyncStatusResponse,
 	VideoDetail,
 	VideoSearchQuery,
 	VideoSearchResponse,
@@ -99,17 +101,35 @@ export const postSyncPlaylistAction = async (): Promise<
 		},
 	})
 
-	if (res.ok) {
-		revalidateTag('videos', 'max')
-		revalidateTag(YOUTUBE_IDS_TAG('video'), 'max')
-		revalidateTag(YOUTUBE_IDS_TAG('playlist'), 'max')
-		return res
-	}
+	if (res.ok) return res
 
 	return {
 		...res,
 		message: getSyncPlaylistErrorMessage(res.status),
 	}
+}
+
+export const getSyncJobStatusAction = async (
+	jobId: string,
+): Promise<ApiResponse<VideoAdminSyncStatusResponse>> => {
+	const res = await apiGet(`/video/webhook/${jobId}`, {
+		cache: 'no-store',
+		schemas: {
+			response: VideoAdminSyncStatusResponseSchema,
+		},
+	})
+
+	if (!res.ok) {
+		return withFallbackMessage(res, '同期状態の取得に失敗しました。')
+	}
+
+	return okResponse(res.data)
+}
+
+export const revalidateVideoCacheAction = async () => {
+	revalidateTag('videos', 'max')
+	revalidateTag(YOUTUBE_IDS_TAG('video'), 'max')
+	revalidateTag(YOUTUBE_IDS_TAG('playlist'), 'max')
 }
 
 export const getYoutubeIds = async (
