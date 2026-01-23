@@ -9,11 +9,11 @@ export type GachaResultViewState =
 	| { status: 'success'; rarity: GachaRarity; signedUrl: string }
 	| { status: 'error'; message: string }
 
-interface GachaResultProps {
+type Props = {
 	readonly state: GachaResultViewState
 }
 
-export const GachaResult = ({ state }: GachaResultProps) => {
+export const GachaResult = ({ state }: Props) => {
 	if (state.status === 'idle') {
 		return null
 	}

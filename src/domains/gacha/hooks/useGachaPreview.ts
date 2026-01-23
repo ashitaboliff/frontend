@@ -3,22 +3,22 @@
 import { useMemo, useState } from 'react'
 import useSWR, { mutate as mutateGlobal } from 'swr'
 import { getGachaByGachaSrcAction } from '@/domains/gacha/api/actions'
-import type { Gacha } from '@/domains/gacha/model/types'
 import {
 	clearPreviewCacheEntry,
 	getPreviewCacheEntry,
 	isPreviewEntryValid,
 	PREVIEW_CACHE_TTL_MS,
 	setPreviewCacheEntry,
-} from '@/domains/gacha/services/gachaPreviewCache'
+} from '@/domains/gacha/cache/gachaPreviewCache'
 import {
 	ensureSignedResourceUrls,
 	getSignedResourceEntry,
 	getSignedResourceUrl,
 	setSignedResourceEntry,
 	shouldRefreshSignedResource,
-} from '@/domains/gacha/services/signedGachaResourceCache'
-import { toSignedImageKey } from '@/domains/gacha/utils'
+} from '@/domains/gacha/cache/signedGachaResourceCache'
+import { toSignedImageKey } from '@/domains/gacha/domain/gachaImage'
+import type { Gacha } from '@/domains/gacha/model/types'
 import { logError } from '@/shared/utils/logger'
 import type { Session } from '@/types/session'
 

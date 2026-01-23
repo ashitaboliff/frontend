@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { type SubmitHandler, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
 import type { BookingNewPageParams } from '@/app/booking/new/schema'
 import { createBookingAction } from '@/domains/booking/api/actions'
@@ -100,59 +100,72 @@ const BookingCreate = ({ session, query }: Props) => {
 		})
 	}, [onGachaPlayedSuccessfully, session.user.id])
 
-	const onSubmit: SubmitHandler<BookingCreateFormValues> = async (data) => {
-		messageFeedback.clearFeedback()
-		setCreatedBooking(null)
-		setGachaResultState({ status: 'idle' })
+	const onSubmit = useCallback(
+		async (data: BookingCreateFormValues) => {
+			messageFeedback.clearFeedback()
+			setCreatedBooking(null)
+			setGachaResultState({ status: 'idle' })
 
-		const reservationData = {
-			bookingDate: data.bookingDate,
-			bookingTime: data.bookingTime,
-			registName: data.registName,
-			name: data.name,
-			isDeleted: false,
-		}
-
-		try {
-			const res = await createBookingAction({
-				userId: session.user.id,
-				booking: reservationData,
-				password: data.password,
-				today,
-			})
-
-			if (res.ok) {
-				await mutateBookingCalendarsForDate(mutate, toDateKey(data.bookingDate))
-				setCreatedBooking({
-					id: res.data.id,
-					bookingDate: data.bookingDate,
-					bookingTime: data.bookingTime,
-					registName: data.registName,
-					name: data.name,
-				})
-				messageFeedback.showSuccess('予約が完了しました。')
-				reset({
-					...defaultValues,
-					registName: '',
-					name: '',
-					password: '',
-				})
-				setShowPassword(false)
-				triggerGachaExecution()
-				setPopupOpen(true)
-			} else {
-				messageFeedback.showApiError(res)
+			const reservationData = {
+				bookingDate: data.bookingDate,
+				bookingTime: data.bookingTime,
+				registName: data.registName,
+				name: data.name,
+				isDeleted: false,
 			}
-		} catch (error) {
-			messageFeedback.showError(
-				'予約の作成中にエラーが発生しました。時間をおいて再度お試しください。',
-				{
-					details: error instanceof Error ? error.message : String(error),
-				},
-			)
-			logError('Error creating booking', error)
-		}
-	}
+
+			try {
+				const res = await createBookingAction({
+					userId: session.user.id,
+					booking: reservationData,
+					password: data.password,
+					today,
+				})
+
+				if (res.ok) {
+					await mutateBookingCalendarsForDate(
+						mutate,
+						toDateKey(data.bookingDate),
+					)
+					setCreatedBooking({
+						id: res.data.id,
+						bookingDate: data.bookingDate,
+						bookingTime: data.bookingTime,
+						registName: data.registName,
+						name: data.name,
+					})
+					messageFeedback.showSuccess('予約が完了しました。')
+					reset({
+						...defaultValues,
+						registName: '',
+						name: '',
+						password: '',
+					})
+					setShowPassword(false)
+					triggerGachaExecution()
+					setPopupOpen(true)
+				} else {
+					messageFeedback.showApiError(res)
+				}
+			} catch (error) {
+				messageFeedback.showError(
+					'予約の作成中にエラーが発生しました。時間をおいて再度お試しください。',
+					{
+						details: error instanceof Error ? error.message : String(error),
+					},
+				)
+				logError('Error creating booking', error)
+			}
+		},
+		[
+			defaultValues,
+			messageFeedback,
+			mutate,
+			reset,
+			session.user.id,
+			triggerGachaExecution,
+		],
+	)
 
 	return (
 		<div className="mx-auto max-w-md">

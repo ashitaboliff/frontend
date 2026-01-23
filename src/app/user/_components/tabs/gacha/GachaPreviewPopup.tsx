@@ -1,7 +1,7 @@
 'use client'
 
 import { useId } from 'react'
-import { gachaConfigs } from '@/domains/gacha/config/config'
+import { resolveGachaTitle } from '@/domains/gacha/config/selectors'
 import type { Gacha } from '@/domains/gacha/model/types'
 import CardAnimation from '@/domains/gacha/ui/animations/CardAnimation'
 import Popup from '@/shared/ui/molecules/Popup'
@@ -55,8 +55,7 @@ const GachaPreviewPopup = ({ open, onClose, gachaItem, count }: Props) => {
 					<dl className="ml-auto grid w-64 grid-cols-3">
 						<dt className="font-semibold text-sm">パック:</dt>
 						<dd className="col-span-2 text-base">
-							{gachaConfigs[gachaItem.gachaVersion]?.title ||
-								gachaItem.gachaVersion}
+							{resolveGachaTitle(gachaItem.gachaVersion)}
 						</dd>
 						<dt className="font-semibold text-sm">所持枚数:</dt>
 						<dd className="col-span-2 text-base">{count}枚</dd>

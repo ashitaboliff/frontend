@@ -2,7 +2,7 @@
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { BsLine } from '@/shared/ui/icons'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type LineButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 	children: ReactNode
@@ -20,7 +20,7 @@ const LineButton = ({
 }: LineButtonProps) => (
 	<button
 		type={type}
-		className={classNames(
+		className={cn(
 			'btn overflow-hidden border border-transparent bg-line text-white',
 			'disabled:border-[#e5e5e5]/60 disabled:bg-white disabled:text-[#1e1e1e]/20 disabled:opacity-100',
 			"after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-black/10 after:opacity-0 after:transition-opacity after:duration-150 after:content-['']",

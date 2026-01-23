@@ -4,10 +4,11 @@ import {
 	createUserGachaResultAction,
 	getSignedUrlForGachaImageAction,
 } from '@/domains/gacha/api/actions'
+import { toSignedImageKey } from '@/domains/gacha/domain/gachaImage'
+import type { GachaItem } from '@/domains/gacha/domain/gachaPicker'
+import { gachaPicker } from '@/domains/gacha/domain/gachaPicker'
 import { invalidateGachaPreviewCache } from '@/domains/gacha/hooks/useGachaPreview'
 import type { GachaRarity } from '@/domains/gacha/model/types'
-import Gacha, { type GachaItem } from '@/domains/gacha/services/gacha'
-import { toSignedImageKey } from '@/domains/gacha/utils'
 
 export type ExecuteGachaPlayErrorType =
 	| 'missing-src'
@@ -55,8 +56,7 @@ export const executeGachaPlay = async ({
 	ignorePlayCountLimit,
 	skipCacheInvalidation,
 }: ExecuteGachaPlayParams): Promise<ExecuteGachaPlayResult> => {
-	const gacha = new Gacha(version)
-	const { data, name } = gacha.pickRandomImage()
+	const { data, name } = gachaPicker(version)
 
 	if (!data?.src) {
 		return {

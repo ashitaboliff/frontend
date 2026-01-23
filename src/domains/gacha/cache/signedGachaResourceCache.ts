@@ -6,7 +6,7 @@ export const SIGNED_RESOURCE_REFRESH_THRESHOLD_MS = 5 * 60 * 1000
 const NULL_ENTRY_TTL_MS = 5 * 60 * 1000
 const ERROR_RETRY_TTL_MS = 30 * 1000
 
-export interface SignedResourceEntry {
+export type SignedResourceEntry = {
 	url: string | null
 	expiresAt: number | null
 	updatedAt: number

@@ -2,7 +2,7 @@
 
 import { type ReactNode, useState } from 'react'
 import Popup from '@/shared/ui/molecules/Popup'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type ModalProps = {
 	id: string
@@ -46,7 +46,7 @@ const Modal = ({
 		<>
 			<button
 				type="button"
-				className={classNames(btnClass)}
+				className={cn(btnClass)}
 				onClick={() => setOpen(true)}
 			>
 				{btnText || '開く'}

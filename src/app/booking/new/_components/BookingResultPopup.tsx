@@ -31,13 +31,11 @@ const BookingResultPopup = ({
 	return (
 		<Popup
 			id={`booking-create-popup-${booking.id}`}
-			title="予約完了"
+			title="予約が完了しました"
 			open={popupOpen}
 			onClose={() => setPopupOpen(false)}
+			className="justify-center"
 		>
-			<h3 className="text-center font-semibold text-lg">
-				以下の内容で予約が完了しました
-			</h3>
 			<BookingDetailCard booking={booking} is3DHover={false} />
 			<GachaResult state={gachaResultState} />
 			<div className="flex justify-center gap-2 pt-4">

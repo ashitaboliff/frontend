@@ -4,7 +4,7 @@ import type {
 	ChangelogEntry,
 	RoadmapItem,
 } from '@/app/changelog/_components/hooks'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 import { formatDateJa } from '@/shared/utils/dateFormat'
 
 type Props = {
@@ -99,7 +99,7 @@ const ChangeLogPage = ({ roadmap, changelogEntries }: Props) => {
 									{item.title}
 								</h3>
 								<span
-									className={classNames(
+									className={cn(
 										'badge badge-soft',
 										resolveStatusBadge(item.status),
 										'-top-5 -right-8 absolute rotate-8 text-xxs',

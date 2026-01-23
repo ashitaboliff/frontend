@@ -5,7 +5,7 @@ import {
 	SuccessIcon,
 	WarningIcon,
 } from '@/shared/ui/icons'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type MessageVariant = 'info' | 'success' | 'warning' | 'error'
 
@@ -57,13 +57,13 @@ const Message = ({
 	const live = ariaLive ?? (effectiveRole === 'alert' ? 'assertive' : 'polite')
 
 	return (
-		<div className={classNames('relative', className)}>
+		<div className={cn('relative', className)}>
 			<div
 				className="pointer-events-none absolute inset-0 rounded-md bg-white"
 				aria-hidden="true"
 			/>
 			<div
-				className={classNames(
+				className={cn(
 					'relative z-10 flex items-start gap-3 rounded-md border px-3 py-2 text-sm',
 					variantToClass[variant],
 				)}
@@ -71,7 +71,7 @@ const Message = ({
 				aria-live={live}
 			>
 				{showIcon ? (
-					<span className={classNames('mt-0.5', iconClassName)}>
+					<span className={cn('mt-0.5', iconClassName)}>
 						{icon ?? variantToIcon[variant]}
 					</span>
 				) : null}

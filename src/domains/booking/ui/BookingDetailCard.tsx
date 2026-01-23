@@ -22,7 +22,7 @@ const BookingDetailCard = ({ booking, is3DHover = true }: Props) => {
 				</p>
 			</div>
 			<hr className="my-2 border-base-200 border-t md:my-4" />
-			<dl className="space-y-2 px-2 text-sm md:px-4 md:text-base">
+			<dl className="space-y-2 px-1 text-sm md:px-4 md:text-base">
 				<div className="flex justify-between">
 					<dt className="text-base-content/60">登録名</dt>
 					<dd className="font-medium text-base-content">

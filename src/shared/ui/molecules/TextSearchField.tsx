@@ -3,7 +3,7 @@ import type { UseFormRegisterReturn } from 'react-hook-form'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import { HiOutlineSearch } from '@/shared/ui/icons'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type TextSearchFieldProps = {
 	name?: string
@@ -42,7 +42,7 @@ const TextSearchField = ({
 					labelId={labelId}
 				/>
 			) : null}
-			<div className={classNames('relative', className)}>
+			<div className={cn('relative', className)}>
 				<TextInputField
 					labelId={labelId}
 					name={name}
@@ -53,7 +53,7 @@ const TextSearchField = ({
 					{...rest}
 				/>
 				<div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-					<HiOutlineSearch className={classNames('text-xl', iconClassName)} />
+					<HiOutlineSearch className={cn('text-xl', iconClassName)} />
 				</div>
 			</div>
 		</div>
