@@ -44,8 +44,8 @@ const GachaConfirm = ({
 			setAnimationDone(true)
 			return
 		}
-		const ratio = 684 / 360
-		const finalWidth = Math.min(window.innerWidth * 0.8, 360)
+		const ratio = 570 / 300
+		const finalWidth = Math.min(window.innerWidth * 0.8, 300)
 		const finalHeight = finalWidth * ratio
 		const finalLeft = window.innerWidth / 2 - finalWidth / 2
 		const finalTop = window.innerHeight - finalHeight * 0.6 - 128
@@ -79,8 +79,8 @@ const GachaConfirm = ({
 					src={pack.signedPackImageUrl}
 					fallback="/version1.webp"
 					alt={`${pack.version} pack`}
-					width={360}
-					height={684}
+					width={300}
+					height={570}
 					className="h-full w-full object-contain drop-shadow-[0_25px_25px_rgba(0,0,0,0.75)]"
 				/>
 				{animationDone && (

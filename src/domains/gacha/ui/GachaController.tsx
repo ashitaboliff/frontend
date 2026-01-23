@@ -232,8 +232,6 @@ const GachaController = ({
 				open={open && currentStep === 'select'}
 				onClose={handleSelectPopupClose}
 				carouselPackData={carouselPackData}
-				gachaPlayCountToday={gachaPlayCountToday}
-				maxPlayCount={effectiveMaxPlayCount}
 				onPackSelect={handlePackSelected}
 			/>
 
