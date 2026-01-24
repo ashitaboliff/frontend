@@ -3,7 +3,7 @@
 import { type CSSProperties, useMemo, useRef } from 'react'
 import type { GachaRarity } from '@/domains/gacha/model/types'
 
-interface SparkleProps {
+type Props = {
 	size: number
 	color: string
 	style?: CSSProperties
@@ -29,7 +29,7 @@ const Sparkle = ({
 	className,
 	rarity,
 	gradientId,
-}: SparkleProps) => {
+}: Props) => {
 	const sparkleRef = useRef<SVGSVGElement>(null)
 	const sparkleMotion = useMemo(() => {
 		let baseScale = 1.3

@@ -44,7 +44,7 @@ const FullscreenOverlay = ({ children, className }: FullscreenOverlayProps) => {
 			role="dialog"
 			aria-modal="true"
 		>
-			<div className="flex h-full flex-col">{children}</div>
+			{children}
 		</div>
 	)
 }

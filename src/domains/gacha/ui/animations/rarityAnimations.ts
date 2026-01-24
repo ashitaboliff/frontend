@@ -13,50 +13,46 @@ type RarityAnimation = (context: AnimationContext) => void
  * カードに対して軽いズームイン・ズームアウトと光のエフェクトを適用する
  */
 const animateCommon: RarityAnimation = ({ timeline, card }) => {
-	timeline.to(
-		card,
-		{
-			scale: 1.05,
-			duration: 0.3,
-			yoyo: true,
-			repeat: 1,
-			ease: 'power1.inOut',
-		},
-		'>',
-	)
-	timeline.fromTo(
-		card,
-		{ boxShadow: '0 0 0px 0px rgba(200,200,200,0)' },
-		{
-			boxShadow: '0 0 15px 5px rgba(200,200,200,0.7)',
-			duration: 0.2,
-			yoyo: true,
-			repeat: 1,
-		},
-		'<',
-	)
+	timeline
+		.to(
+			card,
+			{
+				scale: 1.05,
+				duration: 0.3,
+				yoyo: true,
+				repeat: 1,
+				ease: 'power1.inOut',
+			},
+			'>',
+		)
+		.to(
+			card,
+			{
+				boxShadow: '0 0 15px 5px rgba(200,200,200,0.7)',
+				duration: 0.2,
+				yoyo: true,
+				repeat: 1,
+				borderRadius: '2rem',
+			},
+			'<',
+		)
 }
 
 const animateRare: RarityAnimation = ({ timeline, card }) => {
-	timeline.to(
-		card,
-		{ rotationY: 360, duration: 1.5, ease: 'power2.inOut' },
-		'>',
-	)
-	timeline.fromTo(
-		card.querySelectorAll<HTMLDivElement>('.backface-hidden'),
-		{
-			boxShadow: '0 0 0px 0px rgba(100,100,255,0)',
-		},
-		{
-			boxShadow: '0 0 20px 8px rgba(100,100,255,0.7)',
-			duration: 0.4,
-			yoyo: true,
-			repeat: 3,
-			delay: 0.5,
-		},
-		'<0.5',
-	)
+	timeline
+		.to(card, { rotationY: 360, duration: 1.5, ease: 'power2.inOut' }, '>')
+		.to(
+			card,
+			{
+				boxShadow: '0 0 20px 20px rgba(200,200,200,0.7)',
+				duration: 0.4,
+				yoyo: true,
+				repeat: 1,
+				delay: 0.5,
+				borderRadius: '1.5rem',
+			},
+			'<0.6',
+		)
 }
 
 const animateSuperRare: RarityAnimation = ({ timeline, card }) => {
@@ -64,18 +60,16 @@ const animateSuperRare: RarityAnimation = ({ timeline, card }) => {
 		.to(card, { x: '-=5', yoyo: true, repeat: 5, duration: 0.05 }, '>')
 		.to(card, { x: '+=5', yoyo: true, repeat: 5, duration: 0.05 }, '<')
 		.to(card, { rotationY: 360, duration: 1, ease: 'power3.inOut' }, '+=0.1')
-		.fromTo(
-			card.querySelectorAll<HTMLDivElement>('.backface-hidden'),
+		.to(
+			card,
 			{
-				boxShadow: '0 0 0px 0px rgba(255,215,0,0)',
-			},
-			{
-				boxShadow: '0 0 30px 12px rgba(255,215,0,0.8)',
+				boxShadow: '0 0 40px 20px rgba(255,255,150,1)',
 				duration: 0.5,
 				yoyo: true,
-				repeat: 3,
+				repeat: 1,
+				borderRadius: '1.5rem',
 			},
-			'-=0.5',
+			'<0.5',
 		)
 }
 
@@ -94,7 +88,18 @@ const animateSSR: RarityAnimation = ({ timeline, card }) => {
 			},
 			'+=0.1',
 		)
-		.to(card, { scale: 1.0, duration: 0.3, ease: 'power1.out' })
+		.to(
+			card,
+			{
+				boxShadow: '0 0 60px 30px rgba(255,255,150,1)',
+				yoyo: true,
+				repeat: 3,
+				duration: 0.6,
+				borderRadius: '1.5rem',
+			},
+			'-=1',
+		)
+		.to(card, { scale: 1.0, duration: 0.3, ease: 'power1.out' }, '<1.0')
 }
 
 const animateUltraRare: RarityAnimation = ({ timeline, card }) => {
@@ -112,7 +117,7 @@ const animateUltraRare: RarityAnimation = ({ timeline, card }) => {
 				yoyo: true,
 				repeat: 3,
 				duration: 0.3,
-				borderRadius: '2rem',
+				borderRadius: '1.5rem',
 			},
 			'-=1.5',
 		)

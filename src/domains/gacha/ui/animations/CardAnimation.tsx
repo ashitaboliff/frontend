@@ -113,10 +113,7 @@ export const CardAnimation = ({
 	const sizeVariations = [-6, 0, 6, 0]
 
 	return (
-		<div
-			className="relative flex w-full justify-center"
-			style={{ perspective: '1000px' }}
-		>
+		<div className="relative flex w-full justify-center">
 			<Hover3D
 				ref={cardRef}
 				className="transform-style-3d relative h-100 w-75"

@@ -87,16 +87,14 @@ const GachaConfirm = ({
 					<div className="gacha-stripe-overlay -translate-x-1/2 absolute top-[12.7%] left-1/2 z-40 h-2 w-full" />
 				)}
 			</button>
-			<div className="relative">
-				<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
-					<button
-						type="button"
-						className="btn btn-outline btn-circle"
-						onClick={onBack}
-					>
-						<TbArrowBackUp className="h-6 w-6" />
-					</button>
-				</div>
+			<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
+				<button
+					type="button"
+					className="btn btn-outline btn-circle"
+					onClick={onBack}
+				>
+					<TbArrowBackUp className="h-6 w-6" />
+				</button>
 			</div>
 		</>
 	)

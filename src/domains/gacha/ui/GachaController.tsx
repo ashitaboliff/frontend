@@ -185,7 +185,6 @@ const GachaController = ({
 						pack={selectedPack}
 						packRect={pendingPackRect ?? selectedRect}
 						onAnimationComplete={() => setPendingAnimationDone(true)}
-						showBlockingLoader={pendingAnimationDone && isGachaExecutionPending}
 					/>
 				)
 			case 'result':

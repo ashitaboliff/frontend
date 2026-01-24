@@ -10,7 +10,6 @@ type Props = {
 	readonly pack: CarouselPackDataItem
 	readonly packRect: PackSelectionPayload['rect']
 	readonly onAnimationComplete: () => void
-	readonly showBlockingLoader: boolean
 }
 
 const PACK_RATIO = 684 / 360
@@ -23,12 +22,7 @@ const RIBBON_CLIP_PATHS = [
 
 const getRibbonClipPath = (index: number) =>
 	RIBBON_CLIP_PATHS[index % RIBBON_CLIP_PATHS.length]
-const GachaPending = ({
-	pack,
-	packRect,
-	onAnimationComplete,
-	showBlockingLoader,
-}: Props) => {
+const GachaPending = ({ pack, packRect, onAnimationComplete }: Props) => {
 	const animatedPackRef = useRef<HTMLDivElement | null>(null)
 	const topSliceRef = useRef<HTMLDivElement | null>(null)
 	const cutLineRef = useRef<HTMLDivElement | null>(null)
@@ -71,105 +65,95 @@ const GachaPending = ({
 	const bottomClipPercent = PACK_TOP_TRIM_RATIO * 100
 
 	return (
-		<>
+		<div
+			ref={animatedPackRef}
+			className="relative drop-shadow-[0_25px_25px_rgba(0,0,0,0.75)]"
+		>
+			<div ref={topSliceRef} className="absolute top-0 left-0 h-full w-full">
+				<Image
+					src={pack.signedPackImageUrl}
+					fallback="/version1.webp"
+					alt={`${pack.version} pack top`}
+					width={360}
+					height={684}
+					className="absolute top-0 right-0 left-0 h-full w-full object-cover"
+					style={{ clipPath: `inset(0 0 ${topClipPercent}% 0)` }}
+				/>
+			</div>
+			<div className="absolute bottom-0 left-0 h-full w-full">
+				<Image
+					src={pack.signedPackImageUrl}
+					fallback="/version1.webp"
+					alt={`${pack.version} pack bottom`}
+					width={360}
+					height={684}
+					className="absolute right-0 bottom-0 left-0 h-full w-full object-cover"
+					style={{ clipPath: `inset(${bottomClipPercent}% 0 0 0)` }}
+				/>
+			</div>
 			<div
-				ref={animatedPackRef}
-				className="relative drop-shadow-[0_25px_25px_rgba(0,0,0,0.75)]"
+				className="pointer-events-none absolute left-0 w-full"
+				style={{ top: `${PACK_TOP_TRIM_RATIO * 100}%` }}
 			>
-				<div ref={topSliceRef} className="absolute top-0 left-0 h-full w-full">
-					<Image
-						src={pack.signedPackImageUrl}
-						fallback="/version1.webp"
-						alt={`${pack.version} pack top`}
-						width={360}
-						height={684}
-						className="absolute top-0 right-0 left-0 h-full w-full object-cover"
-						style={{ clipPath: `inset(0 0 ${topClipPercent}% 0)` }}
-					/>
-				</div>
-				<div className="absolute bottom-0 left-0 h-full w-full">
-					<Image
-						src={pack.signedPackImageUrl}
-						fallback="/version1.webp"
-						alt={`${pack.version} pack bottom`}
-						width={360}
-						height={684}
-						className="absolute right-0 bottom-0 left-0 h-full w-full object-cover"
-						style={{ clipPath: `inset(${bottomClipPercent}% 0 0 0)` }}
-					/>
-				</div>
 				<div
-					className="pointer-events-none absolute left-0 w-full"
-					style={{ top: `${PACK_TOP_TRIM_RATIO * 100}%` }}
-				>
-					<div
-						ref={cutLineRef}
-						className="h-1.5 w-full"
-						style={{
-							background: '#ffffff',
-							filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.8))',
+					ref={cutLineRef}
+					className="h-1.5 w-full"
+					style={{
+						background: '#ffffff',
+						filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.8))',
+					}}
+				></div>
+			</div>
+			<div
+				className="pointer-events-none absolute left-0 w-full overflow-visible"
+				style={{ top: `${PACK_TOP_TRIM_RATIO * 100}%` }}
+			>
+				{confettiSpecs.map((spec, index) => (
+					<span
+						key={`confetti-${spec.color}-${index}`}
+						ref={(node) => {
+							confettiRefs.current[index] = node
 						}}
-					></div>
-				</div>
-				<div
-					className="pointer-events-none absolute left-0 w-full overflow-visible"
-					style={{ top: `${PACK_TOP_TRIM_RATIO * 100}%` }}
-				>
-					{confettiSpecs.map((spec, index) => (
+						className="-translate-x-1/2 absolute left-1/2 inline-block h-2 w-2 opacity-0"
+						style={{ backgroundColor: spec.color }}
+					></span>
+				))}
+				{ribbonSpecs.map((spec, index) => {
+					const clipPath = getRibbonClipPath(index)
+					return (
 						<span
-							key={`confetti-${spec.color}-${index}`}
+							key={`ribbon-${spec.color}-${index}`}
 							ref={(node) => {
-								confettiRefs.current[index] = node
+								ribbonRefs.current[index] = node
 							}}
-							className="-translate-x-1/2 absolute left-1/2 inline-block h-2 w-2 opacity-0"
-							style={{ backgroundColor: spec.color }}
-						></span>
-					))}
-					{ribbonSpecs.map((spec, index) => {
-						const clipPath = getRibbonClipPath(index)
-						return (
-							<span
-								key={`ribbon-${spec.color}-${index}`}
-								ref={(node) => {
-									ribbonRefs.current[index] = node
-								}}
-								className="-translate-x-1/2 absolute left-1/2 inline-block h-28 w-40 opacity-0"
-								style={{
-									background: spec.color,
-									boxShadow: '0 0 6px rgba(0,0,0,0.18)',
-									clipPath,
-									WebkitClipPath: clipPath,
-									transformOrigin: '50% 50%',
-								}}
-							></span>
-						)
-					})}
-					{lightBeamSpecs.map((spec, index) => (
-						<span
-							key={`light-${spec.rotation}-${index}`}
-							ref={(node) => {
-								lightRefs.current[index] = node
-							}}
-							className="-translate-x-1/2 absolute left-1/2 z-10 inline-block h-28 w-1 opacity-0"
+							className="-translate-x-1/2 absolute left-1/2 inline-block h-28 w-40 opacity-0"
 							style={{
-								background:
-									'linear-gradient(180deg, rgba(255,255,120,0.8), rgba(255,255,120,0))',
-								transformOrigin: 'center top',
-								rotate: `${spec.rotation}deg`,
+								background: spec.color,
+								boxShadow: '0 0 6px rgba(0,0,0,0.18)',
+								clipPath,
+								WebkitClipPath: clipPath,
+								transformOrigin: '50% 50%',
 							}}
 						></span>
-					))}
-				</div>
+					)
+				})}
+				{lightBeamSpecs.map((spec, index) => (
+					<span
+						key={`light-${spec.rotation}-${index}`}
+						ref={(node) => {
+							lightRefs.current[index] = node
+						}}
+						className="-translate-x-1/2 absolute left-1/2 z-10 inline-block h-28 w-1 opacity-0"
+						style={{
+							background:
+								'linear-gradient(180deg, rgba(255,255,120,0.8), rgba(255,255,120,0))',
+							transformOrigin: 'center top',
+							rotate: `${spec.rotation}deg`,
+						}}
+					></span>
+				))}
 			</div>
-			<div className="relative">
-				<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4" />
-				{showBlockingLoader && (
-					<div className="absolute inset-0 top-40 bottom-0 z-40 flex items-center justify-center bg-white/75">
-						<div className="loading loading-spinner loading-lg" />
-					</div>
-				)}
-			</div>
-		</>
+		</div>
 	)
 }
 
