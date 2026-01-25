@@ -23,7 +23,7 @@ export const bookingCreateSchema = zod.object({
 	password: zod
 		.string()
 		.trim()
-		.min(1, { message: '予約に必要なパスワードを入力してください。' })
+		.min(1, { message: 'パスワードを入力してください。' })
 		.max(128, { message: 'パスワードは128文字以内で入力してください。' }),
 })
 
