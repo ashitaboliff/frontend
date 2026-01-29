@@ -47,40 +47,35 @@ const debugLinks = [
 
 const AdminMain = () => {
 	return (
-		<div className="flex flex-col items-center justify-center">
-			<div className="my-4 font-bold text-2xl">三役用管理ページ</div>
-			<div className="overflow-x-auto">
-				<table className="table-lg table">
-					<tbody>
-						{adminLinks.map((link) => (
-							<tr key={link.href} className="hover:bg-base-200">
-								<td className="w-12">{link.icon}</td>
-								<td>
-									<Link href={link.href} className="text-lg">
-										{link.label}
-									</Link>
-								</td>
-							</tr>
-						))}
-						{process.env.NODE_ENV !== 'production'
-							? debugLinks.map((link) => (
-									<tr key={link.href} className="hover:bg-base-200">
-										<td className="w-12">{link.icon}</td>
-										<td>
-											<Link href={link.href} className="text-lg text-warning">
-												{link.label}
-											</Link>
-										</td>
-									</tr>
-								))
-							: null}
-					</tbody>
-				</table>
-			</div>
-			<Link href="/" className="btn btn-outline mt-4">
-				ホームに戻る
-			</Link>
-		</div>
+		<article className="flex flex-col items-center justify-center">
+			<h1 className="my-4 font-bold text-2xl">三役用管理ページ</h1>
+			<table className="table-lg table">
+				<tbody>
+					{adminLinks.map((link) => (
+						<tr key={link.href} className="hover:bg-base-200">
+							<td className="w-12">{link.icon}</td>
+							<td>
+								<Link href={link.href} className="text-lg">
+									{link.label}
+								</Link>
+							</td>
+						</tr>
+					))}
+					{process.env.NODE_ENV !== 'production'
+						? debugLinks.map((link) => (
+								<tr key={link.href} className="hover:bg-base-200">
+									<td className="w-12">{link.icon}</td>
+									<td>
+										<Link href={link.href} className="text-lg text-warning">
+											{link.label}
+										</Link>
+									</td>
+								</tr>
+							))
+						: null}
+				</tbody>
+			</table>
+		</article>
 	)
 }
 

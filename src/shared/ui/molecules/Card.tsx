@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import type { ReactNode } from 'react'
 import Hover3D from '@/shared/ui/atoms/Hover3D'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 type Variant = 'error' | 'rainbow'
 
@@ -30,12 +30,7 @@ const Card = ({
 			disabled={!is3DHover}
 			noRenderCells={!is3DHover}
 		>
-			<div
-				className={classNames(
-					'card aspect-3/2 shadow-xl',
-					variantClass[variant],
-				)}
-			>
+			<div className={cn('card aspect-3/2 shadow-xl', variantClass[variant])}>
 				<section
 					className="card-body z-10 m-3 overflow-hidden rounded-box bg-white/95 p-4!"
 					aria-labelledby={`${id}-title`}

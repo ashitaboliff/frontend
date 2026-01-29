@@ -69,12 +69,11 @@ const BandFormModal = ({
 		onClose()
 	}
 
-	const onSubmit = async (values: BandFormValues) => {
+	const onSubmit = async (data: BandFormValues) => {
 		feedback.clearFeedback()
 
 		const formData = new FormData()
-		formData.append('name', values.name.trim())
-
+		formData.append('name', data.name.trim())
 		try {
 			const response =
 				isEditing && bandToEdit

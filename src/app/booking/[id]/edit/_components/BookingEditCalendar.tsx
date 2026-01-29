@@ -9,7 +9,10 @@ import {
 	DENIED_BOOKING,
 } from '@/domains/booking/constants'
 import type { BookingEditFormValues } from '@/domains/booking/model/schema'
-import type { Booking, BookingResponse } from '@/domains/booking/model/types'
+import type {
+	Booking,
+	BookingCalendarResponse,
+} from '@/domains/booking/model/types'
 import {
 	AvailableCell,
 	BookingInfoCell,
@@ -24,7 +27,7 @@ export type BookingEditCalendarSelection = {
 }
 
 type Props = {
-	readonly data: BookingResponse
+	readonly data: BookingCalendarResponse
 	readonly calendarSelection: BookingEditCalendarSelection
 	readonly setCalendarOpen: (calendarOpen: boolean) => void
 	readonly setValue: UseFormSetValue<BookingEditFormValues>

@@ -3,8 +3,8 @@
 import { Fragment, useMemo } from 'react'
 import { useYoutubeSearchQuery } from '@/domains/video/hooks/useYoutubeSearchQuery'
 import type {
-	SearchResponse,
-	YoutubeSearchQuery,
+	VideoSearchQuery,
+	VideoSearchResponse,
 } from '@/domains/video/model/types'
 import {
 	buildYoutubeQueryString,
@@ -16,13 +16,13 @@ import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayo
 import VideoItem from './VideoItem'
 import VideoSearchForm from './VideoSearchForm'
 
-const defaultQuery: YoutubeSearchQuery = {
+const defaultQuery: VideoSearchQuery = {
 	...VIDEO_PAGE_DEFAULT_QUERY,
 }
 
 type Props = {
-	readonly youtubeList: SearchResponse
-	readonly query: YoutubeSearchQuery
+	readonly youtubeList: VideoSearchResponse
+	readonly query: VideoSearchQuery
 }
 
 const PER_PAGE_OPTIONS: Record<string, number> = {
@@ -52,7 +52,7 @@ const VideoListPage = ({ youtubeList, query }: Props) => {
 
 	const shareUrl = shareQueryString ? `/video?${shareQueryString}` : '/video'
 
-	const handleSearch = (searchQuery: Partial<YoutubeSearchQuery>) => {
+	const handleSearch = (searchQuery: Partial<VideoSearchQuery>) => {
 		updateQuery({ ...searchQuery, page: 1 })
 	}
 

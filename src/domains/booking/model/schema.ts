@@ -1,7 +1,7 @@
 import * as zod from 'zod'
 
-export * from '@ashitaboliff/types/modules/booking/schema/booking'
-export * from '@ashitaboliff/types/modules/booking/schema/denied'
+export * from '@ashitabo/types/booking/schema/booking'
+export * from '@ashitabo/types/booking/schema/denied'
 
 export const bookingAuthSchema = zod.object({
 	password: zod.string().min(1, 'パスワードを入力してください'),
@@ -23,7 +23,7 @@ export const bookingCreateSchema = zod.object({
 	password: zod
 		.string()
 		.trim()
-		.min(1, { message: '予約に必要なパスワードを入力してください。' })
+		.min(1, { message: 'パスワードを入力してください。' })
 		.max(128, { message: 'パスワードは128文字以内で入力してください。' }),
 })
 

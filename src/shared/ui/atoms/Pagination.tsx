@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo } from 'react'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type PaginationProps = {
 	currentPage: number
@@ -77,10 +77,7 @@ const Pagination = ({
 	)
 
 	return (
-		<nav
-			className={classNames('join mx-auto', className)}
-			aria-label="pagination"
-		>
+		<nav className={cn('join mx-auto', className)} aria-label="pagination">
 			{items.map((item) => {
 				if (typeof item === 'number') {
 					const isActive = currentPage === item
@@ -88,7 +85,7 @@ const Pagination = ({
 						<button
 							type="button"
 							key={item}
-							className={classNames(
+							className={cn(
 								'join-item btn w-12',
 								isActive ? 'btn-primary' : 'btn-outline',
 							)}

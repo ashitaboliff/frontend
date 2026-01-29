@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { DENIED_BOOKING_DEFAULT_QUERY } from '@/domains/admin/query/deniedBookingQuery'
-import { AdminDeniedSortSchema } from '@/domains/booking/model/schema'
+import { DeniedBookingSortSchema } from '@/domains/booking/model/schema'
 
 export const AdminDeniedPageParamsSchema = z.object({
 	page: z.coerce
@@ -14,7 +14,7 @@ export const AdminDeniedPageParamsSchema = z.object({
 		.min(1)
 		.max(100)
 		.default(DENIED_BOOKING_DEFAULT_QUERY.perPage),
-	sort: AdminDeniedSortSchema.default(DENIED_BOOKING_DEFAULT_QUERY.sort),
+	sort: DeniedBookingSortSchema.default(DENIED_BOOKING_DEFAULT_QUERY.sort),
 })
 
 export type AdminDeniedPageParams = z.infer<typeof AdminDeniedPageParamsSchema>

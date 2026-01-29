@@ -2,8 +2,8 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { type SubmitHandler, useForm } from 'react-hook-form'
+import { useCallback, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import { type Part, PartOptionList } from '@/domains/user/model/types'
 import TextareaInputField from '@/shared/ui/atoms/TextareaInputField'
@@ -56,9 +56,7 @@ const MemberRecruitmentForm = () => {
 		},
 	})
 
-	const onSubmit: SubmitHandler<MemberRecruitmentFormValues> = async (
-		_data,
-	) => {
+	const onSubmit = useCallback(async (_data: MemberRecruitmentFormValues) => {
 		setLoading(true)
 		setError(null)
 
@@ -73,7 +71,7 @@ const MemberRecruitmentForm = () => {
 		} finally {
 			setLoading(false)
 		}
-	}
+	}, [])
 
 	return (
 		<form

@@ -16,14 +16,16 @@ export const deniedBookingTypeSchema = z.enum(['single', 'period', 'regular'])
 export const deniedBookingFormSchema = z
 	.object({
 		type: deniedBookingTypeSchema,
-		startDate: z.date().min(new Date(), '過去の日付は選択できません'),
+		startDate: z
+			.date()
+			.min(
+				new Date(new Date().setHours(0, 0, 0, 0)),
+				'過去の日付は選択できません',
+			),
 		endDate: z.date().optional(),
 		startTime: z.string().min(1, '開始時間を入力してください'),
 		endTime: z.string().optional(),
-		dayOfWeek: z.preprocess(
-			(value) => (value === '' ? undefined : value),
-			z.enum(['0', '1', '2', '3', '4', '5', '6']).optional(),
-		),
+		dayOfWeek: z.enum(['0', '1', '2', '3', '4', '5', '6']).optional(),
 		description: z.string().min(1, '説明を入力してください'),
 	})
 	.superRefine((data, ctx) => {

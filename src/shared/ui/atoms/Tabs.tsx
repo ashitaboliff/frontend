@@ -10,7 +10,7 @@ import {
 	useMemo,
 	useState,
 } from 'react'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type TabProps = {
 	readonly label: ReactNode
@@ -24,6 +24,7 @@ export type TabsProps = {
 	readonly onChange?: (value: string) => void
 	readonly className?: string
 	readonly tabListClassName?: string
+	readonly tabButtonClassName?: string
 	readonly mountStrategy?: 'all' | 'active' | 'lazy'
 	readonly suspenseFallback?: ReactNode
 	readonly onTabHover?: (value: string) => void
@@ -34,7 +35,8 @@ export const Tabs = ({
 	value,
 	onChange,
 	className,
-	tabListClassName = 'flex justify-center tabs tabs-box mb-4',
+	tabListClassName,
+	tabButtonClassName = 'px-4 py-2 text-lg',
 	mountStrategy = 'all',
 	suspenseFallback,
 	onTabHover,
@@ -133,9 +135,12 @@ export const Tabs = ({
 	}
 
 	return (
-		<div className={classNames(className)}>
+		<div className={cn(className)}>
 			<div
-				className={tabListClassName}
+				className={cn(
+					'tabs tabs-box mb-4 flex justify-center',
+					tabListClassName,
+				)}
 				role="tablist"
 				aria-orientation="horizontal"
 			>
@@ -152,11 +157,12 @@ export const Tabs = ({
 							role="tab"
 							aria-controls={panelId}
 							aria-selected={isActive}
-							className={classNames(
-								'tab px-4 py-2 text-lg',
+							className={cn(
+								'tab',
 								isActive
 									? 'tab-active text-accent'
 									: 'text-base-content hover:text-accent',
+								tabButtonClassName,
 							)}
 							onClick={() => setActive(tabValue)}
 							onMouseEnter={() => onTabHover?.(tabValue)}

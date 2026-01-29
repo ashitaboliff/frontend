@@ -1,6 +1,6 @@
 import { gkktt } from '@/shared/lib/fonts'
 import HomePageBar from '@/shared/ui/atoms/HomePageBar'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 /**
  * トップページのヒーローヘッダー。背景装飾バーとタイトルテキストを表示する。
@@ -8,7 +8,7 @@ import { classNames } from '@/shared/ui/utils/classNames'
 const HomePageHeader = () => {
 	return (
 		<div
-			className={classNames(
+			className={cn(
 				'relative mb-8 flex flex-col items-center overflow-x-hidden',
 				gkktt.className,
 			)}

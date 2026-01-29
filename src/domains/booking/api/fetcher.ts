@@ -4,23 +4,23 @@ import {
 	BOOKING_TIME_LIST,
 } from '@/domains/booking/constants'
 import {
-	BookingByUserResponseSchema,
-	BookingResponseSchema,
-	BookingUserQuerySchema,
-	GetBookingQuerySchema,
+	BookingCalendarResponseSchema,
+	BookingRangeQuerySchema,
+	BookingUserListQuerySchema,
+	BookingUserListResponseSchema,
 } from '@/domains/booking/model/schema'
 import type {
-	BookingByUserResponse,
-	BookingRange,
-	BookingResponse,
+	BookingCalendarResponse,
+	BookingRangeQuery,
+	BookingUserListResponse,
 } from '@/domains/booking/model/types'
 import { bffGet } from '@/shared/lib/api/bff'
 import { toDateKey } from '@/shared/utils'
 
 type BookingRangeKey = [
 	typeof BOOKING_CALENDAR_SWR_KEY,
-	BookingRange['start'],
-	BookingRange['end'],
+	BookingRangeQuery['start'],
+	BookingRangeQuery['end'],
 ]
 
 export const BOOKING_USER_LOGS_SWR_KEY = 'booking-user-logs'
@@ -36,7 +36,7 @@ export type BookingUserLogsKey = [
 export const buildEmptyBookingResponse = (
 	viewDate: Date,
 	viewRangeDays: number,
-): BookingResponse => {
+): BookingCalendarResponse => {
 	const dates = Array.from({ length: viewRangeDays }, (_, offset) =>
 		toDateKey(addDays(viewDate, offset)),
 	)
@@ -47,7 +47,7 @@ export const buildEmptyBookingResponse = (
 			return slots
 		}, {})
 
-	return dates.reduce<BookingResponse>((acc, date) => {
+	return dates.reduce<BookingCalendarResponse>((acc, date) => {
 		acc[date] = createEmptySlots()
 		return acc
 	}, {})
@@ -66,7 +66,7 @@ export const bookingRangeFetcher = async ([
 	cacheKey,
 	start,
 	end,
-]: BookingRangeKey): Promise<BookingResponse> => {
+]: BookingRangeKey): Promise<BookingCalendarResponse> => {
 	if (cacheKey !== BOOKING_CALENDAR_SWR_KEY) {
 		throw new Error('Invalid cache key for booking calendar fetcher')
 	}
@@ -74,8 +74,8 @@ export const bookingRangeFetcher = async ([
 	const res = await bffGet('/booking', {
 		searchParams: { start, end },
 		schemas: {
-			searchParams: GetBookingQuerySchema,
-			response: BookingResponseSchema,
+			searchParams: BookingRangeQuerySchema,
+			response: BookingCalendarResponseSchema,
 		},
 	})
 	if (res.ok) {
@@ -104,7 +104,7 @@ export const bookingUserLogsFetcher = async ([
 	page,
 	perPage,
 	sort,
-]: BookingUserLogsKey): Promise<BookingByUserResponse> => {
+]: BookingUserLogsKey): Promise<BookingUserListResponse> => {
 	if (cacheKey !== BOOKING_USER_LOGS_SWR_KEY) {
 		throw new Error('Invalid cache key for booking logs fetcher')
 	}
@@ -116,8 +116,8 @@ export const bookingUserLogsFetcher = async ([
 			sort,
 		},
 		schemas: {
-			searchParams: BookingUserQuerySchema,
-			response: BookingByUserResponseSchema,
+			searchParams: BookingUserListQuerySchema,
+			response: BookingUserListResponseSchema,
 		},
 	})
 

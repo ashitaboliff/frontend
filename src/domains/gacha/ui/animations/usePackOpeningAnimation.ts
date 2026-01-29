@@ -2,7 +2,7 @@
 
 import gsap from 'gsap'
 import type { RefObject } from 'react'
-import { useLayoutEffect, useMemo } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import { createPackOpeningTimeline } from '@/domains/gacha/ui/animations/packTimelineFactory'
 import {
 	type ConfettiSpec,
@@ -51,10 +51,12 @@ export const usePackOpeningAnimation = ({
 	onAnimationComplete,
 }: PackOpeningAnimationParams) => {
 	const { confettiSpecs, ribbonSpecs, lightBeamSpecs } = useParticleSpecs()
+	const hasAnimatedRef = useRef(false)
 
 	useLayoutEffect(() => {
 		const element = containerRef.current
 		if (!element) {
+			hasAnimatedRef.current = true
 			const timer = window.setTimeout(
 				onAnimationComplete,
 				PENDING_ANIMATION_DURATION * 1000,
@@ -64,6 +66,7 @@ export const usePackOpeningAnimation = ({
 		const topSlice = topSliceRef.current
 		const cutLine = cutLineRef.current
 		if (!topSlice || !cutLine) {
+			hasAnimatedRef.current = true
 			return
 		}
 		const confettiElements = collectElements(confettiRefs)
@@ -79,6 +82,7 @@ export const usePackOpeningAnimation = ({
 			height: finalSize.height,
 		}
 
+		hasAnimatedRef.current = true
 		const ctx = gsap.context(() => {
 			createPackOpeningTimeline({
 				element,

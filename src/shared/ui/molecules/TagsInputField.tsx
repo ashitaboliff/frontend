@@ -11,7 +11,7 @@ import {
 import { type Control, Controller, type UseFormSetValue } from 'react-hook-form'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 import { HiMiniXMark } from '@/shared/ui/icons'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type TagInputFieldProps = {
 	name: string
@@ -125,7 +125,7 @@ const TagsInputField = ({
 	const commonInputProps = {
 		id: labelId,
 		placeholder: inputPlaceholder,
-		className: classNames(
+		className: cn(
 			'input min-w-[150px] flex-grow bg-white text-sm sm:text-base',
 			inputClassName,
 		),
@@ -135,7 +135,7 @@ const TagsInputField = ({
 
 	if (Controlled && control) {
 		return (
-			<div className={classNames('flex flex-col', className)}>
+			<div className={cn('flex flex-col', className)}>
 				{label ? (
 					<LabelInputField
 						label={label}
@@ -193,7 +193,7 @@ const TagsInputField = ({
 
 	// Uncontrolled (local state)
 	return (
-		<div className={classNames('flex flex-col', className)}>
+		<div className={cn('flex flex-col', className)}>
 			{label ? (
 				<LabelInputField
 					label={label}

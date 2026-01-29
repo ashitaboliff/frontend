@@ -1,7 +1,7 @@
 import Link, { type LinkProps } from 'next/link'
 import type { AnchorHTMLAttributes, ReactNode } from 'react'
 import { LuArrowRight } from '@/shared/ui/icons'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type LinkWithArrowProps = {
 	readonly children: ReactNode
@@ -23,11 +23,11 @@ const LinkWithArrow = ({
 	return (
 		<Link
 			href={href}
-			className={classNames('flex w-full items-center gap-2', className)}
+			className={cn('flex w-full items-center gap-2', className)}
 			{...rest}
 		>
 			<span>{children}</span>
-			<LuArrowRight className={classNames('text-lg', iconClassName)} />
+			<LuArrowRight className={cn('text-lg', iconClassName)} />
 		</Link>
 	)
 }

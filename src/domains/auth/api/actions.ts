@@ -8,14 +8,14 @@ import {
 	getUpdateProfileErrorMessage,
 } from '@/domains/auth/api/errorMessages'
 import {
-	PadlockRequestSchema,
-	PadlockResponseSchema,
+	PadlockVerifyRequestSchema,
+	PadlockVerifyResponseSchema,
 } from '@/domains/auth/model/schema'
 import type { AuthDetails } from '@/domains/auth/model/types'
 import { makeAuthDetails } from '@/domains/auth/utils/sessionInfo'
 import {
 	type ProfileFormValues,
-	ProfilePayloadSchema,
+	ProfileUpsertRequestSchema,
 	UserPartSchema,
 } from '@/domains/user/model/schema'
 import type { AccountRole, Part, Role } from '@/domains/user/model/types'
@@ -148,7 +148,7 @@ export const createProfileAction = async ({
 	}
 	const res = await apiPost(`/users/${userId}/profile`, {
 		body: payload,
-		schemas: { body: ProfilePayloadSchema },
+		schemas: { body: ProfileUpsertRequestSchema },
 	})
 
 	if (!res.ok) {
@@ -183,7 +183,7 @@ export const putProfileAction = async ({
 	}
 	const res = await apiPut(`/users/${userId}/profile`, {
 		body: payload,
-		schemas: { body: ProfilePayloadSchema },
+		schemas: { body: ProfileUpsertRequestSchema },
 	})
 
 	if (!res.ok) {
@@ -220,8 +220,8 @@ export const padLockAction = async (
 	const res = await apiPost('/auth/padlock', {
 		body: { password },
 		schemas: {
-			body: PadlockRequestSchema,
-			response: PadlockResponseSchema,
+			body: PadlockVerifyRequestSchema,
+			response: PadlockVerifyResponseSchema,
 		},
 	})
 

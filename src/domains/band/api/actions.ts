@@ -6,15 +6,15 @@ import {
 	getUpdateBandErrorMessage,
 } from '@/domains/band/api/errorMessages'
 import {
+	BandCreateRequestSchema,
 	BandCreateResponseSchema,
-	BandCreateSchema,
-	BandListSchema,
-	BandMemberCreateSchema,
-	BandMemberUpdateSchema,
+	BandListResponseSchema,
+	BandMemberCreateRequestSchema,
+	BandMemberUpdateRequestSchema,
 	BandSchema,
 	BandSearchQuerySchema,
-	BandSearchResultSchema,
-	BandUpdateSchema,
+	BandSearchResponseSchema,
+	BandUpdateRequestSchema,
 } from '@/domains/band/model/schema'
 import type {
 	AddBandMemberResponse,
@@ -56,7 +56,7 @@ export const getUserBandsAction = async (): Promise<
 > => {
 	const res = await apiGet('/band/me', {
 		next: { revalidate: 30, tags: ['band-me'] },
-		schemas: { response: BandListSchema },
+		schemas: { response: BandListResponseSchema },
 	})
 
 	if (!res.ok) {
@@ -73,7 +73,7 @@ export const createBandAction = async (
 	const res = await apiPost('/band', {
 		body: { name },
 		schemas: {
-			body: BandCreateSchema,
+			body: BandCreateRequestSchema,
 			response: BandCreateResponseSchema,
 		},
 	})
@@ -111,7 +111,7 @@ export const updateBandAction = async (
 	const name = String(formData.get('name') ?? '').trim()
 	const res = await apiPut(`/band/${bandId}`, {
 		body: { name },
-		schemas: { body: BandUpdateSchema },
+		schemas: { body: BandUpdateRequestSchema },
 	})
 
 	if (!res.ok) {
@@ -155,7 +155,7 @@ export const addBandMemberAction = async (
 ): Promise<AddBandMemberResponse> => {
 	const res = await apiPost(`/band/${bandId}/members`, {
 		body: { userId, part },
-		schemas: { body: BandMemberCreateSchema },
+		schemas: { body: BandMemberCreateRequestSchema },
 	})
 
 	if (!res.ok) {
@@ -174,7 +174,7 @@ export const updateBandMemberAction = async (
 ): Promise<UpdateBandMemberResponse> => {
 	const res = await apiPut(`/band/members/${bandMemberId}`, {
 		body: { part },
-		schemas: { body: BandMemberUpdateSchema },
+		schemas: { body: BandMemberUpdateRequestSchema },
 	})
 
 	if (!res.ok) {
@@ -224,7 +224,7 @@ export const searchUsersForBandAction = async (
 		next: { revalidate: 30, tags: ['band-search-users'] },
 		schemas: {
 			searchParams: BandSearchQuerySchema,
-			response: BandSearchResultSchema,
+			response: BandSearchResponseSchema,
 		},
 	})
 

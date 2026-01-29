@@ -8,13 +8,13 @@ import {
 } from '@/domains/admin/api/errorMessages'
 import type { DeniedBookingFormValues } from '@/domains/admin/model/types'
 import {
-	AdminDeniedBookingCreateSchema,
-	AdminDeniedBookingQuerySchema,
-	AdminDeniedBookingResponseSchema,
+	DeniedBookingAdminListResponseSchema,
+	DeniedBookingAdminQuerySchema,
+	DeniedBookingCreateRequestSchema,
 } from '@/domains/booking/model/schema'
 import type {
-	AdminDeniedBookingResponse,
-	AdminDeniedSort,
+	DeniedBookingAdminListResponse,
+	DeniedBookingSort,
 } from '@/domains/booking/model/types'
 import {
 	buildFlashMessageValue,
@@ -42,7 +42,7 @@ export const createDeniedBookingAction = async (
 	const res = await apiPost('/booking/denied', {
 		body: request.payload,
 		schemas: {
-			body: AdminDeniedBookingCreateSchema,
+			body: DeniedBookingCreateRequestSchema,
 		},
 	})
 
@@ -76,9 +76,9 @@ export const getDeniedBookingAction = async ({
 }: {
 	page: number
 	perPage: number
-	sort: AdminDeniedSort
+	sort: DeniedBookingSort
 	today: string
-}): Promise<ApiResponse<AdminDeniedBookingResponse>> => {
+}): Promise<ApiResponse<DeniedBookingAdminListResponse>> => {
 	const res = await apiGet('/booking/denied', {
 		searchParams: {
 			page,
@@ -94,8 +94,8 @@ export const getDeniedBookingAction = async ({
 			],
 		},
 		schemas: {
-			searchParams: AdminDeniedBookingQuerySchema,
-			response: AdminDeniedBookingResponseSchema,
+			searchParams: DeniedBookingAdminQuerySchema,
+			response: DeniedBookingAdminListResponseSchema,
 		},
 	})
 

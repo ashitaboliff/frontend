@@ -25,8 +25,8 @@ const UsagePage = async () => {
 	})
 
 	return (
-		<div className="container mx-auto rounded-lg bg-white p-4 pb-8">
-			<h1 className="mt-4 text-center font-bold text-4xl">
+		<div className="container mx-auto p-4 pb-8">
+			<h1 className="mt-4 text-center font-bold text-2xl">
 				管理者ページの使い方
 			</h1>
 			<div className="flex flex-col items-end">
@@ -39,12 +39,10 @@ const UsagePage = async () => {
 					{frontmatter.createdAt}
 				</p>
 			</div>
-			<div className="prose mt-8 max-w-none">{content}</div>
-			<div className="mt-5 flex flex-row justify-center gap-5">
-				<a className="btn btn-outline" href="/admin">
-					ホームに戻る
-				</a>
-			</div>
+			<article className="prose mt-8 max-w-none">{content}</article>
+			<a className="btn btn-ghost mt-5 w-full" href="/admin">
+				ホームに戻る
+			</a>
 		</div>
 	)
 }

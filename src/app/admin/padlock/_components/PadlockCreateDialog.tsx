@@ -8,7 +8,7 @@ import type { PadLockFormValues } from '@/domains/admin/model/types'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import Popup from '@/shared/ui/molecules/Popup'
 
-interface PadlockCreateDialogProps {
+type Props = {
 	readonly open: boolean
 	onClose: () => void
 	onSubmit: (values: PadLockFormValues) => Promise<boolean>
@@ -20,7 +20,7 @@ const PadlockCreateDialog = ({
 	onClose,
 	onSubmit,
 	isSubmitting,
-}: PadlockCreateDialogProps) => {
+}: Props) => {
 	const {
 		register,
 		handleSubmit,
@@ -38,8 +38,8 @@ const PadlockCreateDialog = ({
 		}
 	}, [open, reset])
 
-	const handleFormSubmit = handleSubmit(async (values) => {
-		const shouldReset = await onSubmit(values)
+	const handleFormSubmit = handleSubmit(async (data) => {
+		const shouldReset = await onSubmit(data)
 		if (shouldReset) {
 			reset({ name: '', password: '' })
 		}

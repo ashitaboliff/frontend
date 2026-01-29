@@ -24,7 +24,15 @@ export const useAuthPadlock = ({
 	const [padlockToken, setPadlockToken] = useState<string | null>(null)
 
 	const { csrfToken, refreshCsrf } = useCsrfToken(initialCsrfToken)
-	const passwordForm = usePasswordForm()
+	const {
+		handleSubmit,
+		extractPassword,
+		reset,
+		handleDigitChange,
+		handleDigitKeyDown,
+		register,
+		errors,
+	} = usePasswordForm()
 	const feedback = useFeedback()
 
 	const effectiveCallbackUrl = useMemo(() => {
@@ -99,11 +107,11 @@ export const useAuthPadlock = ({
 		],
 	)
 
-	const onSubmit = passwordForm.handleSubmit(async (values) => {
+	const onSubmit = handleSubmit(async (data) => {
 		setLoadingMessage('パスワードを確認しています...')
 		setIsLoading(true)
 		feedback.clearFeedback()
-		const password = passwordForm.extractPassword(values)
+		const password = extractPassword(data)
 		try {
 			const res = await padLockAction(password)
 			if (res.ok) {
@@ -141,17 +149,16 @@ export const useAuthPadlock = ({
 	})
 
 	const handleClear = useCallback(() => {
-		passwordForm.reset()
+		reset()
 		feedback.clearFeedback()
 		setPadlockToken(null)
 		setHiddenInputValue('padlockToken', '')
-	}, [feedback, passwordForm, setHiddenInputValue])
-
+	}, [feedback, reset, setHiddenInputValue])
 	const digitError =
-		passwordForm.errors.digit1?.message ??
-		passwordForm.errors.digit2?.message ??
-		passwordForm.errors.digit3?.message ??
-		passwordForm.errors.digit4?.message ??
+		errors.digit1?.message ??
+		errors.digit2?.message ??
+		errors.digit3?.message ??
+		errors.digit4?.message ??
 		undefined
 
 	const disableSubmit = [401, 403].includes(feedback.feedback?.code ?? 0)
@@ -165,10 +172,10 @@ export const useAuthPadlock = ({
 		effectiveCallbackUrl,
 		onSubmit,
 		handleClear,
-		handleDigitChange: passwordForm.handleDigitChange,
-		handleDigitKeyDown: passwordForm.handleDigitKeyDown,
-		register: passwordForm.register,
-		errors: passwordForm.errors,
+		handleDigitChange,
+		handleDigitKeyDown,
+		register,
+		errors,
 		disableSubmit,
 	}
 }

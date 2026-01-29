@@ -11,7 +11,7 @@ import type { UseFormRegisterReturn } from 'react-hook-form'
 import { createSyntheticEvent } from '@/shared/hooks/useSelectField'
 import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type SelectOptions<TValue extends string | number> = Record<
 	string,
@@ -101,7 +101,7 @@ const SelectField = <TValue extends string | number = string>({
 	const errorId = errorMessage ? `${labelId ?? name}-error` : undefined
 
 	return (
-		<div className={classNames('form-control w-full', wrapperClassName)}>
+		<div className={cn('form-control w-full', wrapperClassName)}>
 			{label ? (
 				<LabelInputField
 					label={label}
@@ -112,7 +112,7 @@ const SelectField = <TValue extends string | number = string>({
 			<select
 				id={labelId}
 				name={name}
-				className={classNames('select w-full bg-white', className)}
+				className={cn('select w-full bg-white', className)}
 				onChange={handleChange}
 				aria-describedby={errorId}
 				{...registerRest}

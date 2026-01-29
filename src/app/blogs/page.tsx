@@ -1,20 +1,16 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { logError } from '@/shared/utils/logger'
-
-const inter = Inter({ subsets: ['latin'] })
-
 export const metadata = createMetaData({
-	title: 'おしらせ | あしたぼホームページ',
-	description: 'あしたぼホームページからのおしらせです。',
+	title: '開発者ブログ | あしたぼホームページ',
+	description: 'あしたぼホームページ開発チームのブログです。',
 	url: '/blogs',
 })
 
-interface PostMeta {
+type PostMeta = {
 	slug: string
 	title: string
 	createdAt?: string
@@ -75,21 +71,32 @@ const BlogsPage = async () => {
 	const posts = await getAllPostsMeta()
 
 	return (
-		<div
-			className={`container mx-auto flex flex-col items-center justify-center gap-y-3 p-4 ${inter.className}`}
-		>
-			<h1 className="mb-6 font-bold text-3xl">おしらせ一覧</h1>
+		<article className="container mx-auto max-w-2xl space-y-10 pb-12">
+			<h1 className="mb-6 text-center font-bold text-3xl">ブログ一覧</h1>
+			<p className="mb-4 text-neutral-content/70 text-sm">
+				あしたぼホームページ開発チームによるブログ記事です。
+				詳細なアップデート情報や今後追加予定の機能について、運営に関するお知らせなどを掲載しています。
+				<br />
+				今後のアップデート計画については
+				<Link className="ml-1 text-primary/70 underline" href="/changelog">
+					ロードマップ & 更新履歴ページ
+				</Link>
+				もご覧ください。
+			</p>
 			{posts.length > 0 ? (
-				<ul className="space-y-3">
+				<ul className="list-inside list-none space-y-3">
 					{posts.map((post) => (
-						<li key={post.slug}>
+						<li
+							key={post.slug}
+							className='group before:mr-2 before:inline-block before:content-["📄"]'
+						>
 							<Link
 								href={`/blogs/${post.slug}`}
-								className="text-lg underline hover:text-secondary"
+								className="text-lg underline transition group-hover:text-primary"
 							>
 								{post.title}
 								{post.createdAt && (
-									<span className="ml-2 text-gray-500 text-sm">
+									<span className="ml-2 text-neutral-content/70 text-sm transition group-hover:text-primary/70">
 										({new Date(post.createdAt).toLocaleDateString('ja-JP')})
 									</span>
 								)}
@@ -98,12 +105,9 @@ const BlogsPage = async () => {
 					))}
 				</ul>
 			) : (
-				<p>まだお知らせはありません。</p>
+				<p>まだブログはありません。</p>
 			)}
-			<Link className="btn btn-outline mt-8" href="/">
-				戻る
-			</Link>
-		</div>
+		</article>
 	)
 }
 

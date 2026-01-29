@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes } from 'react'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type SortOption<T extends string> = {
 	readonly value: T
@@ -30,11 +30,11 @@ const RadioSortGroup = <T extends string>({
 	...rest
 }: RadioSortGroupProps<T>) => {
 	return (
-		<div className={classNames('join', className)}>
+		<div className={cn('join', className)}>
 			{options.map((option) => (
 				<input
 					key={option.value}
-					className={classNames(
+					className={cn(
 						'join-item btn text-nowrap',
 						`btn-${size}`,
 						buttonClassName,

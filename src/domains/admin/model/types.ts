@@ -1,12 +1,12 @@
 import type { z } from 'zod'
-import type { AdminDeniedBookingQuery } from '@/domains/booking/model/types'
+import type { DeniedBookingAdminQuery } from '@/domains/booking/model/types'
 import type {
 	deniedBookingFormSchema,
 	deniedBookingTypeSchema,
 	padLockFormSchema,
 } from './schema'
 
-export type DeniedBookingQuery = Omit<AdminDeniedBookingQuery, 'today'>
+export type DeniedBookingQuery = Omit<DeniedBookingAdminQuery, 'today'>
 
 export type PadLockFormValues = z.infer<typeof padLockFormSchema>
 

@@ -3,7 +3,7 @@ import YoutubeManagement from '@/app/admin/youtube/_components'
 import PageLayout from '@/app/admin/youtube/_components/PageLayout'
 import { AdminYoutubePageParamsSchema } from '@/app/admin/youtube/schema'
 import { searchYoutubeAction } from '@/domains/video/api/actions'
-import type { YoutubeSearchQuery } from '@/domains/video/model/types'
+import type { VideoSearchQuery } from '@/domains/video/model/types'
 import { ADMIN_YOUTUBE_DEFAULT_QUERY } from '@/domains/video/query/youtubeQuery'
 import PaginatedErrorView from '@/shared/ui/organisms/PaginatedErrorView'
 import PaginatedTableSkeleton from '@/shared/ui/organisms/PaginatedTableSkeleton'
@@ -22,7 +22,7 @@ const Content = async ({ searchParams }: Props) => {
 		videoPerPage: params.videoPerPage,
 	})
 
-	const actionQuery: YoutubeSearchQuery = {
+	const actionQuery: VideoSearchQuery = {
 		...ADMIN_YOUTUBE_DEFAULT_QUERY,
 		...query,
 	}

@@ -1,15 +1,14 @@
 'use client'
 
-import gsap from 'gsap'
-import { type CSSProperties, useEffect, useRef } from 'react'
-import type { RarityType } from '@/domains/gacha/model/types'
+import { type CSSProperties, useMemo, useRef } from 'react'
+import type { GachaRarity } from '@/domains/gacha/model/types'
 
-interface SparkleProps {
+type Props = {
 	size: number
 	color: string
 	style?: CSSProperties
 	className?: string
-	rarity: RarityType
+	rarity: GachaRarity
 	gradientId: string
 }
 
@@ -30,43 +29,46 @@ const Sparkle = ({
 	className,
 	rarity,
 	gradientId,
-}: SparkleProps) => {
+}: Props) => {
 	const sparkleRef = useRef<SVGSVGElement>(null)
-
-	useEffect(() => {
-		if (!sparkleRef.current) return
-		let sparkleAnimSpeed = 0.8
-		let sparkleScale = 1.5
+	const sparkleMotion = useMemo(() => {
+		let baseScale = 1.3
+		let baseSpeed = 1.4
 		if (rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE') {
-			sparkleAnimSpeed = 0.5
-			sparkleScale = 2.0
+			baseScale = 1.7
+			baseSpeed = 1.0
 		} else if (rarity === 'SS_RARE') {
-			sparkleAnimSpeed = 0.6
-			sparkleScale = 1.8
+			baseScale = 1.55
+			baseSpeed = 1.2
 		}
-
-		const tween = gsap.to(sparkleRef.current, {
-			opacity: gsap.utils.random(0.3, 0.8),
-			scale: gsap.utils.random(sparkleScale * 0.8, sparkleScale * 1.2),
-			rotation: gsap.utils.random(-30, 30),
-			duration: sparkleAnimSpeed,
-			yoyo: true,
-			repeat: -1,
-			ease: 'power1.inOut',
-			delay: gsap.utils.random(0, 0.5),
-		})
-		return () => {
-			tween.kill()
+		return {
+			scale: baseScale + Math.random() * 0.4,
+			opacity: 0.45 + Math.random() * 0.35,
+			rotate: `${Math.random() * 40 - 20}deg`,
+			duration: `${baseSpeed + Math.random() * 0.8}s`,
+			delay: `${Math.random() * 0.8}s`,
 		}
 	}, [rarity])
+
+	const sparkleStyle: CSSProperties & Record<`--${string}`, string | number> = {
+		...style,
+		'--sparkle-scale': sparkleMotion.scale,
+		'--sparkle-rotate': sparkleMotion.rotate,
+		'--sparkle-opacity': sparkleMotion.opacity,
+		animationDuration: sparkleMotion.duration,
+		animationDelay: sparkleMotion.delay,
+	}
+	const sparkleClassName = ['gacha-sparkle', className]
+		.filter(Boolean)
+		.join(' ')
 
 	return (
 		<svg
 			ref={sparkleRef}
 			width={size}
 			height={size}
-			style={style}
-			className={className}
+			style={sparkleStyle}
+			className={sparkleClassName}
 			viewBox="0 0 100 100"
 			aria-hidden="true"
 			focusable="false"

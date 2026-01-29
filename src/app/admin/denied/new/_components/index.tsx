@@ -34,11 +34,9 @@ const defaultFormValues: Partial<DeniedBookingFormInput> = {
 }
 
 const DENIED_BOOKING_TYPE_DESCRIPTIONS: Record<DeniedBookingType, string> = {
-	single: '単発禁止:この日のこの時間のみを禁止したいときに利用します。',
-	period:
-		'期間禁止:ある日のある時間からある時間までの予約を禁止したいときに利用します。',
-	regular:
-		'定期禁止:ある日付からある日付までの特定の曜日に対して、この時間からこの時間までは利用できない場合に利用します。',
+	single: '単発禁止:この日のこの時間のみを禁止したいとき',
+	period: '期間禁止:ある日のある時間からある時間までの予約を禁止したいとき',
+	regular: '定期禁止:毎週この時間を繰り返し禁止したいとき',
 }
 
 const BOOKING_TIME_OPTIONS = BOOKING_TIME_LIST.reduce(
@@ -102,16 +100,13 @@ const DeniedBookingCreatePage = () => {
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-3">
-			<div className="flex flex-col items-center gap-y-2 text-center">
-				<h1 className="font-bold text-2xl">予約禁止日追加</h1>
-				<p className="text-sm">このページでは予約禁止日の追加が可能です。</p>
-			</div>
+			<h1 className="font-bold text-2xl">予約禁止日追加</h1>
 			<form
 				className="flex w-full max-w-md flex-col items-center space-y-4 px-4 sm:px-8"
 				onSubmit={handleSubmit(onSubmit)}
 			>
 				<DeniedBookingTypeSelector register={register} />
-				<DeniedBookingTypeDescription type={type ?? 'single'} />
+				<DeniedBookingTypeDescription type={type} />
 				<Controller
 					name="startDate"
 					control={control}
@@ -156,16 +151,16 @@ const DeniedBookingCreatePage = () => {
 				)}
 				{type === 'regular' && (
 					<div className="w-full">
-						<span className="label-text font-semibold">繰り返し</span>
+						<span className="label">繰り返し</span>
 						<div className="flex flex-row items-center justify-between space-x-2">
-							<div className="whitespace-nowrap text-sm">毎週</div>
+							<p className="whitespace-nowrap text-sm">毎週</p>
 							<SelectField
 								name="dayOfWeek"
 								register={register('dayOfWeek')}
 								options={DAY_OF_WEEK_SELECT_OPTIONS}
 								errorMessage={errors.dayOfWeek?.message}
 							/>
-							<div className="whitespace-nowrap text-sm">曜日</div>
+							<p className="whitespace-nowrap text-sm">曜日</p>
 						</div>
 					</div>
 				)}
@@ -175,18 +170,16 @@ const DeniedBookingCreatePage = () => {
 					label="説明"
 					errorMessage={errors.description?.message}
 				/>
-				<div className="flex flex-row gap-x-2">
-					<button className="btn btn-primary btn-md" type="submit">
-						送信
-					</button>
-					<button
-						className="btn btn-outline btn-md"
-						type="button"
-						onClick={() => router.push('/admin/denied')}
-					>
-						戻る
-					</button>
-				</div>
+				<button className="btn btn-primary w-full" type="submit">
+					送信
+				</button>
+				<button
+					className="btn btn-ghost w-full"
+					type="button"
+					onClick={() => router.push('/admin/denied')}
+				>
+					戻る
+				</button>
 			</form>
 			<FeedbackMessage
 				source={actionFeedback.feedback}

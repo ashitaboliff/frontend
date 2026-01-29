@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import Pagination from '@/shared/ui/atoms/Pagination'
 import RadioSortGroup from '@/shared/ui/atoms/RadioSortGroup'
 import SelectField from '@/shared/ui/atoms/SelectField'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type SortOption<T extends string> = {
 	readonly value: T
@@ -67,7 +67,7 @@ const PaginatedResourceLayout = <T extends string>({
 	})()
 
 	return (
-		<div className={classNames(className)}>
+		<div className={cn(className)}>
 			{topSlot}
 			<div className="ml-auto flex w-full flex-row items-center space-x-2 sm:w-1/2 md:w-1/3 lg:w-1/4">
 				<p className="whitespace-nowrap text-sm">{perPage.label}</p>

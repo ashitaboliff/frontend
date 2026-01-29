@@ -7,7 +7,7 @@ import {
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 import { composeRefs } from '@/shared/ui/utils/refs'
 
 export type TextareaInputFieldProps = {
@@ -56,7 +56,7 @@ const TextareaInputField = forwardRef<
 			: undefined
 
 		return (
-			<div className={classNames('flex w-full flex-col', wrapperClassName)}>
+			<div className={cn('flex w-full flex-col', wrapperClassName)}>
 				{label ? (
 					<LabelInputField
 						label={label}
@@ -66,7 +66,7 @@ const TextareaInputField = forwardRef<
 				) : null}
 				<textarea
 					id={labelId}
-					className={classNames('textarea w-full bg-white pr-10', className)}
+					className={cn('textarea w-full bg-white pr-10', className)}
 					onChange={handleChange}
 					ref={composeRefs(ref, registerRef)}
 					aria-describedby={errorId}

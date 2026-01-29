@@ -1,5 +1,5 @@
 import { type Key, type KeyboardEvent, memo, type ReactNode } from 'react'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 import { getCurrentJSTDateString } from '@/shared/utils'
 import {
 	extractDateKey,
@@ -74,9 +74,7 @@ const renderHeader = (date: string) => {
 	const weekendTextClassName =
 		weekday !== null ? getWeekendTextClass(weekday) : 'text-base-content'
 	return (
-		<p
-			className={classNames('text-xs-custom sm:text-sm', weekendTextClassName)}
-		>
+		<p className={cn('text-xs-custom sm:text-sm', weekendTextClassName)}>
 			{formatMonthDay(date)}
 			<br />
 			{formatWeekday(date, { enclosed: true })}
@@ -133,15 +131,12 @@ const CalendarFrame = ({
 	})
 
 	return (
-		<table className={classNames(defaultTableClass, tableClassName)}>
+		<table className={cn(defaultTableClass, tableClassName)}>
 			<thead>
 				<tr>
 					<th className={cornerCellClassName}></th>
 					{dateColumnOptions.map(({ date, todayClassName }) => (
-						<th
-							key={date}
-							className={classNames(headerCellClassName, todayClassName)}
-						>
+						<th key={date} className={cn(headerCellClassName, todayClassName)}>
 							{renderHeader(date)}
 						</th>
 					))}
@@ -149,7 +144,7 @@ const CalendarFrame = ({
 			</thead>
 			<tbody>
 				{times.map((time, timeIndex) => (
-					<tr key={time} className={classNames(bodyRowClassName)}>
+					<tr key={time} className={cn(bodyRowClassName)}>
 						<td className={timeCellClassName}>{renderTime(time)}</td>
 						{dates.map((date, dateIndex) => {
 							const { todayClassName } = dateColumnOptions[dateIndex]
@@ -158,13 +153,13 @@ const CalendarFrame = ({
 								return (
 									<td
 										key={`empty-${date}-${time}`}
-										className={classNames(DEFAULT_CELL_CLASS, todayClassName)}
+										className={cn(DEFAULT_CELL_CLASS, todayClassName)}
 									/>
 								)
 							}
 
 							const { key, className, content, onClick } = result
-							const cellClass = classNames(
+							const cellClass = cn(
 								DEFAULT_CELL_CLASS,
 								todayClassName,
 								className,
@@ -183,7 +178,7 @@ const CalendarFrame = ({
 							return (
 								<td
 									key={key ?? `cell-${date}-${time}`}
-									className={classNames(cellClass)}
+									className={cn(cellClass)}
 									onClick={onClick}
 									onKeyDown={onClick ? handleKeyDown : undefined}
 									role={onClick ? 'button' : undefined}

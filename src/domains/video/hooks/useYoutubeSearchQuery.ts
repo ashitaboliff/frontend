@@ -1,13 +1,13 @@
 'use client'
 
 import { useMemo } from 'react'
-import type { YoutubeSearchQuery } from '@/domains/video/model/types'
+import type { VideoSearchQuery } from '@/domains/video/model/types'
 import { createYoutubeQueryOptions } from '@/domains/video/query/youtubeQuery'
 import { useQueryUpdater } from '@/shared/hooks/useQueryUpdater'
 
 type UseYoutubeSearchQueryArgs = {
-	defaultQuery: YoutubeSearchQuery
-	initialQuery: YoutubeSearchQuery
+	defaultQuery: VideoSearchQuery
+	initialQuery: VideoSearchQuery
 }
 
 export const useYoutubeSearchQuery = ({
@@ -22,7 +22,7 @@ export const useYoutubeSearchQuery = ({
 	const query = initialQuery
 
 	const { updateQuery, isPending, hasCustomQuery } =
-		useQueryUpdater<YoutubeSearchQuery>({
+		useQueryUpdater<VideoSearchQuery>({
 			queryOptions,
 			currentQuery: query,
 		})

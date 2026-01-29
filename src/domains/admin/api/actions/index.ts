@@ -8,12 +8,15 @@ import {
 	getDeleteUserErrorMessage,
 	getUpdateUserRoleErrorMessage,
 } from '@/domains/admin/api/errorMessages'
-import { PadLockCreateSchema, PadLockSchema } from '@/domains/auth/model/schema'
-import type { PadLock } from '@/domains/auth/model/types'
 import {
-	UpdateUserRoleSchema,
-	UserListForAdminResponseSchema,
-	UserQuerySchema,
+	PadlockCreateRequestSchema,
+	PadlockSchema,
+} from '@/domains/auth/model/schema'
+import type { Padlock } from '@/domains/auth/model/types'
+import {
+	AdminUserListResponseSchema,
+	UserListQuerySchema,
+	UserRoleUpdateRequestSchema,
 } from '@/domains/user/model/schema'
 import type {
 	AccountRole,
@@ -30,11 +33,11 @@ import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib/api/v2/crud'
 import { type ApiResponse, StatusCode } from '@/types/response'
 
 export const getAllPadLocksAction = async (): Promise<
-	ApiResponse<PadLock[]>
+	ApiResponse<Padlock[]>
 > => {
 	const res = await apiGet('/auth/admin/padlocks', {
 		next: { revalidate: 6 * 30 * 24 * 60 * 60, tags: ['padlocks'] },
-		schemas: { response: z.array(PadLockSchema) },
+		schemas: { response: z.array(PadlockSchema) },
 	})
 
 	if (!res.ok) {
@@ -56,8 +59,8 @@ export const getUserDetailsListAction = async ({
 			tags: ['users', `users-page-${page}-perPage-${perPage}-sort-${sort}`],
 		},
 		schemas: {
-			searchParams: UserQuerySchema,
-			response: UserListForAdminResponseSchema,
+			searchParams: UserListQuerySchema,
+			response: AdminUserListResponseSchema,
 		},
 	})
 
@@ -99,7 +102,7 @@ export const updateUserRoleAction = async ({
 	const res = await apiPut(`/users/${id}/role`, {
 		body: { role },
 		schemas: {
-			body: UpdateUserRoleSchema,
+			body: UserRoleUpdateRequestSchema,
 			response: z.union([z.null(), z.undefined()]),
 		},
 	})
@@ -130,7 +133,7 @@ export const createPadLockAction = async ({
 	const res = await apiPost('/auth/admin/padlocks', {
 		body: { name, password },
 		schemas: {
-			body: PadLockCreateSchema,
+			body: PadlockCreateRequestSchema,
 			response: z.union([z.null(), z.undefined()]),
 		},
 	})

@@ -8,7 +8,7 @@ import {
 	useMemo,
 	useRef,
 } from 'react'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type PopupProps = {
 	id: string
@@ -119,7 +119,7 @@ const Popup = ({
 			aria-modal={open ? true : undefined}
 		>
 			<section
-				className={classNames(
+				className={cn(
 					'modal-box relative mx-auto overflow-y-auto overflow-x-hidden bg-base-100',
 					maxWClass,
 					noPadding && 'px-0! py-2!',
@@ -129,7 +129,7 @@ const Popup = ({
 			>
 				<h2
 					id={titleId}
-					className={classNames(
+					className={cn(
 						'mb-4 text-center font-bold text-xl',
 						noPadding && 'pt-6',
 					)}

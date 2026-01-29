@@ -6,12 +6,11 @@ import { createMetaData } from '@/shared/hooks/useMetaData'
 import { LuCalendar, LuCalendarSync } from '@/shared/ui/icons'
 import { logError } from '@/shared/utils/logger'
 
-interface Frontmatter {
+type Frontmatter = {
 	title: string
 	description: string
 	createdAt: string
 	updatedAt: string
-	// Add other frontmatter fields if needed
 }
 
 async function getPost(slug: string) {
@@ -23,8 +22,6 @@ async function getPost(slug: string) {
 		const { content, frontmatter } = await compileMDX<Frontmatter>({
 			source,
 			options: { parseFrontmatter: true },
-			// You can pass components here if needed, e.g.,
-			// components: { MyCustomComponent },
 		})
 		return { content, frontmatter, slug }
 	} catch (error) {
@@ -79,10 +76,10 @@ const BlogPostPage = async ({
 
 	if (!post) {
 		return (
-			<div className="container mx-auto rounded-lg bg-white p-4 pb-8 text-center">
+			<div className="container mx-auto pb-8 text-center">
 				<h1 className="mt-8 font-bold text-3xl">記事が見つかりません</h1>
 				<p className="mt-4">指定されたブログ記事は見つかりませんでした。</p>
-				<Link className="btn btn-outline mt-8" href="/blogs">
+				<Link className="btn btn-ghost mt-8 w-full" href="/blogs">
 					ブログ一覧に戻る
 				</Link>
 			</div>
@@ -90,12 +87,10 @@ const BlogPostPage = async ({
 	}
 
 	return (
-		<div className="container mx-auto rounded-lg bg-white p-4 pb-8">
-			<article className="prose lg:prose-xl max-w-none">
+		<div className="container mx-auto pb-8">
+			<article className="prose max-w-none py-6">
 				{' '}
-				<h1 className="mt-4 text-center font-bold text-3xl">
-					{post.frontmatter.title}
-				</h1>
+				<h1 className="mb-4 text-center font-bold">{post.frontmatter.title}</h1>
 				<div className="mb-4 flex flex-col items-end">
 					{post.frontmatter.updatedAt && (
 						<div className="mt-2 flex flex-row items-center gap-x-1 text-gray-600 text-sm">
@@ -112,11 +107,9 @@ const BlogPostPage = async ({
 				</div>
 				<div className="mt-8">{post.content}</div>
 			</article>
-			<div className="mt-8 flex flex-row justify-center gap-5">
-				<Link className="btn btn-outline" href="/blogs">
-					ブログ一覧に戻る
-				</Link>
-			</div>
+			<Link className="btn btn-ghost w-full" href="/blogs">
+				ブログ一覧に戻る
+			</Link>
 		</div>
 	)
 }

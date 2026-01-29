@@ -1,16 +1,16 @@
 'use client'
 
-const CONFETTI_COUNT = 32
-const RIBBON_COUNT = 12
-const LIGHT_BEAM_COUNT = 8
+const CONFETTI_COUNT = 20
+const RIBBON_COUNT = 8
+const LIGHT_BEAM_COUNT = 5
 const CONFETTI_COLORS = ['#ffd166', '#ff4c29', '#7c4dff', '#23d5ab'] as const
 const RIBBON_COLORS = ['#ff5e57', '#5c7cfa', '#22d3ee', '#ffa41b'] as const
-const CONFETTI_ANCHOR_SPREAD = 80
-const RIBBON_ANCHOR_SPREAD = 110
-const LIGHT_ANCHOR_SPREAD = 45
-const CONFETTI_CONE_SPREAD = 70
-const RIBBON_CONE_SPREAD = 55
-const LIGHT_CONE_SPREAD = 60
+const CONFETTI_ANCHOR_SPREAD = 60
+const RIBBON_ANCHOR_SPREAD = 85
+const LIGHT_ANCHOR_SPREAD = 32
+const CONFETTI_CONE_SPREAD = 55
+const RIBBON_CONE_SPREAD = 45
+const LIGHT_CONE_SPREAD = 45
 
 type ConfettiLayerName = 'back' | 'mid' | 'front'
 
@@ -29,35 +29,35 @@ type ConfettiLayerConfig = {
 const CONFETTI_LAYERS: readonly ConfettiLayerConfig[] = [
 	{
 		name: 'back',
-		distance: [45, 110],
-		scale: [0.45, 0.7],
-		blur: [2.2, 3.1],
-		delay: [0.08, 0.2],
-		spin: [80, 140],
-		waveHeight: [10, 20],
-		lifetime: [0.75, 0.95],
+		distance: [35, 90],
+		scale: [0.4, 0.65],
+		blur: [1.6, 2.4],
+		delay: [0.06, 0.16],
+		spin: [60, 110],
+		waveHeight: [8, 16],
+		lifetime: [0.7, 0.9],
 		zIndex: 2,
 	},
 	{
 		name: 'mid',
-		distance: [70, 150],
-		scale: [0.6, 0.95],
-		blur: [1.1, 1.9],
-		delay: [0.04, 0.12],
-		spin: [110, 190],
-		waveHeight: [14, 28],
-		lifetime: [0.85, 1.05],
+		distance: [55, 120],
+		scale: [0.55, 0.85],
+		blur: [0.8, 1.5],
+		delay: [0.03, 0.1],
+		spin: [80, 150],
+		waveHeight: [10, 22],
+		lifetime: [0.8, 1.0],
 		zIndex: 4,
 	},
 	{
 		name: 'front',
-		distance: [90, 190],
-		scale: [0.85, 1.2],
-		blur: [0.4, 1.1],
-		delay: [0, 0.08],
-		spin: [160, 240],
-		waveHeight: [18, 32],
-		lifetime: [0.95, 1.2],
+		distance: [70, 150],
+		scale: [0.75, 1.05],
+		blur: [0.3, 0.9],
+		delay: [0, 0.06],
+		spin: [120, 190],
+		waveHeight: [12, 24],
+		lifetime: [0.85, 1.05],
 		zIndex: 6,
 	},
 ] as const
@@ -212,24 +212,24 @@ export const createRibbonSpecs = (): RibbonSpec[] =>
 			RIBBON_CONE_SPREAD,
 		)
 		const angleDeg = -90 + coneOffset + randomInRange(-4, 4)
-		const distance = randomInRange(140, 240)
+		const distance = randomInRange(110, 190)
 		const rad = degToRad(angleDeg)
 		const dx = Math.cos(rad) * distance
-		const dy = Math.sin(rad) * distance - 160
+		const dy = Math.sin(rad) * distance - 140
 		return {
 			color,
 			dx,
 			dy,
 			rotation:
-				(index % 2 === 0 ? -0.5 : 0.5) * angleDeg * 0.35 +
-				randomInRange(-12, 12),
+				(index % 2 === 0 ? -0.5 : 0.5) * angleDeg * 0.3 +
+				randomInRange(-10, 10),
 			anchorOffsetX:
 				computeAnchorOffset(index, RIBBON_COUNT, RIBBON_ANCHOR_SPREAD) +
-				randomInRange(-14, 14),
-			delay: index * 0.012 + randomInRange(0, 0.08),
-			duration: randomInRange(1.05, 1.4),
-			waveTilt: randomInRange(-18, 18),
-			flutter: randomInRange(28, 46) * randomSign(),
+				randomInRange(-10, 10),
+			delay: index * 0.01 + randomInRange(0, 0.06),
+			duration: randomInRange(0.9, 1.2),
+			waveTilt: randomInRange(-12, 12),
+			flutter: randomInRange(18, 32) * randomSign(),
 		}
 	})
 
@@ -245,12 +245,12 @@ export const createLightBeamSpecs = (): LightBeamSpec[] =>
 				-5 +
 				computeConeAngleOffset(index, LIGHT_BEAM_COUNT, LIGHT_CONE_SPREAD) +
 				randomInRange(-5, 5),
-			delay: index * 0.05 + randomInRange(-0.02, 0.04),
+			delay: index * 0.04 + randomInRange(-0.02, 0.03),
 			anchorOffsetX:
 				computeAnchorOffset(index, LIGHT_BEAM_COUNT, LIGHT_ANCHOR_SPREAD) +
 				randomInRange(-6, 6),
-			pulseScaleX: randomInRange(0.85, 1.25),
-			pulseScaleY: randomInRange(1.1, 1.8),
-			flickerDelay: randomInRange(0.05, 0.12),
+			pulseScaleX: randomInRange(0.9, 1.15),
+			pulseScaleY: randomInRange(1.05, 1.5),
+			flickerDelay: randomInRange(0.04, 0.1),
 		}
 	})

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Gacha } from '@/domains/gacha/model/types'
 import {
 	ensureSignedResourceUrls,
 	getSignedResourceEntry,
@@ -7,8 +6,9 @@ import {
 	markSignedResourceStale,
 	setSignedResourceEntry,
 	shouldRefreshSignedResource,
-} from '@/domains/gacha/services/signedGachaResourceCache'
-import { toSignedImageKey } from '@/domains/gacha/utils'
+} from '@/domains/gacha/cache/signedGachaResourceCache'
+import { toSignedImageKey } from '@/domains/gacha/domain/gachaImage'
+import type { Gacha } from '@/domains/gacha/model/types'
 
 type SignedUrlEntry = {
 	url: string | null
