@@ -1,1 +1,0 @@
-export { useDragSwipe } from './useDragSwipe'

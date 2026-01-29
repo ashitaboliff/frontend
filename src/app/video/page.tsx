@@ -2,9 +2,9 @@ import { Suspense } from 'react'
 import VideoListPage from '@/app/video/_components'
 import VideoPageLayout from '@/app/video/_components/PageLayout'
 import Loading from '@/app/video/_components/VideoSearchLoading'
-import { YoutubeSearchQuerySchema } from '@/app/video/schema'
+import { VideoSearchPageParamsSchema } from '@/app/video/schema'
 import { searchYoutubeAction } from '@/domains/video/api/actions'
-import type { YoutubeSearchQuery } from '@/domains/video/model/types'
+import type { VideoSearchQuery } from '@/domains/video/model/types'
 import PaginatedErrorView from '@/shared/ui/organisms/PaginatedErrorView'
 import { logError } from '@/shared/utils/logger'
 
@@ -12,7 +12,7 @@ type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-const Content = async ({ query }: { query: YoutubeSearchQuery }) => {
+const Content = async ({ query }: { query: VideoSearchQuery }) => {
 	const res = await searchYoutubeAction(query)
 
 	if (res.ok) {
@@ -32,7 +32,7 @@ const Content = async ({ query }: { query: YoutubeSearchQuery }) => {
 
 const Page = async ({ searchParams }: Props) => {
 	const params = await searchParams
-	const query = YoutubeSearchQuerySchema.parse({
+	const query = VideoSearchPageParamsSchema.parse({
 		liveOrBand: params.liveOrBand,
 		bandName: params.bandName,
 		liveName: params.liveName,

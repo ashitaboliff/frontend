@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import type { CSSProperties } from 'react'
 import type { AdFormat } from '@/shared/lib/ads'
 
-interface MockAdSenseProps {
+type MockAdSenseProps = {
 	adSlot: string
 	adFormat?: AdFormat
 	adStyle?: CSSProperties

@@ -146,7 +146,7 @@ const UserPageTabs = ({ session, gachaCarouselData, profile, tab }: Props) => {
 					label: <GiCardRandom size={24} />,
 					content: (
 						<>
-							<div className="mb-4 flex w-full flex-col items-center justify-center gap-2 sm:mx-auto sm:w-2/3 sm:flex-row">
+							<div className="my-2 flex w-full flex-col items-center justify-center gap-2 sm:flex-row">
 								<button
 									type="button"
 									className="btn btn-gaming w-full sm:flex-1"
@@ -157,10 +157,12 @@ const UserPageTabs = ({ session, gachaCarouselData, profile, tab }: Props) => {
 										: '広告を見ることでガチャが引き放題'}
 								</button>
 								<RatioPopup />
-								{gachaMessage && (
-									<div className="text-error text-sm">{gachaMessage}</div>
-								)}
 							</div>
+							{gachaMessage && (
+								<p className="mb-2 text-error text-sm sm:text-center">
+									{gachaMessage}
+								</p>
+							)}
 							<GachaLogs session={session} />
 						</>
 					),

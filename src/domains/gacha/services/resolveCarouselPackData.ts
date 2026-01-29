@@ -1,42 +1,38 @@
-import { gachaConfigs } from '@/domains/gacha/config/config'
+import { ensureSignedResourceUrls } from '@/domains/gacha/cache/signedGachaResourceCache'
+import { listGachaPackEntries } from '@/domains/gacha/config/selectors'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
-import { ensureSignedResourceUrls } from '@/domains/gacha/services/signedGachaResourceCache'
 import { logError } from '@/shared/utils/logger'
 
 /**
- * gachaConfigs に基づきカルーセル用のパックデータを解決する。
+ * ガチャ設定に基づきカルーセル用のパックデータを解決する。
  * 署名URL取得が失敗した場合は空文字列をセットして継続する。
  */
 export const resolveCarouselPackData = async (): Promise<
 	CarouselPackDataItem[]
 > => {
-	const entries = Object.entries(gachaConfigs).filter(([, config]) =>
-		Boolean(config.packKey),
-	)
+	const entries = listGachaPackEntries()
 
 	if (entries.length === 0) {
 		return []
 	}
 
-	const packKeys = entries
-		.map(([, config]) => config.packKey)
-		.filter((key): key is string => Boolean(key))
+	const packKeys = entries.map((entry) => entry.packKey)
 
 	try {
 		const signedUrls = await ensureSignedResourceUrls(packKeys)
 		return entries
-			.map(([version, config]) => ({
-				version,
-				r2Key: config.packKey,
-				signedPackImageUrl: signedUrls[config.packKey] ?? '',
+			.map((entry) => ({
+				version: entry.version,
+				r2Key: entry.packKey,
+				signedPackImageUrl: signedUrls[entry.packKey] ?? '',
 			}))
 			.sort((a, b) => a.version.localeCompare(b.version))
 	} catch (error) {
 		logError('Failed to resolve signed URLs for gacha pack images', error)
 		return entries
-			.map(([version, config]) => ({
-				version,
-				r2Key: config.packKey,
+			.map((entry) => ({
+				version: entry.version,
+				r2Key: entry.packKey,
 				signedPackImageUrl: '',
 			}))
 			.sort((a, b) => a.version.localeCompare(b.version))

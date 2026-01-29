@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { InfoIcon } from '@/shared/ui/icons'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type LabelInputFieldProps = {
 	readonly label: string
@@ -20,10 +20,7 @@ const LabelInputField = ({
 }: LabelInputFieldProps) => {
 	return (
 		<label
-			className={classNames(
-				'label flex flex-row justify-start gap-2',
-				className,
-			)}
+			className={cn('label flex flex-row justify-start gap-2', className)}
 			htmlFor={labelId}
 		>
 			<span className="font-medium">{label}</span>

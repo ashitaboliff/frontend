@@ -22,4 +22,4 @@ export type AuthDetails = {
 	error?: string
 }
 
-export type { PublicPadLock as PadLock } from '@ashitaboliff/types/modules/auth/types'
+export type { Padlock } from '@ashitabo/types/auth/types'

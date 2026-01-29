@@ -1,1 +1,1 @@
-export * from '@ashitaboliff/types/modules/auth/schema'
+export * from '@ashitabo/types/auth/schema'

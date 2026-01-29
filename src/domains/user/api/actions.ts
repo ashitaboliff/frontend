@@ -3,7 +3,7 @@
 import { getUserErrorMessage } from '@/domains/user/api/errorMessage'
 import {
 	ProfileResponseSchema,
-	UserSelectListSchema,
+	UserSelectResponseSchema,
 } from '@/domains/user/model/schema'
 import type { Profile, UserForSelect } from '@/domains/user/model/types'
 import { okResponse } from '@/shared/lib/api/helper'
@@ -16,7 +16,7 @@ export const getUsersForSelect = async (): Promise<
 	const response = await apiGet('/users/select', {
 		cache: 'no-store',
 		next: { revalidate: 24 * 60 * 60, tags: ['users-select'] },
-		schemas: { response: UserSelectListSchema },
+		schemas: { response: UserSelectResponseSchema },
 	})
 
 	if (response.ok) {

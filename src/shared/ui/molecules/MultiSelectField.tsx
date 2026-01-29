@@ -10,7 +10,7 @@ import {
 import { useDropdown } from '@/shared/hooks/useSelectField'
 import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type MultiSelectFieldProps<
 	TFieldValues extends FieldValues,
@@ -91,18 +91,12 @@ const MultiSelectField = <
 							/>
 						) : null}
 						<div
-							className={classNames(
-								'dropdown w-full',
-								isOpen && 'dropdown-open',
-							)}
+							className={cn('dropdown w-full', isOpen && 'dropdown-open')}
 							id={labelId}
 						>
 							<button
 								type="button"
-								className={classNames(
-									'select w-full bg-white text-left',
-									className,
-								)}
+								className={cn('select w-full bg-white text-left', className)}
 								onClick={handleToggle}
 								aria-expanded={isOpen}
 								aria-haspopup="listbox"

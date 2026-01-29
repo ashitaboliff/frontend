@@ -8,7 +8,7 @@ import {
 	IoEllipsisHorizontalCircleSharp as OtherIcon,
 	MdPiano as PianoIcon,
 } from '@/shared/ui/icons'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type InstIconProps = {
 	readonly part: Part[]
@@ -40,9 +40,9 @@ const InstIcon = ({ part, size, className }: InstIconProps) => {
 	const badgeSizeClass = iconSize < 20 ? 'text-xs py-1' : 'text-sm py-1.5'
 
 	return (
-		<div className={classNames('flex flex-wrap justify-around', className)}>
+		<div className={cn('flex flex-wrap justify-around', className)}>
 			<div
-				className={classNames(
+				className={cn(
 					'grid w-full gap-1 md:flex md:flex-row',
 					gridColumnsClass,
 				)}
@@ -56,7 +56,7 @@ const InstIcon = ({ part, size, className }: InstIconProps) => {
 						aria-label={PartMap[p]}
 					>
 						<span
-							className={classNames(
+							className={cn(
 								'inline-flex items-center justify-center',
 								badgeSizeClass,
 							)}
