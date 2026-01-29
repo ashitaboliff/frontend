@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useId, useState } from 'react'
-import { type SubmitHandler, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import UserSelectPopup from '@/domains/band/ui/UserSelectPopup'
 import { type Part, PartOptionList } from '@/domains/user/model/types'
@@ -61,7 +61,7 @@ const BandAddForm = () => {
 		setSelectedUsers(userIds)
 	}, [])
 
-	const onSubmit: SubmitHandler<BandAddFormValues> = async (_data) => {
+	const onSubmit = useCallback(async (_data: BandAddFormValues) => {
 		setLoading(true)
 		setError(null)
 
@@ -75,7 +75,7 @@ const BandAddForm = () => {
 		} finally {
 			setLoading(false)
 		}
-	}
+	}, [])
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

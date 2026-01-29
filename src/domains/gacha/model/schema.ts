@@ -1,1 +1,1 @@
-export * from '@ashitaboliff/types/modules/gacha/schema'
+export * from '@ashitabo/types/gacha/schema'

@@ -8,7 +8,7 @@ import {
 	BOOKING_TIME_LIST,
 	DENIED_BOOKING,
 } from '@/domains/booking/constants'
-import type { BookingResponse } from '@/domains/booking/model/types'
+import type { BookingCalendarResponse } from '@/domains/booking/model/types'
 import {
 	AvailableCell,
 	BookingInfoCell,
@@ -23,7 +23,7 @@ import { DateToDayISOstring, toDateKey } from '@/shared/utils'
  * @returns
  */
 type Props = {
-	readonly data: BookingResponse
+	readonly data: BookingCalendarResponse
 	readonly isLoading: boolean
 }
 

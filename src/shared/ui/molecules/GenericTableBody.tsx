@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import type { MessageSource } from '@/shared/ui/molecules/FeedbackMessage'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 type TableHeader = {
 	key: string
@@ -54,15 +54,12 @@ const GenericTable = <T extends object>({
 
 	return (
 		<div
-			className={classNames(
+			className={cn(
 				'w-full overflow-x-auto rounded-box border border-base-content/5 bg-white',
 				isLoading && 'text-muted transition-colors',
 			)}
 		>
-			<table
-				className={classNames('table', tableClassName)}
-				aria-label={ariaLabel}
-			>
+			<table className={cn('table', tableClassName)} aria-label={ariaLabel}>
 				<thead>
 					<tr>
 						{headers.map((header) => (
@@ -89,7 +86,7 @@ const GenericTable = <T extends object>({
 						data.map((item) => (
 							<tr
 								key={itemKeyExtractor(item)}
-								className={classNames(
+								className={cn(
 									rowClassName,
 									onRowClick && clickableRowClassName,
 								)}

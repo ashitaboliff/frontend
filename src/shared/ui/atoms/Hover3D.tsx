@@ -1,5 +1,5 @@
 import type { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 type Hover3DProps = DetailedHTMLProps<
 	HTMLAttributes<HTMLDivElement>,
@@ -28,10 +28,7 @@ const Hover3D = ({
 	noRenderCells = false,
 	...props
 }: Hover3DProps) => {
-	const wrapperClassName = classNames(
-		!disabled && 'hover-3d cursor-pointer',
-		className,
-	)
+	const wrapperClassName = cn(!disabled && 'hover-3d cursor-pointer', className)
 
 	return (
 		<div

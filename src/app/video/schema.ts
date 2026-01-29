@@ -1,12 +1,12 @@
 import * as z from 'zod'
-import { SortSchema } from '@/domains/shared/model/schema'
-import { liveOrBandSchema } from '@/domains/video/model/schema'
+import { SortOrderSchema } from '@/domains/shared/model/schema'
+import { VideoSearchTargetSchema } from '@/domains/video/model/schema'
 import { VIDEO_PAGE_DEFAULT_QUERY } from '@/domains/video/query/youtubeQuery'
 
-export const YoutubeSearchQuerySchema = z.object({
-	liveOrBand: liveOrBandSchema
-		.default(VIDEO_PAGE_DEFAULT_QUERY.liveOrBand)
-		.catch(VIDEO_PAGE_DEFAULT_QUERY.liveOrBand),
+export const VideoSearchPageParamsSchema = z.object({
+	liveOrBand: VideoSearchTargetSchema.default(
+		VIDEO_PAGE_DEFAULT_QUERY.liveOrBand,
+	).catch(VIDEO_PAGE_DEFAULT_QUERY.liveOrBand),
 	bandName: z
 		.string()
 		.max(100)
@@ -17,7 +17,7 @@ export const YoutubeSearchQuerySchema = z.object({
 		.max(100)
 		.default(VIDEO_PAGE_DEFAULT_QUERY.liveName)
 		.catch(VIDEO_PAGE_DEFAULT_QUERY.liveName),
-	sort: SortSchema.default(VIDEO_PAGE_DEFAULT_QUERY.sort).catch(
+	sort: SortOrderSchema.default(VIDEO_PAGE_DEFAULT_QUERY.sort).catch(
 		VIDEO_PAGE_DEFAULT_QUERY.sort,
 	),
 	page: z.coerce

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 type GenericTableSkeletonProps = {
 	headers: Array<{ key: string; label: ReactNode }>
@@ -19,8 +19,8 @@ const GenericTableSkeleton = ({
 	const colCount = Math.max(headers.length, 1)
 
 	return (
-		<div className={classNames(className)} aria-busy="true">
-			<table className={classNames('table', tableClassName)}>
+		<div className={cn(className)} aria-busy="true">
+			<table className={cn('table', tableClassName)}>
 				{showHeader ? (
 					<thead>
 						<tr>

@@ -5,7 +5,7 @@ import Autoplay from 'embla-carousel-autoplay'
 import useEmblaCarousel from 'embla-carousel-react'
 import type { CSSProperties, DragEvent, KeyboardEvent, ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type CarouselSlide = {
 	id: string
@@ -112,11 +112,6 @@ const Carousel = ({
 		[scrollNext, scrollPrev],
 	)
 
-	const composedClassName = useMemo(
-		() => classNames('relative w-full select-none', className),
-		[className],
-	)
-
 	const composedStyle = useMemo<CSSProperties>(() => {
 		return {
 			cursor: slides.length > 1 ? 'grab' : 'default',
@@ -136,7 +131,7 @@ const Carousel = ({
 
 	return (
 		<section
-			className={composedClassName}
+			className={cn('relative w-full select-none', className)}
 			style={composedStyle}
 			aria-roledescription="carousel"
 			aria-live="polite"

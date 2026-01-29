@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from 'react'
 import Message, { type MessageVariant } from '@/shared/ui/atoms/Message'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 
 export type NoticeType = MessageVariant
 
@@ -63,14 +63,14 @@ const FlashMessage = ({
 	return (
 		<div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center">
 			<div
-				className={classNames(
+				className={cn(
 					'pointer-events-auto mt-4 transform will-change-transform',
 					inView
 						? 'translate-y-0 duration-350 ease-out'
 						: '-translate-y-full duration-280 ease-in',
 				)}
 			>
-				<Message variant={type} className={classNames('shadow-lg', className)}>
+				<Message variant={type} className={cn('shadow-lg', className)}>
 					{closeable ? (
 						<div className="flex items-start gap-3">
 							<div className="flex-1">{children}</div>

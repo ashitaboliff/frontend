@@ -44,8 +44,8 @@ const GachaConfirm = ({
 			setAnimationDone(true)
 			return
 		}
-		const ratio = 684 / 360
-		const finalWidth = Math.min(window.innerWidth * 0.8, 360)
+		const ratio = 570 / 300
+		const finalWidth = Math.min(window.innerWidth * 0.8, 300)
 		const finalHeight = finalWidth * ratio
 		const finalLeft = window.innerWidth / 2 - finalWidth / 2
 		const finalTop = window.innerHeight - finalHeight * 0.6 - 128
@@ -79,24 +79,22 @@ const GachaConfirm = ({
 					src={pack.signedPackImageUrl}
 					fallback="/version1.webp"
 					alt={`${pack.version} pack`}
-					width={360}
-					height={684}
+					width={300}
+					height={570}
 					className="h-full w-full object-contain drop-shadow-[0_25px_25px_rgba(0,0,0,0.75)]"
 				/>
 				{animationDone && (
 					<div className="gacha-stripe-overlay -translate-x-1/2 absolute top-[12.7%] left-1/2 z-40 h-2 w-full" />
 				)}
 			</button>
-			<div className="relative">
-				<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
-					<button
-						type="button"
-						className="btn btn-outline btn-circle"
-						onClick={onBack}
-					>
-						<TbArrowBackUp className="h-6 w-6" />
-					</button>
-				</div>
+			<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">
+				<button
+					type="button"
+					className="btn btn-outline btn-circle"
+					onClick={onBack}
+				>
+					<TbArrowBackUp className="h-6 w-6" />
+				</button>
 			</div>
 		</>
 	)

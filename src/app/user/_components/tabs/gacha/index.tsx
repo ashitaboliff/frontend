@@ -9,7 +9,10 @@ import {
 	gachaLogsFetcher,
 } from '@/domains/gacha/api/fetcher'
 import { useGachaPreview } from '@/domains/gacha/hooks/useGachaPreview'
-import type { GachaListResponse, GachaSort } from '@/domains/gacha/model/types'
+import type {
+	GachaListResponse,
+	GachaSortOrder,
+} from '@/domains/gacha/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import { usePagedResource } from '@/shared/hooks/usePagedResource'
 import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
@@ -21,7 +24,7 @@ const perPageOptions = {
 	'35件': 35,
 }
 
-const sortOptions: { value: GachaSort; label: string }[] = [
+const sortOptions: { value: GachaSortOrder; label: string }[] = [
 	{ value: 'new', label: '新しい順' },
 	{ value: 'old', label: '古い順' },
 	{ value: 'rare', label: 'レア順' },
@@ -40,7 +43,7 @@ const UserGachaLogs = ({ session }: Props) => {
 		setPerPage,
 		setSort,
 		setTotalCount,
-	} = usePagedResource<GachaSort>({
+	} = usePagedResource<GachaSortOrder>({
 		initialPerPage: 15,
 		initialSort: 'new',
 	})

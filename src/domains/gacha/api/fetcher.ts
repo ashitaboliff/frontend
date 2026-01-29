@@ -1,8 +1,11 @@
 import {
+	GachaListQuerySchema,
 	GachaListResponseSchema,
-	GachaQuerySchema,
 } from '@/domains/gacha/model/schema'
-import type { GachaListResponse, GachaSort } from '@/domains/gacha/model/types'
+import type {
+	GachaListResponse,
+	GachaSortOrder,
+} from '@/domains/gacha/model/types'
 import { bffGet } from '@/shared/lib/api/bff'
 
 export const GACHA_LOGS_SWR_KEY = 'gacha-logs'
@@ -12,14 +15,14 @@ export type GachaLogsKey = [
 	string,
 	number,
 	number,
-	GachaSort,
+	GachaSortOrder,
 ]
 
 export const buildGachaLogsKey = (
 	userId: string,
 	page: number,
 	perPage: number,
-	sort: GachaSort,
+	sort: GachaSortOrder,
 ): GachaLogsKey => [GACHA_LOGS_SWR_KEY, userId, page, perPage, sort]
 
 export const gachaLogsFetcher = async ([
@@ -40,7 +43,7 @@ export const gachaLogsFetcher = async ([
 			sort,
 		},
 		schemas: {
-			searchParams: GachaQuerySchema,
+			searchParams: GachaListQuerySchema,
 			response: GachaListResponseSchema,
 		},
 	})

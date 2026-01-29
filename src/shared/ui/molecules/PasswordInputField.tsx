@@ -3,7 +3,7 @@ import type { UseFormRegisterReturn } from 'react-hook-form'
 import InputFieldError from '@/shared/ui/atoms/InputFieldError'
 import LabelInputField from '@/shared/ui/atoms/LabelInputField'
 import { MdVisibility, MdVisibilityOff } from '@/shared/ui/icons'
-import { classNames } from '@/shared/ui/utils/classNames'
+import cn from '@/shared/ui/utils/classNames'
 import { composeRefs } from '@/shared/ui/utils/refs'
 
 export type PasswordInputFieldProps = {
@@ -58,13 +58,13 @@ const PasswordInputField = forwardRef<
 			: undefined
 
 		return (
-			<div className={classNames('flex w-full flex-col', wrapperClassName)}>
+			<div className={cn('flex w-full flex-col', wrapperClassName)}>
 				{label ? <LabelInputField label={label} labelId={labelId} /> : null}
 				<div className="relative">
 					<input
 						id={labelId}
 						{...registerRest}
-						className={classNames('input w-full bg-white pr-12', className)}
+						className={cn('input w-full bg-white pr-12', className)}
 						type={showPassword ? 'text' : 'password'}
 						autoComplete="new-password"
 						onChange={handleChange}

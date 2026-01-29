@@ -1,6 +1,6 @@
 'use client'
 
-import type { PadLock } from '@/domains/auth/model/types'
+import type { Padlock } from '@/domains/auth/model/types'
 import { TiDeleteOutline } from '@/shared/ui/icons'
 import GenericTable from '@/shared/ui/molecules/GenericTableBody'
 import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
@@ -13,10 +13,10 @@ const PER_PAGE_OPTIONS_LABELS: Record<string, number> = {
 }
 
 type PadlockListProps = {
-	readonly padLocks: PadLock[]
+	readonly padLocks: Padlock[]
 	readonly perPage: number
 	readonly onPerPageChange: (perPage: number) => void
-	readonly onSelect: (padLock: PadLock) => void
+	readonly onSelect: (padLock: Padlock) => void
 	readonly headers: Array<{ key: string; label: string }>
 }
 
@@ -37,7 +37,7 @@ const PadlockList = ({
 				onChange: onPerPageChange,
 			}}
 		>
-			<GenericTable<PadLock>
+			<GenericTable<Padlock>
 				headers={headers}
 				data={padLocks}
 				isLoading={false}

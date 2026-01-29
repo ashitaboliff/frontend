@@ -292,6 +292,28 @@
 	animation: gacha-yoyo-scale 1.5s ease-in-out infinite;
 }
 
+@keyframes gacha-sparkle-twinkle {
+	0%,
+	100% {
+		opacity: 0;
+		transform: scale(0.6) rotate(0deg);
+	}
+	50% {
+		opacity: var(--sparkle-opacity, 0.75);
+		transform: scale(var(--sparkle-scale, 1.4))
+			rotate(var(--sparkle-rotate, 0deg));
+	}
+}
+
+.gacha-sparkle {
+	animation-name: gacha-sparkle-twinkle;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+	transform-origin: 50% 50%;
+	pointer-events: none;
+	will-change: transform, opacity;
+}
+
 .bg-rainbow-45 {
 	background: linear-gradient(
 		45deg,
@@ -312,7 +334,7 @@
 		background-position: 0 0;
 	}
 	100% {
-		background-position: 160px 0;
+		background-position: 150px 0;
 	}
 }
 

@@ -7,9 +7,9 @@ import { deleteDeniedBookingAction } from '@/domains/admin/api/actions/denied'
 import type { DeniedBookingQuery } from '@/domains/admin/model/types'
 import { DeniedBookingQueryOptions } from '@/domains/admin/query/deniedBookingQuery'
 import type {
-	AdminDeniedBookingResponse,
-	AdminDeniedSort,
 	DeniedBooking,
+	DeniedBookingAdminListResponse,
+	DeniedBookingSort,
 } from '@/domains/booking/model/types'
 import { mutateAllBookingCalendars } from '@/domains/booking/utils/calendarCache'
 import { FLASH_MESSAGE_KEYS } from '@/shared/constants/flashMessage'
@@ -30,14 +30,14 @@ const PER_PAGE_OPTIONS: Record<string, number> = {
 	'30件': 30,
 }
 
-const SORT_OPTIONS: Array<{ value: AdminDeniedSort; label: string }> = [
+const SORT_OPTIONS: Array<{ value: DeniedBookingSort; label: string }> = [
 	{ value: 'relativeCurrent', label: '関連度順' },
 	{ value: 'new', label: '新しい順' },
 	{ value: 'old', label: '古い順' },
 ]
 
 type Props = {
-	readonly deniedBookings: AdminDeniedBookingResponse
+	readonly deniedBookings: DeniedBookingAdminListResponse
 	readonly query: DeniedBookingQuery
 	readonly headers: Array<{ key: string; label: string }>
 }
