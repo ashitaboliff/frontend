@@ -18,10 +18,6 @@ const list = [
 				title: '過去動画',
 			},
 			{
-				url: '/blogs',
-				title: 'お知らせ',
-			},
-			{
 				url: '/changelog',
 				title: 'ロードマップ',
 			},

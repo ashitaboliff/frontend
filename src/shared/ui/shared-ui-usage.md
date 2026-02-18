@@ -49,8 +49,6 @@
 ## molecules
 - **Popup**  
   - `<dialog>` ラッパ。`open/onClose` 必須。`maxWidth` は Tailwind トークン or 任意長さ。フォーカスを閉じ元に戻す。バックドロップは form method="dialog" で閉じる。
-- **Modal**  
-  - Popup を内部利用。`open/onOpenChange` で外部制御も可。`defaultOpen` で初期表示。
 - **ShareToLineButton**  
   - LINE 共有専用ボタン。`url` と `text` を渡す。内部で `LineButton` を利用。
 - **TextSearchField**  

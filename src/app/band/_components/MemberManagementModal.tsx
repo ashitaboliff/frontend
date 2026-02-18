@@ -113,6 +113,11 @@ export default function MemberManagementModal({
 		setMessage(null)
 	}, [])
 
+	const handleModalClose = useCallback(() => {
+		resetFormState()
+		onClose()
+	}, [onClose, resetFormState])
+
 	useEffect(() => {
 		if (isOpen) {
 			modalRef.current?.showModal()
@@ -122,9 +127,8 @@ export default function MemberManagementModal({
 			}
 		} else {
 			modalRef.current?.close()
-			resetFormState()
 		}
-	}, [isOpen, initialBand, mutateBandDetails, resetFormState])
+	}, [isOpen, initialBand, mutateBandDetails])
 
 	// const fetchAvailableParts = async () => { // Replaced by SWR
 	// 	const result = await getAvailablePartsAction()
@@ -275,7 +279,7 @@ export default function MemberManagementModal({
 		<dialog
 			ref={modalRef}
 			className="modal modal-bottom sm:modal-middle"
-			onClose={onClose}
+			onClose={handleModalClose}
 		>
 			<div className="modal-box w-11/12 max-w-3xl">
 				<h3 className="mb-4 font-bold text-lg">
@@ -535,7 +539,7 @@ export default function MemberManagementModal({
 					<button
 						type="button"
 						className="btn"
-						onClick={onClose}
+						onClick={handleModalClose}
 						disabled={isLoadingAction}
 					>
 						閉じる
@@ -543,7 +547,7 @@ export default function MemberManagementModal({
 				</div>
 			</div>
 			<form method="dialog" className="modal-backdrop">
-				<button type="button" onClick={onClose}>
+				<button type="button" onClick={handleModalClose}>
 					close
 				</button>
 			</form>

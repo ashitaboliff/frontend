@@ -1,17 +1,17 @@
 'use client'
 
-import { useCallback, useId, useMemo } from 'react'
+import { useCallback, useId, useMemo, useState } from 'react'
 import {
 	useLocationNavigate,
 	useWindowOpen,
 } from '@/shared/hooks/useBrowserApis'
 import { FaApple, FaYahoo, SiGooglecalendar } from '@/shared/ui/icons'
-import Modal from '@/shared/ui/molecules/Modal'
+import Popup from '@/shared/ui/molecules/Popup'
 import { formatDateTimeCompact } from '@/shared/utils/dateFormat'
 
 type DateInput = Date | string | number
 
-export type CalendarEvent = {
+type CalendarEvent = {
 	title: string
 	description: string
 	start: DateInput
@@ -19,15 +19,12 @@ export type CalendarEvent = {
 	location?: string
 }
 
-export type AddToCalendarModalProps = {
+type Props = {
 	event: CalendarEvent
 	buttonLabel?: string
 	buttonClassName?: string
 	modalTitle?: string
 	modalClassName?: string
-	defaultOpen?: boolean
-	open?: boolean
-	onOpenChange?: (next: boolean) => void
 }
 
 /**
@@ -39,13 +36,11 @@ const AddToCalendarModal = ({
 	buttonClassName,
 	modalTitle = 'カレンダーに追加',
 	modalClassName = 'max-w-sm',
-	defaultOpen,
-	open,
-	onOpenChange,
-}: AddToCalendarModalProps) => {
+}: Props) => {
 	const openWindow = useWindowOpen()
 	const navigate = useLocationNavigate()
 	const modalId = useId()
+	const [isPopupOpen, setPopupOpen] = useState(false)
 	const resolvedButtonLabel = buttonLabel.trim() || 'カレンダーに追加'
 	const resolvedButtonClassName = buttonClassName?.trim()
 		? buttonClassName
@@ -86,46 +81,59 @@ const AddToCalendarModal = ({
 	}, [openWindow, yahooCalendarUrl])
 
 	return (
-		<Modal
-			id={modalId}
-			btnText={resolvedButtonLabel}
-			btnClass={resolvedButtonClassName}
-			modalClass={modalClassName}
-			title={resolvedModalTitle}
-			defaultOpen={defaultOpen}
-			open={open}
-			onOpenChange={onOpenChange}
-		>
-			<div className="text-center">
-				<p>予定を追加するカレンダーアプリを選択してください。</p>
-				<div className="flex justify-center gap-1">
+		<>
+			<button
+				type="button"
+				className={resolvedButtonClassName}
+				onClick={() => setPopupOpen(true)}
+			>
+				{resolvedButtonLabel}
+			</button>
+			<Popup
+				id={modalId}
+				title={resolvedModalTitle}
+				open={isPopupOpen}
+				onClose={() => setPopupOpen(false)}
+				className={modalClassName}
+			>
+				<div className="text-center">
+					<p>予定を追加するカレンダーアプリを選択してください。</p>
+					<div className="flex justify-center gap-1">
+						<button
+							type="button"
+							className="btn btn-outline btn-sm"
+							onClick={handleOpenGoogleCalendar}
+						>
+							<SiGooglecalendar color="#2180FC" />
+							Android
+						</button>
+						<button
+							type="button"
+							className="btn btn-outline btn-sm"
+							onClick={handleOpenAppleCalendar}
+						>
+							<FaApple color="#000" />
+							iPhone
+						</button>
+						<button
+							type="button"
+							className="btn btn-outline btn-sm"
+							onClick={handleOpenYahooCalendar}
+						>
+							<FaYahoo color="#720E9E" />
+							Yahoo!
+						</button>
+					</div>
 					<button
 						type="button"
-						className="btn btn-outline btn-sm"
-						onClick={handleOpenGoogleCalendar}
+						className="btn btn-ghost mt-4 w-full"
+						onClick={() => setPopupOpen(false)}
 					>
-						<SiGooglecalendar color="#2180FC" />
-						Android
-					</button>
-					<button
-						type="button"
-						className="btn btn-outline btn-sm"
-						onClick={handleOpenAppleCalendar}
-					>
-						<FaApple color="#000" />
-						iPhone
-					</button>
-					<button
-						type="button"
-						className="btn btn-outline btn-sm"
-						onClick={handleOpenYahooCalendar}
-					>
-						<FaYahoo color="#720E9E" />
-						Yahoo!
+						閉じる
 					</button>
 				</div>
-			</div>
-		</Modal>
+			</Popup>
+		</>
 	)
 }
 

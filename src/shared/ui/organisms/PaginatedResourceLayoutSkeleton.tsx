@@ -52,7 +52,7 @@ const PaginatedResourceLayoutSkeleton = ({
 						<div
 							/* biome-ignore lint: complexity/noArrayIndexKey */
 							key={index}
-							className={cn('join-item h-9 w-12', skeletonClass)}
+							className={cn('join-item h-12.5 w-12', skeletonClass)}
 							aria-hidden
 						/>
 					))}

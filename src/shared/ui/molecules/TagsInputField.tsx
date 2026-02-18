@@ -4,7 +4,6 @@ import {
 	type ChangeEvent,
 	type KeyboardEvent,
 	type ReactNode,
-	useEffect,
 	useState,
 } from 'react'
 import { type Control, Controller, type UseFormSetValue } from 'react-hook-form'
@@ -47,12 +46,6 @@ const TagsInputField = ({
 }: TagInputFieldProps) => {
 	const [tags, setTags] = useState<string[]>(() => dedupeTags(defaultValue))
 	const [inputValue, setInputValue] = useState<string>('')
-
-	useEffect(() => {
-		if (!control) {
-			setTags(dedupeTags(defaultValue))
-		}
-	}, [control, defaultValue])
 
 	const addTagInternal = (
 		tagValue: string,

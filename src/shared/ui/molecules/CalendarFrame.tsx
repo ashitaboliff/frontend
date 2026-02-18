@@ -63,12 +63,13 @@ const CELL_SIZE_CLASSES = {
 	},
 } satisfies Record<CalendarFrameSize, CalendarFrameCellSizeClasses>
 
-const renderHeader = (date: string) => {
-	const getWeekendTextClass = (weekday: number): string | undefined => {
-		if (weekday === 6) return 'text-info'
-		if (weekday === 0) return 'text-secondary'
-		return 'text-base-content'
-	}
+const getWeekendTextClass = (weekday: number): string => {
+	if (weekday === 6) return 'text-info'
+	if (weekday === 0) return 'text-secondary'
+	return 'text-base-content'
+}
+
+const CalendarHeaderLabel = ({ date }: { readonly date: string }) => {
 	const dateKey = extractDateKey(date)
 	const weekday = dateKey ? getUtcDayOfWeek(dateKey) : null
 	const weekendTextClassName =
@@ -82,7 +83,7 @@ const renderHeader = (date: string) => {
 	)
 }
 
-const renderTime = (time: string) => {
+const CalendarTimeLabel = ({ time }: { readonly time: string }) => {
 	const [start = '', end = ''] = time.split('~')
 	return (
 		<p className="wrap-break-words text-base-content text-xs-custom sm:text-sm">
@@ -137,7 +138,7 @@ const CalendarFrame = ({
 					<th className={cornerCellClassName}></th>
 					{dateColumnOptions.map(({ date, todayClassName }) => (
 						<th key={date} className={cn(headerCellClassName, todayClassName)}>
-							{renderHeader(date)}
+							<CalendarHeaderLabel date={date} />
 						</th>
 					))}
 				</tr>
@@ -145,7 +146,9 @@ const CalendarFrame = ({
 			<tbody>
 				{times.map((time, timeIndex) => (
 					<tr key={time} className={cn(bodyRowClassName)}>
-						<td className={timeCellClassName}>{renderTime(time)}</td>
+						<td className={timeCellClassName}>
+							<CalendarTimeLabel time={time} />
+						</td>
 						{dates.map((date, dateIndex) => {
 							const { todayClassName } = dateColumnOptions[dateIndex]
 							const result = renderCell({ date, dateIndex, time, timeIndex })

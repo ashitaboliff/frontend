@@ -129,7 +129,6 @@ const GachaSelectCarousel = ({
 
 	useEffect(() => {
 		if (!emblaApi) return
-		updateControls()
 		const handleScroll = () => tweenSlides(emblaApi)
 		handleScroll()
 		emblaApi.on('select', updateControls)
@@ -146,11 +145,9 @@ const GachaSelectCarousel = ({
 
 	useEffect(() => {
 		if (!emblaApi || packs.length === 0) {
-			setCurrentIndex(0)
 			return
 		}
 		slideRefs.current = slideRefs.current.slice(0, packs.length)
-		setCurrentIndex(startIndex)
 		emblaApi.scrollTo(startIndex, true)
 		tweenSlides(emblaApi)
 	}, [emblaApi, packs.length, startIndex, tweenSlides])

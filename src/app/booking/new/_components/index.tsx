@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSWRConfig } from 'swr'
 import type { BookingNewPageParams } from '@/app/booking/new/schema'
@@ -47,7 +47,6 @@ const BookingCreate = ({ session, query }: Props) => {
 	const [showPassword, setShowPassword] = useState(false)
 	const [gachaResultState, setGachaResultState] =
 		useState<GachaResultViewState>({ status: 'idle' })
-	const gachaExecutionIdRef = useRef(0)
 
 	const defaultValues: Partial<BookingCreateFormInput> = useMemo(
 		() => ({
@@ -76,14 +75,11 @@ const BookingCreate = ({ session, query }: Props) => {
 	})
 
 	const triggerGachaExecution = useCallback(() => {
-		const executionId = gachaExecutionIdRef.current + 1
-		gachaExecutionIdRef.current = executionId
 		setGachaResultState({ status: 'loading', message: 'ガチャ結果を生成中...' })
 		void executeGachaPlay({
 			version: LATEST_GACHA_VERSION,
 			userId: session.user.id,
 		}).then((result) => {
-			if (gachaExecutionIdRef.current !== executionId) return
 			if (result.ok) {
 				setGachaResultState({
 					status: 'success',

@@ -9,7 +9,7 @@ import cn from '@/shared/ui/utils/classNames'
 
 export type MessageVariant = 'info' | 'success' | 'warning' | 'error'
 
-export type MessageProps = {
+type Props = {
 	readonly variant?: MessageVariant
 	readonly showIcon?: boolean
 	readonly icon?: ReactNode
@@ -48,7 +48,7 @@ const Message = ({
 	className,
 	role,
 	'aria-live': ariaLive,
-}: MessageProps) => {
+}: Props) => {
 	if (!children && !title) {
 		return null
 	}

@@ -6,7 +6,6 @@ import {
 	type ReactNode,
 	Suspense,
 	useCallback,
-	useEffect,
 	useMemo,
 	useState,
 } from 'react'
@@ -62,14 +61,24 @@ export const Tabs = ({
 		return value ?? tabValues[0] ?? 'tab-0'
 	})
 
+	const [mountedTabsState, setMountedTabsState] = useState<string[]>(() => {
+		const initialTab = value ?? tabValues[0]
+		return initialTab ? [initialTab] : []
+	})
+
 	const setActive = useCallback(
 		(nextValue: string) => {
 			if (!isControlled) {
 				setInternalValue(nextValue)
 			}
+			if (mountStrategy === 'lazy') {
+				setMountedTabsState((prev) =>
+					prev.includes(nextValue) ? prev : [...prev, nextValue],
+				)
+			}
 			onChange?.(nextValue)
 		},
-		[isControlled, onChange],
+		[isControlled, mountStrategy, onChange],
 	)
 
 	const validInternalValue = tabValues.includes(internalValue)
@@ -77,24 +86,10 @@ export const Tabs = ({
 		: (tabValues[0] ?? internalValue)
 
 	const activeValue = value ?? validInternalValue
-	const [mountedTabs, setMountedTabs] = useState<string[]>([])
-
-	useEffect(() => {
-		if (mountStrategy !== 'lazy') {
-			return
-		}
-		setMountedTabs((prev) => {
-			const next = new Set(prev)
-			next.add(activeValue)
-			const filtered = Array.from(next).filter((tabValue) =>
-				tabValues.includes(tabValue),
-			)
-			const isSame =
-				filtered.length === prev.length &&
-				filtered.every((tabValue) => prev.includes(tabValue))
-			return isSame ? prev : filtered
-		})
-	}, [activeValue, mountStrategy, tabValues])
+	const mountedTabs = useMemo(
+		() => mountedTabsState.filter((tabValue) => tabValues.includes(tabValue)),
+		[mountedTabsState, tabValues],
+	)
 
 	if (tabChildren.length === 0) {
 		return null

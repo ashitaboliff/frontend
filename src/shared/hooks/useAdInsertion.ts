@@ -15,7 +15,7 @@ type UseAdInsertionResult = {
 	readonly shouldRenderAd: (index: number) => boolean
 }
 
-export const useAdInsertion = ({
+const useAdInsertion = ({
 	ids,
 	maxAds,
 	seedKey,

@@ -20,14 +20,14 @@ type CornerImage = {
 	style?: CSSProperties
 }
 
-export type CenterImage = {
+type CenterImage = {
 	src: string
 	alt: string
 	width?: number
 	height?: number
 }
 
-export type Props = {
+type Props = {
 	readonly background: string
 	readonly centerImage: CenterImage
 	readonly message: string

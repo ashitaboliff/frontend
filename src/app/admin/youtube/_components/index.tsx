@@ -44,6 +44,14 @@ const sleep = (ms: number) =>
 		setTimeout(resolve, ms)
 	})
 
+const PlaylistRowCells = ({
+	item: playlist,
+}: {
+	readonly item: PlaylistDoc
+}) => {
+	return <td>{playlist.title}</td>
+}
+
 const YoutubeManagement = ({ playlists, query, headers }: Props) => {
 	const router = useRouter()
 	const actionFeedback = useFeedback()
@@ -165,11 +173,7 @@ const YoutubeManagement = ({ playlists, query, headers }: Props) => {
 					onRowClick={(playlist) => setDetailPlaylist(playlist)}
 					itemKeyExtractor={(playlist) => playlist.playlistId}
 					rowClassName="cursor-pointer"
-					renderCells={(playlist) => (
-						<>
-							<td>{playlist.title}</td>
-						</>
-					)}
+					RowCells={PlaylistRowCells}
 				/>
 			</PaginatedResourceLayout>
 			<div className="mt-2 flex flex-row justify-center">

@@ -1,16 +1,13 @@
 import type { NoticeType } from '@/shared/ui/molecules/FlashMessage'
 
-export type FlashMessagePayload = {
+type FlashMessagePayload = {
 	type: NoticeType
 	message: string
 }
 
-export type FlashMessageCategory = 'booking' | 'adminDenied' | 'auth'
+type FlashMessageCategory = 'booking' | 'adminDenied' | 'auth'
 
-export type FlashMessageKey =
-	| 'booking:flash'
-	| 'admin/denied:flash'
-	| 'auth:flash'
+type FlashMessageKey = 'booking:flash' | 'admin/denied:flash' | 'auth:flash'
 
 export const FLASH_MESSAGE_KEYS: Record<FlashMessageCategory, FlashMessageKey> =
 	{
@@ -19,7 +16,7 @@ export const FLASH_MESSAGE_KEYS: Record<FlashMessageCategory, FlashMessageKey> =
 		auth: 'auth:flash',
 	}
 
-export type FlashMessageCookieOptions = {
+type FlashMessageCookieOptions = {
 	path: string
 	maxAge: number
 	httpOnly: false

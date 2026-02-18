@@ -23,31 +23,35 @@ const SessionExpiredClient = ({ redirectFrom }: Props) => {
 
 	const handleLogout = async () => {
 		setIsLoading(true)
-		try {
-			await signOutUser()
-			await update()
-			router.push('/home')
-		} catch (error) {
-			logError('ログアウト中にエラーが発生しました', error)
-			// エラーが発生してもホームページへリダイレクト
-			router.push('/home')
-		} finally {
-			setIsLoading(false)
-		}
+		await signOutUser()
+			.then(async () => {
+				await update()
+				router.push('/home')
+			})
+			.catch((error: unknown) => {
+				logError('ログアウト中にエラーが発生しました', error)
+				// エラーが発生してもホームページへリダイレクト
+				router.push('/home')
+			})
+			.finally(() => {
+				setIsLoading(false)
+			})
 	}
 
 	const handleReLogin = async () => {
 		setIsLoading(true)
-		try {
-			await signOutUser()
-			await update()
-			router.push(padlockPath)
-		} catch (error) {
-			logError('再ログイン処理中にエラーが発生しました', error)
-			router.push(padlockPath)
-		} finally {
-			setIsLoading(false)
-		}
+		await signOutUser()
+			.then(async () => {
+				await update()
+				router.push(padlockPath)
+			})
+			.catch((error: unknown) => {
+				logError('再ログイン処理中にエラーが発生しました', error)
+				router.push(padlockPath)
+			})
+			.finally(() => {
+				setIsLoading(false)
+			})
 	}
 
 	return (

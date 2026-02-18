@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react'
 
-export type WindowOpenFn = (
+type WindowOpenFn = (
 	url: string,
 	target?: string,
 	features?: string,
@@ -16,7 +16,7 @@ export const useWindowOpen = (): WindowOpenFn =>
 		return window.open(url, target, features)
 	}, [])
 
-export type ShareFn = (data: ShareData) => Promise<void>
+type ShareFn = (data: ShareData) => Promise<void>
 
 export const useNavigatorShare = (): ShareFn =>
 	useCallback(async (data: ShareData) => {

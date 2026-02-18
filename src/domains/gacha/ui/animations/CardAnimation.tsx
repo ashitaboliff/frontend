@@ -63,11 +63,7 @@ const computeStarPositions = (
 	return positions
 }
 
-export const CardAnimation = ({
-	frontImageSignedUrl,
-	rarity,
-	delay,
-}: CardProps) => {
+const CardAnimation = ({ frontImageSignedUrl, rarity, delay }: CardProps) => {
 	const cardRef = useRef<HTMLDivElement>(null)
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0)
 	const id = useId()
@@ -140,6 +136,8 @@ export const CardAnimation = ({
 					<Img
 						src={frontImageSignedUrl}
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-おもて面`}
+						width={750}
+						height={1000}
 						className="h-full w-full object-cover"
 						onLoad={() => handleImageLoad()}
 						decoding="auto"
@@ -151,9 +149,11 @@ export const CardAnimation = ({
 					data-card-face="true"
 					style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
 				>
-					<img
+					<Img
 						src="/backimage.webp"
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-うら面`}
+						width={750}
+						height={1000}
 						className="h-full w-full object-cover"
 						onLoad={() => handleImageLoad()}
 						decoding="auto"

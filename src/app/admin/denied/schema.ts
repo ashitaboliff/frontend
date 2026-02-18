@@ -16,5 +16,3 @@ export const AdminDeniedPageParamsSchema = z.object({
 		.default(DENIED_BOOKING_DEFAULT_QUERY.perPage),
 	sort: DeniedBookingSortSchema.default(DENIED_BOOKING_DEFAULT_QUERY.sort),
 })
-
-export type AdminDeniedPageParams = z.infer<typeof AdminDeniedPageParamsSchema>

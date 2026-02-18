@@ -13,21 +13,21 @@ type Props = {
 	readonly onBookingItemClick: (booking: Booking) => void
 }
 
+const BookingLogRowCells = ({ item: booking }: { readonly item: Booking }) => (
+	<>
+		<td>{formatDateSlashWithWeekday(booking.bookingDate)}</td>
+		<td>{BOOKING_TIME_LIST[booking.bookingTime]}</td>
+		<td>{booking.name}</td>
+		<td>{booking.registName}</td>
+	</>
+)
+
 const BookingLogList = ({
 	bookings,
 	isLoading,
 	error,
 	onBookingItemClick,
 }: Props) => {
-	const renderBookingCells = (booking: Booking) => (
-		<>
-			<td>{formatDateSlashWithWeekday(booking.bookingDate)}</td>
-			<td>{BOOKING_TIME_LIST[booking.bookingTime]}</td>
-			<td>{booking.name}</td>
-			<td>{booking.registName}</td>
-		</>
-	)
-
 	return (
 		<GenericTable
 			headers={[
@@ -39,7 +39,7 @@ const BookingLogList = ({
 			data={bookings}
 			isLoading={isLoading}
 			error={error}
-			renderCells={renderBookingCells}
+			RowCells={BookingLogRowCells}
 			onRowClick={onBookingItemClick}
 			itemKeyExtractor={(booking) => booking.id}
 			emptyDataMessage="予約履歴はありません。"

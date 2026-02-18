@@ -10,15 +10,12 @@ type BookingCalendarTarget = Pick<
 	'bookingDate' | 'bookingTime' | 'registName' | 'name'
 >
 
-export type AddBookingToCalendarProps = {
+type Props = {
 	booking: BookingCalendarTarget
 	buttonLabel?: string
 	buttonClassName?: string
 	modalTitle?: string
 	modalClassName?: string
-	defaultOpen?: boolean
-	open?: boolean
-	onOpenChange?: (next: boolean) => void
 }
 
 const buildDateTimeFromBooking = (dateValue: string, timeValue?: string) => {
@@ -38,10 +35,7 @@ const AddBookingToCalendar = ({
 	buttonClassName,
 	modalTitle,
 	modalClassName,
-	defaultOpen,
-	open,
-	onOpenChange,
-}: AddBookingToCalendarProps) => {
+}: Props) => {
 	const [startAt, endAt] = useMemo(() => {
 		const timeRange = BOOKING_TIME_LIST[booking.bookingTime] ?? ''
 		const [startTime, endTime] = timeRange.split('~')
@@ -69,9 +63,6 @@ const AddBookingToCalendar = ({
 			buttonClassName={buttonClassName}
 			modalTitle={modalTitle}
 			modalClassName={modalClassName}
-			defaultOpen={defaultOpen}
-			open={open}
-			onOpenChange={onOpenChange}
 		/>
 	)
 }

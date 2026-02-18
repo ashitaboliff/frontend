@@ -28,6 +28,30 @@ const headers = [
 	{ key: 'owner', label: '責任者' },
 ]
 
+const BookingLogRowCells = ({ item: log }: { readonly item: Booking }) => (
+	<>
+		<td className="w-12 whitespace-nowrap p-3 text-center">
+			{log.isDeleted ? (
+				<div className="tooltip tooltip-error" data-tip="削除済">
+					<TiDeleteOutline className="text-error" size={20} />
+				</div>
+			) : null}
+		</td>
+		<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm">
+			{formatDateSlashWithWeekday(log.bookingDate)}
+		</td>
+		<td className="whitespace-nowrap p-3 text-xs-custom sm:table-cell sm:text-sm">
+			{BOOKING_TIME_LIST[log.bookingTime]}
+		</td>
+		<td className="wrap-break-words p-3 text-xs-custom sm:text-sm">
+			{log.registName}
+		</td>
+		<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm md:table-cell">
+			{log.name}
+		</td>
+	</>
+)
+
 const BookingLogs = ({ booking }: Props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [logsPerPage, setLogsPerPage] = useState(10)
@@ -79,29 +103,7 @@ const BookingLogs = ({ booking }: Props) => {
 					itemKeyExtractor={(log) => log.id}
 					rowClassName="cursor-pointer transition-colors duration-200 hover:bg-base-200"
 					colSpan={headers.length}
-					renderCells={(log) => (
-						<>
-							<td className="w-12 whitespace-nowrap p-3 text-center">
-								{log.isDeleted ? (
-									<div className="tooltip tooltip-error" data-tip="削除済">
-										<TiDeleteOutline className="text-error" size={20} />
-									</div>
-								) : null}
-							</td>
-							<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm">
-								{formatDateSlashWithWeekday(log.bookingDate)}
-							</td>
-							<td className="whitespace-nowrap p-3 text-xs-custom sm:table-cell sm:text-sm">
-								{BOOKING_TIME_LIST[log.bookingTime]}
-							</td>
-							<td className="wrap-break-words p-3 text-xs-custom sm:text-sm">
-								{log.registName}
-							</td>
-							<td className="whitespace-nowrap p-3 text-xs-custom sm:text-sm md:table-cell">
-								{log.name}
-							</td>
-						</>
-					)}
+					RowCells={BookingLogRowCells}
 				/>
 			</PaginatedResourceLayout>
 
