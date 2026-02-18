@@ -2,7 +2,9 @@
 
 import type { PointerEventHandler } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import cn from '@/shared/ui/utils/classNames'
 import Ads from './Ads'
+import styles from './CreepingOverlayAd.module.css'
 
 const LOCK_DELAY_MS = 8000
 
@@ -67,21 +69,22 @@ const CreepingOverlayAd = () => {
 		[isLocked, triggerAdClick],
 	)
 
-	const containerClass = [
-		'creeping-overlay-ad',
-		isLocked ? 'creeping-overlay-ad--locked' : 'creeping-overlay-ad--floating',
-	].join(' ')
-
 	return (
 		<>
 			{!isLocked && (
 				<div
-					className="creeping-overlay-ad__scrim"
+					className={styles.scrim}
 					aria-hidden="true"
 					onPointerDown={handleScrimPointerDown}
 				/>
 			)}
-			<div className={containerClass} aria-hidden="true">
+			<div
+				className={cn(
+					styles.container,
+					isLocked ? styles.locked : styles.floating,
+				)}
+				aria-hidden="true"
+			>
 				<div
 					ref={adContainerRef}
 					className="pointer-events-auto flex h-full w-full flex-col bg-white text-base-content"

@@ -1,7 +1,15 @@
 import MemberRecruitmentForm from '@/app/band/_components/MemberRecruitmentForm'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 import { gkktt } from '@/shared/lib/fonts'
 import LinkWithArrow from '@/shared/ui/atoms/LinkWithArrow'
+
+export const metadata = createMetaData({
+	title: 'バンド募集',
+	description:
+		'あしたぼのバンドメンバー募集ページです。一緒に音楽を楽しみましょう。',
+	url: '/band',
+})
 
 const Page = async () => {
 	return (

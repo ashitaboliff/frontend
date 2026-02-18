@@ -2,7 +2,9 @@
 
 import { useRouter } from 'next/navigation'
 import type { CSSProperties } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { AdFormat } from '@/shared/lib/ads'
+import cn from '@/shared/ui/utils/classNames'
 
 type MockAdSenseProps = {
 	adSlot: string
@@ -12,6 +14,8 @@ type MockAdSenseProps = {
 	adLayoutKey?: string
 	placement?: string
 }
+
+const FLUID_MIN_WIDTH = 250
 
 /**
  * 開発環境用のモック広告コンポーネント
@@ -26,6 +30,8 @@ const MockAdSense = ({
 	placement,
 }: MockAdSenseProps) => {
 	const router = useRouter()
+	const adRef = useRef<HTMLButtonElement | null>(null)
+	const [availableWidth, setAvailableWidth] = useState<number | null>(null)
 
 	// モック広告のバリエーション
 	const mockAds = [
@@ -71,6 +77,43 @@ const MockAdSense = ({
 		router.push(mockAd.path)
 	}
 
+	useEffect(() => {
+		const target = adRef.current
+		if (!target) {
+			return
+		}
+
+		const updateWidth = (width: number) => {
+			setAvailableWidth(Math.round(width))
+		}
+
+		updateWidth(target.getBoundingClientRect().width)
+
+		if (typeof ResizeObserver === 'undefined') {
+			const handleResize = () => {
+				updateWidth(target.getBoundingClientRect().width)
+			}
+
+			window.addEventListener('resize', handleResize)
+
+			return () => {
+				window.removeEventListener('resize', handleResize)
+			}
+		}
+
+		const observer = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				updateWidth(entry.contentRect.width)
+			}
+		})
+
+		observer.observe(target)
+
+		return () => {
+			observer.disconnect()
+		}
+	}, [])
+
 	// フォーマットに応じた高さを設定
 	const getHeightClass = () => {
 		switch (adFormat) {
@@ -87,10 +130,22 @@ const MockAdSense = ({
 		}
 	}
 
+	const isFluidWidthInsufficient =
+		adFormat === 'fluid' &&
+		availableWidth !== null &&
+		availableWidth < FLUID_MIN_WIDTH
+
 	return (
 		<button
+			ref={adRef}
 			type="button"
-			className={`${mockAd.bgColor} ${mockAd.borderColor} rounded-lg border-2 ${getHeightClass()} flex cursor-pointer flex-col items-center justify-center p-4 transition-all hover:scale-105 hover:shadow-lg`}
+			className={cn(
+				mockAd.bgColor,
+				isFluidWidthInsufficient ? 'border-red-500' : mockAd.borderColor,
+				'rounded-lg border-2',
+				getHeightClass(),
+				'my-4 flex w-full cursor-pointer flex-col items-center justify-center p-1 transition-all hover:scale-105 hover:shadow-lg',
+			)}
 			onClick={handleClick}
 			style={adStyle}
 		>
@@ -109,6 +164,17 @@ const MockAdSense = ({
 				)}
 				{adLayoutKey && (
 					<div className="text-gray-400 text-xs">Layout Key: {adLayoutKey}</div>
+				)}
+				{availableWidth !== null && (
+					<div className="text-gray-400 text-xs">
+						Available Width: {availableWidth}px
+					</div>
+				)}
+				{isFluidWidthInsufficient && (
+					<div className="mt-2 rounded border border-red-300 bg-red-50 px-2 py-1 text-red-700 text-xs">
+						Fluid広告は最低{FLUID_MIN_WIDTH}px必要です（現在: {availableWidth}
+						px）
+					</div>
 				)}
 			</div>
 		</button>

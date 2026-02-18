@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { createBandAction, updateBandAction } from '@/domains/band/api/actions'
 import {
@@ -14,7 +14,7 @@ import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import { logError } from '@/shared/utils/logger'
 
-interface Props {
+type Props = {
 	isOpen: boolean
 	onClose: () => void
 	bandToEdit?: BandDetails | null
@@ -33,7 +33,7 @@ const BandFormModal = ({
 }: Props) => {
 	const modalRef = useRef<HTMLDialogElement>(null)
 	const feedback = useFeedback()
-	const isEditing = useMemo(() => !!bandToEdit, [bandToEdit])
+	const isEditing = !!bandToEdit
 
 	const {
 		register,

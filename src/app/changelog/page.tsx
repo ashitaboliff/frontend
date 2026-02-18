@@ -7,7 +7,7 @@ import { createMetaData } from '@/shared/hooks/useMetaData'
 import HomePageHeader from '@/shared/ui/organisms/HomePageHeader'
 
 export const metadata = createMetaData({
-	title: 'ロードマップ & 更新履歴 | あしたぼホームページ',
+	title: 'ロードマップ & 更新履歴',
 	description: 'あしたぼのロードマップと更新履歴をまとめて確認できます。',
 	url: '/changelog',
 })

@@ -107,9 +107,9 @@ const Footer = () => {
 
 			<span className="block py-6 text-center text-xs-custom">
 				Copyright © {new Date().getFullYear()}{' '}
-				<a href="/" className="hover:underline">
+				<Link href="/" className="hover:underline">
 					あしたぼ
-				</a>{' '}
+				</Link>{' '}
 				All Rights Reserved.
 			</span>
 		</footer>

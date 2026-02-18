@@ -24,14 +24,14 @@ export async function generateMetadata(
 	const bookingDetailRes = await getBookingByIdAction(id)
 	const bookingDetail = bookingDetailRes.ok ? bookingDetailRes.data : null
 
-	let title = `予約編集 ${id} | あしたぼホームページ`
+	let title = `予約編集 ${id}`
 	let description = `コマ表の予約編集 (${id}) です。`
 
 	if (bookingDetail) {
 		const bookingData = bookingDetail
 		title = bookingData.registName
-			? `${bookingData.registName}の予約 | あしたぼホームページ`
-			: `予約編集 ${id} | あしたぼホームページ`
+			? `${bookingData.registName}の予約`
+			: `予約編集 ${id}`
 		description = `コマ表の予約 (${bookingData.registName || id}さん、${bookingData.bookingDate} ${BOOKING_TIME_LIST[bookingData.bookingTime] || ''}) の編集ページです。`
 	}
 

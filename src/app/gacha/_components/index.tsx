@@ -7,7 +7,7 @@ import { Ads, CreepingOverlayAd } from '@/shared/ui/ads'
 import type { AdPlacement } from '@/shared/ui/ads/Ads'
 import type { Session } from '@/types/session'
 
-interface Props {
+type Props = {
 	readonly session: Session
 	readonly carouselPackData: CarouselPackDataItem[]
 }
@@ -120,7 +120,6 @@ const GachaAdPage = ({ session, carouselPackData }: Props) => {
 						return (
 							<Ads
 								placement={slot.placement}
-								className="w-full"
 								enableClickDetection={true}
 								key={slot.id}
 							/>

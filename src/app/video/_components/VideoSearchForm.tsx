@@ -48,7 +48,7 @@ const VideoSearchForm = ({
 
 	return (
 		<>
-			<div className="flex items-center justify-center gap-2 py-2">
+			<nav className="flex items-center justify-center gap-2 py-2">
 				<button
 					className="btn btn-ghost w-16"
 					onClick={() => setIsUsagePopupOpen(true)}
@@ -78,7 +78,7 @@ const VideoSearchForm = ({
 					className="btn btn-ghost w-16"
 					isIcon
 				/>
-			</div>
+			</nav>
 			<Popup
 				id={searchPopupId}
 				title="条件検索"

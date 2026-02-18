@@ -21,25 +21,22 @@ const ADS_CONFIG = {
 		slot: '2297104274',
 		format: 'fluid',
 		layoutKey: '-fb+5w+4e-db+86',
-		wrapperClassName: 'my-4 w-full',
 	} satisfies AdsConfig,
 	Menu: {
 		slot: '1843902033',
 		format: 'fluid',
 		layoutKey: '-hl+a-w-1e+66',
-		wrapperClassName: 'w-full',
 	} satisfies AdsConfig,
 	MenuDisplay: {
 		slot: '1282872676',
 		format: 'auto',
-		wrapperClassName: 'my-2 w-full',
 	} satisfies AdsConfig,
 	Video: {
 		slot: '2716207997',
 		format: 'fluid',
 		layoutKey: '-6u+ec+14-5h+a8',
 		wrapperClassName:
-			'w-full rounded-lg border p-3 shadow-sm transition-shadow hover:shadow-md sm:p-4',
+			'w-full rounded-lg border shadow-sm transition-shadow hover:shadow-md',
 	} satisfies AdsConfig,
 	GachaPage: {
 		slot: '1847416241',
@@ -99,8 +96,8 @@ const Ads = ({
 		enableClickDetection ?? configClickDetection ?? false
 	const effectiveClickThreshold = clickThreshold ?? configClickThreshold ?? 3000
 
-	return (
-		<div className={mergedClassName || undefined}>
+	return mergedClassName ? (
+		<div className={mergedClassName}>
 			<AdSense
 				key={pathname}
 				clientId={clientId}
@@ -114,6 +111,19 @@ const Ads = ({
 				clickThreshold={effectiveClickThreshold}
 			/>
 		</div>
+	) : (
+		<AdSense
+			key={pathname}
+			clientId={clientId}
+			adSlot={slot}
+			adFormat={format}
+			adLayout={layout}
+			adLayoutKey={layoutKey}
+			adStyle={Object.keys(mergedStyle).length ? mergedStyle : undefined}
+			placement={placement}
+			enableClickDetection={shouldEnableClickDetection}
+			clickThreshold={effectiveClickThreshold}
+		/>
 	)
 }
 

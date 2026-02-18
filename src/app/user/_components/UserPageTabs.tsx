@@ -17,7 +17,9 @@ import {
 	MdOutlineEditCalendar,
 } from '@/shared/ui/icons'
 import PaginatedTableSkeleton from '@/shared/ui/organisms/PaginatedTableSkeleton'
+import cn from '@/shared/ui/utils/classNames'
 import type { Session } from '@/types/session'
+import styles from './UserPageTabs.module.css'
 
 const loadBookingLogs = () => import('@/app/user/_components/tabs/booking')
 const loadGachaLogs = () => import('@/app/user/_components/tabs/gacha')
@@ -54,7 +56,7 @@ const GachaController = dynamic(loadGachaController, {
 const RatioPopup = dynamic(loadRatioPopup, {
 	ssr: false,
 	loading: () => (
-		<button type="button" className="btn btn-outline w-full sm:w-auto">
+		<button type="button" className={cn('btn btn-outline w-full sm:w-auto')}>
 			提供割合
 		</button>
 	),
@@ -149,7 +151,7 @@ const UserPageTabs = ({ session, gachaCarouselData, profile, tab }: Props) => {
 							<div className="my-2 flex w-full flex-col items-center justify-center gap-2 sm:flex-row">
 								<button
 									type="button"
-									className="btn btn-gaming w-full sm:flex-1"
+									className={cn('btn w-full sm:flex-1', styles.btnGaming)}
 									onClick={handleOpenGachaPopup}
 								>
 									{canPlayGacha

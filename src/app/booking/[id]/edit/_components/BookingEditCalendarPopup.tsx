@@ -24,6 +24,42 @@ import BookingEditCalendar, {
 	type BookingEditCalendarSelection,
 } from './BookingEditCalendar'
 
+type CalendarContentProps = {
+	swrKey: ReturnType<typeof buildBookingRangeKey>
+	emptyBookingData: ReturnType<typeof buildEmptyBookingResponse>
+	onError: (err: ApiError) => void
+	calendarSelection: BookingEditCalendarSelection
+	onClose: () => void
+	setValue: UseFormSetValue<BookingEditFormValues>
+}
+
+const CalendarContent = ({
+	swrKey,
+	emptyBookingData,
+	onError,
+	calendarSelection,
+	onClose,
+	setValue,
+}: CalendarContentProps) => {
+	const { data, isValidating } = useSWR(swrKey, bookingRangeFetcher, {
+		revalidateOnFocus: false,
+		keepPreviousData: true,
+		onError,
+		suspense: false,
+		fallbackData: emptyBookingData,
+	})
+	const isLoading = data === emptyBookingData && isValidating
+	return (
+		<BookingEditCalendar
+			data={data}
+			calendarSelection={calendarSelection}
+			setCalendarOpen={onClose}
+			setValue={setValue}
+			className={isLoading ? 'opacity-30' : undefined}
+		/>
+	)
+}
+
 type Props = {
 	readonly open: boolean
 	readonly onClose: () => void
@@ -66,30 +102,6 @@ const BookingEditCalendarPopup = ({
 		[viewDate, viewRangeDays],
 	)
 
-	const Content = () => {
-		const { data, isValidating } = useSWR(key, bookingRangeFetcher, {
-			revalidateOnFocus: false,
-			keepPreviousData: true,
-			onError: (err: ApiError) => {
-				calendarFeedback.showApiError(err)
-			},
-			suspense: false,
-			fallbackData: emptyBookingData,
-		})
-
-		const isLoading = data === emptyBookingData && isValidating
-
-		return (
-			<BookingEditCalendar
-				data={data}
-				calendarSelection={calendarSelection}
-				setCalendarOpen={onClose}
-				setValue={setValue}
-				className={isLoading ? 'opacity-30' : undefined}
-			/>
-		)
-	}
-
 	const popupId = useId()
 
 	return (
@@ -125,7 +137,14 @@ const BookingEditCalendarPopup = ({
 					</button>
 				</div>
 				<FeedbackMessage source={calendarFeedback.feedback} />
-				<Content />
+				<CalendarContent
+					swrKey={key}
+					emptyBookingData={emptyBookingData}
+					onError={calendarFeedback.showApiError}
+					calendarSelection={calendarSelection}
+					onClose={onClose}
+					setValue={setValue}
+				/>
 				<div className="flex justify-center space-x-2">
 					<button type="button" className="btn btn-outline" onClick={onClose}>
 						閉じる

@@ -32,23 +32,20 @@ export async function generateMetadata(
 	_parent: ResolvingMetadata,
 ): Promise<Metadata> {
 	const { id, slug } = await params
-	let title = slug === 'live' ? 'ライブ動画詳細' : 'バンド動画詳細'
-	let description = `あしたぼの${slug}動画 (${id}) の詳細ページです。`
+	let title = `ライブ動画 ${id}`
+	let description = `あしたぼのライブ動画 (${id}) の詳細ページです。`
 
 	if (slug === 'live') {
 		const playlistData = await getPlaylist(id)
+
 		if (playlistData) {
-			title = playlistData.title
-				? `${playlistData.title} | ライブ動画`
-				: `ライブ動画 ${id}`
+			title = `${playlistData.title} - ライブ動画`
 			description = `あしたぼのライブ動画 (${playlistData.title || id}) の詳細ページです。`
 		}
 	} else {
 		const videoData = await getVideo(id)
 		if (videoData) {
-			title = videoData.title
-				? `${videoData.title} | バンド動画`
-				: `バンド動画 ${id}`
+			title = `${videoData.title} - バンド動画`
 			description = `あしたぼのバンド動画 (${videoData.title || id}) の詳細ページです。`
 		}
 	}
