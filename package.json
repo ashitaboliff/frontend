@@ -50,7 +50,7 @@
     "@types/node": "^20.19.23",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "daisyui": "^5.5.5",
+    "daisyui": "^5.5.18",
     "embla-carousel": "^8.6.0",
     "jsdom": "^27.0.1",
     "postcss": "^8.5.3",

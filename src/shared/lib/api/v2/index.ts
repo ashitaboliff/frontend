@@ -11,7 +11,7 @@ import {
 	type SuccessStatus,
 } from '@/types/response'
 
-export type QueryValue =
+type QueryValue =
 	| string
 	| number
 	| boolean

@@ -11,13 +11,17 @@ export async function generateMetadata() {
 }
 
 interface AuthErrorPageProps {
-	searchParams: Promise<{ error?: string }>
+	searchParams: Promise<{
+		error?: string
+		message?: string
+		reason?: string
+	}>
 }
 
 export default async function AuthErrorPage({
 	searchParams,
 }: AuthErrorPageProps) {
-	const { error } = await searchParams
+	const { error, message, reason } = await searchParams
 
 	return (
 		<Suspense
@@ -30,7 +34,11 @@ export default async function AuthErrorPage({
 				</div>
 			}
 		>
-			<AuthErrorClient initialError={error} />
+			<AuthErrorClient
+				initialError={error}
+				initialMessage={message}
+				initialReason={reason}
+			/>
 		</Suspense>
 	)
 }

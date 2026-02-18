@@ -1,139 +1,86 @@
 'use client'
 
-import { useEffect } from 'react'
-import useSWR from 'swr'
-import GachaLogList from '@/app/user/_components/tabs/gacha/GachaLogList'
-import GachaPreviewPopup from '@/app/user/_components/tabs/gacha/GachaPreviewPopup'
-import {
-	buildGachaLogsKey,
-	gachaLogsFetcher,
-} from '@/domains/gacha/api/fetcher'
-import { useGachaPreview } from '@/domains/gacha/hooks/useGachaPreview'
-import type {
-	GachaListResponse,
-	GachaSortOrder,
-} from '@/domains/gacha/model/types'
-import { useFeedback } from '@/shared/hooks/useFeedback'
-import { usePagedResource } from '@/shared/hooks/usePagedResource'
-import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
+import { useRouter } from 'next/navigation'
+import { useCallback, useState } from 'react'
+import GachaLogs from '@/app/user/_components/tabs/gacha/GachaLogs'
+import { useGachaPlayManager } from '@/domains/gacha/hooks/useGachaPlayManager'
+import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
+import GachaController from '@/domains/gacha/ui/GachaController'
+import RatioPopup from '@/domains/gacha/ui/RatioPopup'
+import cn from '@/shared/ui/utils/classNames'
 import type { Session } from '@/types/session'
-
-const perPageOptions = {
-	'15件': 15,
-	'25件': 25,
-	'35件': 35,
-}
-
-const sortOptions: { value: GachaSortOrder; label: string }[] = [
-	{ value: 'new', label: '新しい順' },
-	{ value: 'old', label: '古い順' },
-	{ value: 'rare', label: 'レア順' },
-	{ value: 'notrare', label: 'コモン順' },
-]
+import styles from './GachaTab.module.css'
 
 type Props = {
 	readonly session: Session
+	readonly gachaCarouselData: CarouselPackDataItem[]
 }
 
-const UserGachaLogs = ({ session }: Props) => {
-	const {
-		state: { page, perPage, sort, totalCount },
-		pageCount,
-		setPage,
-		setPerPage,
-		setSort,
-		setTotalCount,
-	} = usePagedResource<GachaSortOrder>({
-		initialPerPage: 15,
-		initialSort: 'new',
-	})
-	const feedback = useFeedback()
+const GachaTab = ({ session, gachaCarouselData }: Props) => {
+	const router = useRouter()
+	const [isRatioPopupOpen, setIsRatioPopupOpen] = useState(false)
+	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState(false)
 
 	const {
-		isPopupOpen,
-		isPopupLoading,
-		popupData,
-		openGachaPreview,
-		closeGachaPreview,
-		error: previewError,
-	} = useGachaPreview({ session })
+		canPlayGacha,
+		gachaPlayCountToday,
+		gachaMessage,
+		onGachaPlayedSuccessfully,
+		MAX_GACHA_PLAYS_PER_DAY,
+	} = useGachaPlayManager({ userId: session.user.id })
 
-	const swrKey = buildGachaLogsKey(session.user.id, page, perPage, sort)
-
-	const { data, isLoading } = useSWR<GachaListResponse>(
-		swrKey,
-		gachaLogsFetcher,
-		{
-			keepPreviousData: true,
-			revalidateOnFocus: false,
-			revalidateOnReconnect: false,
-			revalidateIfStale: true,
-			dedupingInterval: 60 * 1000,
-			shouldRetryOnError: false,
-			onError(error) {
-				feedback.showApiError(error)
-			},
-		},
-	)
-
-	useEffect(() => {
-		if (data) {
-			setTotalCount(data.totalCount)
-			feedback.clearFeedback()
+	const handleOpenGachaPopup = useCallback(() => {
+		if (!canPlayGacha) {
+			router.push('/gacha')
+			return
 		}
-	}, [data, feedback, setTotalCount])
+		setIsGachaPopupOpen(true)
+	}, [canPlayGacha, router])
 
 	return (
 		<>
-			<PaginatedResourceLayout
-				perPage={{
-					label: '表示件数:',
-					name: 'gacha_logs_per_page',
-					options: perPageOptions,
-					value: perPage,
-					onChange: setPerPage,
-				}}
-				sort={{
-					name: 'gacha_sort_options',
-					options: sortOptions,
-					value: sort,
-					onChange: setSort,
-				}}
-				pagination={{
-					currentPage: page,
-					totalPages: pageCount,
-					totalCount,
-					onPageChange: setPage,
-				}}
-			>
-				<GachaLogList
-					gachaItems={data?.gacha}
-					logsPerPage={perPage}
-					isLoading={isLoading && !data}
-					error={feedback.feedback}
-					onGachaItemClick={openGachaPreview}
-				/>
-			</PaginatedResourceLayout>
-			{popupData?.gacha && !isPopupLoading && (
-				<GachaPreviewPopup
-					gachaItem={popupData.gacha}
-					count={popupData.totalCount}
-					open={isPopupOpen}
-					onClose={closeGachaPreview}
+			<nav className="my-2 flex w-full flex-col items-center justify-center gap-2 sm:flex-row">
+				<button
+					type="button"
+					className={cn('btn w-full sm:flex-1', styles.btnGaming)}
+					onClick={handleOpenGachaPopup}
+				>
+					{canPlayGacha
+						? `ガチャを引く (${MAX_GACHA_PLAYS_PER_DAY - gachaPlayCountToday}回残)`
+						: '広告を見ることでガチャが引き放題'}
+				</button>
+				<button
+					type="button"
+					className="btn btn-outline w-full sm:flex-1"
+					onClick={() => setIsRatioPopupOpen(true)}
+				>
+					提供割合
+				</button>
+			</nav>
+			{gachaMessage && (
+				<p className="mb-2 text-error text-sm sm:text-center">{gachaMessage}</p>
+			)}
+			<GachaLogs session={session} />
+			{isRatioPopupOpen && (
+				<RatioPopup
+					isPopupOpen={isRatioPopupOpen}
+					setIsPopupOpen={setIsRatioPopupOpen}
 				/>
 			)}
-			{isPopupLoading && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-					<span className="loading loading-spinner loading-lg"></span>
-				</div>
-			)}
-			{previewError && (
-				<div className="mt-2 text-center text-red-500">
-					ガチャプレビューの取得に失敗しました。
-				</div>
+			{isGachaPopupOpen && (
+				<GachaController
+					session={session}
+					gachaPlayCountToday={gachaPlayCountToday}
+					onGachaPlayedSuccessfully={() => {
+						onGachaPlayedSuccessfully()
+					}}
+					open={isGachaPopupOpen}
+					onClose={() => setIsGachaPopupOpen(false)}
+					carouselPackData={gachaCarouselData}
+				/>
 			)}
 		</>
 	)
 }
 
-export default UserGachaLogs
+export default GachaTab

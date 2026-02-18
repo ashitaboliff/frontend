@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 import {
 	AUTH_ERROR_DEFAULT,
 	resolveAuthErrorDetail,
@@ -11,6 +10,8 @@ import { LuTriangleAlert } from '@/shared/ui/icons'
 
 interface Props {
 	readonly initialError?: string | null
+	readonly initialMessage?: string | null
+	readonly initialReason?: string | null
 }
 
 const buildActions = () => (
@@ -24,11 +25,14 @@ const buildActions = () => (
 	</>
 )
 
-export default function AuthErrorClient({ initialError }: Props) {
-	const searchParams = useSearchParams()
-	const error = searchParams.get('error') || initialError
-	const messageFromQuery = searchParams.get('message')
-	const reasonFromQuery = searchParams.get('reason')
+export default function AuthErrorClient({
+	initialError,
+	initialMessage,
+	initialReason,
+}: Props) {
+	const error = initialError
+	const messageFromQuery = initialMessage
+	const reasonFromQuery = initialReason
 
 	const detail = resolveAuthErrorDetail(error ?? undefined)
 	const fallbackMessage =

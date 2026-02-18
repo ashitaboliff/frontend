@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { authBookingAction } from '@/domains/booking/api/actions'
 import {
@@ -32,13 +32,13 @@ const BookingEditAuthForm = () => {
 		resolver: zodResolver(bookingAuthSchema),
 	})
 
-	const { showError } = feedback
-
-	useEffect(() => {
-		if (authPromptMessage) {
-			showError(authPromptMessage, { code: 403 })
-		}
-	}, [authPromptMessage, showError])
+	const promptFeedback = authPromptMessage
+		? {
+				kind: 'error' as const,
+				message: authPromptMessage,
+				code: 403,
+			}
+		: null
 
 	const togglePassword = () => setShowPassword((prev) => !prev)
 
@@ -75,7 +75,7 @@ const BookingEditAuthForm = () => {
 				onSubmit={handleSubmit(onSubmit)}
 				className="flex flex-col items-center space-y-4"
 			>
-				<FeedbackMessage source={feedback.feedback} />
+				<FeedbackMessage source={feedback.feedback ?? promptFeedback} />
 				<PasswordInputField
 					label="パスワード"
 					register={register('password')}

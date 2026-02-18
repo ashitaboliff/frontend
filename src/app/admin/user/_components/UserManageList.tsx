@@ -11,6 +11,28 @@ type Props = {
 	readonly headers: Array<{ key: string; label: string }>
 }
 
+const UserManageRowCells = ({
+	item: user,
+}: {
+	readonly item: UserForAdmin
+}) => {
+	return (
+		<>
+			<td>{user.name}</td>
+			<td>{user.fullName}</td>
+			<td>{user.studentId}</td>
+			<td>
+				{user.role !== undefined && user.role !== null
+					? RoleMap[user.role]
+					: '不明'}
+			</td>
+			<td>
+				{user.accountRole != null ? AccountRoleMap[user.accountRole] : '不明'}
+			</td>
+		</>
+	)
+}
+
 const UserManageList = ({
 	users,
 	onUserItemClick,
@@ -26,23 +48,7 @@ const UserManageList = ({
 			onRowClick={onUserItemClick}
 			itemKeyExtractor={(user) => user.id}
 			rowClassName="cursor-pointer"
-			renderCells={(user) => (
-				<>
-					<td>{user.name}</td>
-					<td>{user.fullName}</td>
-					<td>{user.studentId}</td>
-					<td>
-						{user.role !== undefined && user.role !== null
-							? RoleMap[user.role]
-							: '不明'}
-					</td>
-					<td>
-						{user.accountRole != null
-							? AccountRoleMap[user.accountRole]
-							: '不明'}
-					</td>
-				</>
-			)}
+			RowCells={UserManageRowCells}
 		/>
 	)
 }

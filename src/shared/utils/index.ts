@@ -29,7 +29,7 @@ const ensureDate = (value: Dateish, label: string): Date => {
 const addDays = (date: Date, offsetDays: number): Date =>
 	new Date(date.getTime() + offsetDays * MS_PER_DAY)
 
-export interface JstDateKeyOptions {
+interface JstDateKeyOptions {
 	base?: Dateish
 	offsetDays?: number
 }

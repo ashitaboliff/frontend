@@ -6,7 +6,7 @@ import { MdVisibility, MdVisibilityOff } from '@/shared/ui/icons'
 import cn from '@/shared/ui/utils/classNames'
 import { composeRefs } from '@/shared/ui/utils/refs'
 
-export type PasswordInputFieldProps = {
+type Props = {
 	readonly label?: string
 	readonly labelId?: string
 	readonly register?: UseFormRegisterReturn
@@ -20,10 +20,7 @@ export type PasswordInputFieldProps = {
 /**
  * パスワード入力フィールド。表示/非表示トグル付きで register と onChange を両立させる。
  */
-const PasswordInputField = forwardRef<
-	HTMLInputElement,
-	PasswordInputFieldProps
->(
+const PasswordInputField = forwardRef<HTMLInputElement, Props>(
 	(
 		{
 			label,

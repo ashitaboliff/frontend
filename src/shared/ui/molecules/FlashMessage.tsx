@@ -6,7 +6,7 @@ import cn from '@/shared/ui/utils/classNames'
 
 export type NoticeType = MessageVariant
 
-export type FlashMessageProps = {
+type Props = {
 	type?: NoticeType
 	children: ReactNode
 	className?: string
@@ -15,7 +15,6 @@ export type FlashMessageProps = {
 	closeable?: boolean
 }
 
-const ENTER_MS = 300
 const LEAVE_MS = 300
 
 /**
@@ -28,33 +27,23 @@ const FlashMessage = ({
 	duration = 2000,
 	onClose,
 	closeable = false,
-}: FlashMessageProps) => {
-	const [inView, setInView] = useState(false) // true: 画面内、false: 画面外(上)
-	const [visible, setVisible] = useState(true) // コンポーネント自体の生存
+}: Props) => {
+	const [phase, setPhase] = useState<'shown' | 'leaving' | 'hidden'>('shown')
 
 	useEffect(() => {
-		const rafId = requestAnimationFrame(() => setInView(true)) // 次フレームで入場開始
-
-		const leaveTimer = window.setTimeout(
-			() => setInView(false),
-			ENTER_MS + duration,
-		)
-		const hideTimer = window.setTimeout(
-			() => {
-				setVisible(false)
-				onClose?.()
-			},
-			ENTER_MS + duration + LEAVE_MS,
-		)
+		const leaveTimer = window.setTimeout(() => setPhase('leaving'), duration)
+		const hideTimer = window.setTimeout(() => {
+			setPhase('hidden')
+			onClose?.()
+		}, duration + LEAVE_MS)
 
 		return () => {
-			cancelAnimationFrame(rafId)
 			clearTimeout(leaveTimer)
 			clearTimeout(hideTimer)
 		}
 	}, [duration, onClose])
 
-	if (!visible) return null
+	if (phase === 'hidden') return null
 
 	if (typeof window === 'undefined') {
 		return null
@@ -65,7 +54,7 @@ const FlashMessage = ({
 			<div
 				className={cn(
 					'pointer-events-auto mt-4 transform will-change-transform',
-					inView
+					phase === 'shown'
 						? 'translate-y-0 duration-350 ease-out'
 						: '-translate-y-full duration-280 ease-in',
 				)}
@@ -78,7 +67,7 @@ const FlashMessage = ({
 								type="button"
 								className="btn btn-ghost btn-xs"
 								onClick={() => {
-									setVisible(false)
+									setPhase('hidden')
 									onClose?.()
 								}}
 								aria-label="閉じる"

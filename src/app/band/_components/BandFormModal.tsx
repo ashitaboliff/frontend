@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useRef } from 'react'
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { createBandAction, updateBandAction } from '@/domains/band/api/actions'
 import {
@@ -12,6 +12,7 @@ import type { BandDetails } from '@/domains/band/model/types'
 import { useFeedback } from '@/shared/hooks/useFeedback'
 import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
+import Popup from '@/shared/ui/molecules/Popup'
 import { logError } from '@/shared/utils/logger'
 
 type Props = {
@@ -21,7 +22,7 @@ type Props = {
 	onFormSubmitSuccess: (band: BandDetails, mode: 'create' | 'update') => void
 }
 
-const defaultValues: BandFormValues = {
+const _defaultValues: BandFormValues = {
 	name: '',
 }
 
@@ -31,40 +32,23 @@ const BandFormModal = ({
 	bandToEdit,
 	onFormSubmitSuccess,
 }: Props) => {
-	const modalRef = useRef<HTMLDialogElement>(null)
 	const feedback = useFeedback()
 	const isEditing = !!bandToEdit
+	const formValues = useMemo<BandFormValues>(
+		() => ({ name: bandToEdit?.name ?? '' }),
+		[bandToEdit?.name],
+	)
 
 	const {
 		register,
 		handleSubmit,
-		reset,
 		formState: { errors, isSubmitting },
 	} = useForm<BandFormValues>({
 		resolver: zodResolver(bandFormSchema),
-		defaultValues,
+		values: formValues,
 	})
 
-	useEffect(() => {
-		if (isOpen) {
-			modalRef.current?.showModal()
-		} else {
-			modalRef.current?.close()
-		}
-	}, [isOpen])
-
-	useEffect(() => {
-		if (bandToEdit) {
-			reset({ name: bandToEdit.name ?? '' })
-		} else {
-			reset(defaultValues)
-		}
-	}, [bandToEdit, reset])
-
-	const closeAndReset = (values?: BandFormValues) => {
-		reset(
-			values ?? (bandToEdit ? { name: bandToEdit.name ?? '' } : defaultValues),
-		)
+	const closeAndReset = () => {
 		feedback.clearFeedback()
 		onClose()
 	}
@@ -96,15 +80,21 @@ const BandFormModal = ({
 				response.data as BandDetails,
 				isEditing ? 'update' : 'create',
 			)
-			closeAndReset(defaultValues)
+			closeAndReset()
 		} else {
 			feedback.showApiError(response)
 		}
 	}
 
 	return (
-		<dialog ref={modalRef} className="modal" onClose={() => closeAndReset()}>
-			<div className="modal-box">
+		<Popup
+			id="band-form-modal"
+			title={isEditing ? 'バンド名を編集' : '新しいバンドを作成'}
+			open={isOpen}
+			onClose={closeAndReset}
+			maxWidth="md"
+		>
+			<div>
 				<h3 className="font-bold text-lg">
 					{isEditing ? 'バンド名を編集' : '新しいバンドを作成'}
 				</h3>
@@ -123,7 +113,7 @@ const BandFormModal = ({
 						<button
 							type="button"
 							className="btn"
-							onClick={() => closeAndReset()}
+							onClick={closeAndReset}
 							disabled={isSubmitting}
 						>
 							キャンセル
@@ -143,13 +133,15 @@ const BandFormModal = ({
 						</button>
 					</div>
 				</form>
-			</div>
-			<form method="dialog" className="modal-backdrop">
-				<button type="button" onClick={() => closeAndReset()}>
-					close
+				<button
+					type="button"
+					className="btn btn-ghost mt-2 w-full"
+					onClick={closeAndReset}
+				>
+					閉じる
 				</button>
-			</form>
-		</dialog>
+			</div>
+		</Popup>
 	)
 }
 

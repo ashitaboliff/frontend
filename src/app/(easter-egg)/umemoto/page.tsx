@@ -1,5 +1,12 @@
 import EasterEgg from '@/app/(easter-egg)/_EasterEgg'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 import { getImageUrl } from '@/shared/lib/r2'
+
+export const metadata = createMetaData({
+	title: 'うめもと',
+	description: 'うめもとさん向けイースターエッグページ',
+	url: '/umemoto',
+})
 
 const Page = async () => (
 	<EasterEgg

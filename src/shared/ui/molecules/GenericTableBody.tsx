@@ -15,7 +15,7 @@ type GenericTableProps<T extends object> = {
 	data?: T[]
 	isLoading: boolean
 	error?: MessageSource
-	renderCells: (item: T) => ReactNode
+	RowCells: (props: { readonly item: T }) => ReactNode
 	onRowClick?: (item: T) => void
 	tableClassName?: string
 	rowClassName?: string
@@ -31,7 +31,7 @@ const GenericTable = <T extends object>({
 	data,
 	isLoading,
 	error,
-	renderCells,
+	RowCells,
 	onRowClick,
 	tableClassName = 'table-sm w-full',
 	rowClassName = '',
@@ -95,7 +95,7 @@ const GenericTable = <T extends object>({
 								role={onRowClick ? 'button' : undefined}
 								tabIndex={onRowClick ? 0 : undefined}
 							>
-								{renderCells(item)}
+								<RowCells item={item} />
 							</tr>
 						))
 					)}

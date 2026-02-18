@@ -191,7 +191,7 @@ const GachaController = ({
 		handleClose()
 	}, [handleClose])
 
-	const renderOverlayContent = () => {
+	const overlayContent = useMemo(() => {
 		if (!selectedPack) return null
 		switch (currentStep) {
 			case 'confirm':
@@ -229,7 +229,17 @@ const GachaController = ({
 			default:
 				return null
 		}
-	}
+	}, [
+		currentStep,
+		gachaResultState,
+		handleBackToSelect,
+		handleConfirm,
+		handlePendingAnimationComplete,
+		handleResultBackToSelect,
+		pendingPackRect,
+		selectedPack,
+		selectedRect,
+	])
 
 	const shouldShowOverlay = open && currentStep !== 'select'
 
@@ -243,7 +253,7 @@ const GachaController = ({
 			/>
 
 			{shouldShowOverlay && (
-				<FullscreenOverlay>{renderOverlayContent()}</FullscreenOverlay>
+				<FullscreenOverlay>{overlayContent}</FullscreenOverlay>
 			)}
 		</>
 	)

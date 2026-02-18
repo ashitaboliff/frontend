@@ -110,7 +110,7 @@ const GachaPending = ({ pack, packRect, onAnimationComplete }: Props) => {
 			>
 				{confettiSpecs.map((spec, index) => (
 					<span
-						key={`confetti-${spec.color}-${index}`}
+						key={spec.id}
 						ref={(node) => {
 							confettiRefs.current[index] = node
 						}}
@@ -122,7 +122,7 @@ const GachaPending = ({ pack, packRect, onAnimationComplete }: Props) => {
 					const clipPath = getRibbonClipPath(index)
 					return (
 						<span
-							key={`ribbon-${spec.color}-${index}`}
+							key={spec.id}
 							ref={(node) => {
 								ribbonRefs.current[index] = node
 							}}
@@ -139,7 +139,7 @@ const GachaPending = ({ pack, packRect, onAnimationComplete }: Props) => {
 				})}
 				{lightBeamSpecs.map((spec, index) => (
 					<span
-						key={`light-${spec.rotation}-${spec.delay}-${index}`}
+						key={spec.id}
 						ref={(node) => {
 							lightRefs.current[index] = node
 						}}
