@@ -3,7 +3,7 @@ import type { AnchorHTMLAttributes, ReactNode } from 'react'
 import { LuArrowRight } from '@/shared/ui/icons'
 import cn from '@/shared/ui/utils/classNames'
 
-export type LinkWithArrowProps = {
+type Props = {
 	readonly children: ReactNode
 	readonly className?: string
 	readonly iconClassName?: string
@@ -19,7 +19,7 @@ const LinkWithArrow = ({
 	className,
 	iconClassName,
 	...rest
-}: LinkWithArrowProps) => {
+}: Props) => {
 	return (
 		<Link
 			href={href}

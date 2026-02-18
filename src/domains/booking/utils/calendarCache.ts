@@ -3,7 +3,7 @@ import type { useSWRConfig } from 'swr'
 import { BOOKING_CALENDAR_SWR_KEY } from '@/domains/booking/constants'
 import { toDateKey } from '@/shared/utils'
 
-export const isDateWithinRange = (
+const isDateWithinRange = (
 	date: string,
 	startDate: string,
 	endDate: string,
@@ -20,7 +20,7 @@ export const isDateWithinRange = (
 	return isWithinInterval(target, interval)
 }
 
-export type MutateFn = ReturnType<typeof useSWRConfig>['mutate']
+type MutateFn = ReturnType<typeof useSWRConfig>['mutate']
 
 export const mutateBookingCalendarsForDate = async (
 	mutate: MutateFn,

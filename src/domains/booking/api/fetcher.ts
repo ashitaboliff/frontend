@@ -23,9 +23,9 @@ type BookingRangeKey = [
 	BookingRangeQuery['end'],
 ]
 
-export const BOOKING_USER_LOGS_SWR_KEY = 'booking-user-logs'
+const BOOKING_USER_LOGS_SWR_KEY = 'booking-user-logs'
 
-export type BookingUserLogsKey = [
+type BookingUserLogsKey = [
 	typeof BOOKING_USER_LOGS_SWR_KEY,
 	string,
 	number,

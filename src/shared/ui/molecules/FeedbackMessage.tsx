@@ -11,7 +11,7 @@ export type MessageSource =
 	| null
 	| undefined
 
-export type FeedbackMessageProps = {
+type Props = {
 	source?: MessageSource
 	defaultVariant?: MessageVariant
 	className?: string
@@ -43,7 +43,7 @@ const FeedbackMessage = ({
 	showIcon = true,
 	iconClassName,
 	showDetails = true,
-}: FeedbackMessageProps) => {
+}: Props) => {
 	if (
 		source === null ||
 		source === undefined ||

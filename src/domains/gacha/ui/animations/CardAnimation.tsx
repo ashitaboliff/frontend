@@ -63,11 +63,7 @@ const computeStarPositions = (
 	return positions
 }
 
-export const CardAnimation = ({
-	frontImageSignedUrl,
-	rarity,
-	delay,
-}: CardProps) => {
+const CardAnimation = ({ frontImageSignedUrl, rarity, delay }: CardProps) => {
 	const cardRef = useRef<HTMLDivElement>(null)
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0)
 	const id = useId()

@@ -10,7 +10,7 @@ import {
 	buildYoutubeQueryString,
 	VIDEO_PAGE_DEFAULT_QUERY,
 } from '@/domains/video/query/youtubeQuery'
-import { useAdInsertion } from '@/shared/hooks/useAdInsertion'
+import useAdInsertion from '@/shared/hooks/useAdInsertion'
 import Ads from '@/shared/ui/ads/Ads'
 import PaginatedResourceLayout from '@/shared/ui/organisms/PaginatedResourceLayout'
 import VideoItem from './VideoItem'

@@ -4,7 +4,7 @@ const WEEKDAY_JA = ['日', '月', '火', '水', '木', '金', '土'] as const
 
 type DateInput = Date | string | number
 
-export const toDate = (value: DateInput) => {
+const toDate = (value: DateInput) => {
 	if (value instanceof Date) {
 		return Number.isNaN(value.getTime()) ? null : new Date(value.getTime())
 	}
@@ -76,20 +76,6 @@ export const formatDateTimeJa = (
 	return `${year}年${month}月${day}日 ${time}`
 }
 
-export const formatDateTimeSlash = (
-	value: DateInput,
-	options?: { includeSeconds?: boolean },
-) => {
-	const date = toDate(value)
-	if (!date) return ''
-	const { year, month, day, hours24, minutes, seconds } = getParts(date)
-	const includeSeconds = options?.includeSeconds ?? true
-	const time = includeSeconds
-		? `${hours24}:${minutes}:${seconds}`
-		: `${hours24}:${minutes}`
-	return `${year}/${month}/${day} ${time}`
-}
-
 export const formatDateTimeJaWithUnits = (
 	value: DateInput,
 	options?: { includeSeconds?: boolean; hour12?: boolean },
@@ -102,26 +88,6 @@ export const formatDateTimeJaWithUnits = (
 	const hours = options?.hour12 ? hours12 : hours24
 	const secondsPart = includeSeconds ? `${seconds}秒` : ''
 	return `${year}年${month}月${day}日${hours}時${minutes}分${secondsPart}`
-}
-
-export const formatTimeHm = (
-	value: DateInput,
-	options?: { hour12?: boolean },
-) => {
-	const date = toDate(value)
-	if (!date) return ''
-	const { hours24, hours12, minutes } = getParts(date)
-	return `${options?.hour12 ? hours12 : hours24}:${minutes}`
-}
-
-export const formatSlashWithWeekdayRange = (
-	start: DateInput,
-	end: DateInput,
-	options?: { space?: boolean },
-) => {
-	const startLabel = formatDateSlashWithWeekday(start, options)
-	const endLabel = formatDateSlashWithWeekday(end, options)
-	return `${startLabel} - ${endLabel}`
 }
 
 export const formatIcsDateTime = (value: DateInput) => {
