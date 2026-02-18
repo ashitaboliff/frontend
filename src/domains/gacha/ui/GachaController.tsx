@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { MAX_GACHA_PLAYS_PER_DAY } from '@/domains/gacha/config/config'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import { executeGachaPlay } from '@/domains/gacha/services/executeGachaPlay'
@@ -65,19 +65,22 @@ const GachaController = ({
 		[carouselPackData, selectedVersion],
 	)
 
-	useEffect(() => {
-		if (!open) {
-			setCurrentStep('select')
-			setSelectedVersion(null)
-			setSelectedRect(null)
-			setPendingPackRect(null)
-			setPendingAnimationDone(false)
-			setIsGachaExecutionPending(false)
-			setGachaResultState({ status: 'idle' })
-			executionIdRef.current += 1
-			suppressSelectClose.current = false
-		}
-	}, [open])
+	const moveToResultWhenReady = useCallback(
+		({
+			animationDone,
+			isExecutionPending,
+			resultStatus,
+		}: {
+			animationDone: boolean
+			isExecutionPending: boolean
+			resultStatus: GachaResultViewState['status']
+		}) => {
+			if (animationDone && !isExecutionPending && resultStatus !== 'loading') {
+				setCurrentStep('result')
+			}
+		},
+		[],
+	)
 
 	const handlePackSelected = ({ version, rect }: PackSelectionPayload) => {
 		if (!ignorePlayCountLimit && gachaPlayCountToday >= effectiveMaxPlayCount) {
@@ -117,22 +120,43 @@ const GachaController = ({
 						signedUrl: result.signedUrl,
 					})
 					onGachaPlayedSuccessfully()
+					moveToResultWhenReady({
+						animationDone: pendingAnimationDone,
+						isExecutionPending: false,
+						resultStatus: 'success',
+					})
 				} else {
 					setGachaResultState({
 						status: 'error',
 						message: result.message,
+					})
+					moveToResultWhenReady({
+						animationDone: pendingAnimationDone,
+						isExecutionPending: false,
+						resultStatus: 'error',
 					})
 				}
 			})
 		},
 		[
 			ignorePlayCountLimit,
+			moveToResultWhenReady,
 			onGachaPlayedSuccessfully,
+			pendingAnimationDone,
 			selectedRect,
 			selectedVersion,
 			session.user.id,
 		],
 	)
+
+	const handlePendingAnimationComplete = useCallback(() => {
+		setPendingAnimationDone(true)
+		moveToResultWhenReady({
+			animationDone: true,
+			isExecutionPending: isGachaExecutionPending,
+			resultStatus: gachaResultState.status,
+		})
+	}, [gachaResultState.status, isGachaExecutionPending, moveToResultWhenReady])
 
 	const handleBackToSelect = useCallback(() => {
 		setSelectedVersion(null)
@@ -184,7 +208,7 @@ const GachaController = ({
 					<GachaPending
 						pack={selectedPack}
 						packRect={pendingPackRect ?? selectedRect}
-						onAnimationComplete={() => setPendingAnimationDone(true)}
+						onAnimationComplete={handlePendingAnimationComplete}
 					/>
 				)
 			case 'result':
@@ -208,22 +232,6 @@ const GachaController = ({
 	}
 
 	const shouldShowOverlay = open && currentStep !== 'select'
-
-	useEffect(() => {
-		if (
-			currentStep === 'pending' &&
-			pendingAnimationDone &&
-			!isGachaExecutionPending &&
-			gachaResultState.status !== 'loading'
-		) {
-			setCurrentStep('result')
-		}
-	}, [
-		currentStep,
-		gachaResultState.status,
-		isGachaExecutionPending,
-		pendingAnimationDone,
-	])
 
 	return (
 		<>

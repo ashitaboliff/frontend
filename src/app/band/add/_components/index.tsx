@@ -65,16 +65,19 @@ const BandAddForm = () => {
 		setLoading(true)
 		setError(null)
 
-		try {
-			// await createBandAction(data, selectedUsers)
-			// 成功時の処理
-			setPopupOpen(true)
-			// router.push('/band/board') // バンド作成後のリダイレクト
-		} catch (_err) {
-			setError('バンドの作成に失敗しました。もう一度お試しください。')
-		} finally {
-			setLoading(false)
-		}
+		await Promise.resolve()
+			.then(() => {
+				// await createBandAction(data, selectedUsers)
+				// 成功時の処理
+				setPopupOpen(true)
+				// router.push('/band/board') // バンド作成後のリダイレクト
+			})
+			.catch(() => {
+				setError('バンドの作成に失敗しました。もう一度お試しください。')
+			})
+			.finally(() => {
+				setLoading(false)
+			})
 	}, [])
 
 	return (

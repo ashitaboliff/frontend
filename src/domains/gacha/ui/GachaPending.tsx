@@ -139,7 +139,7 @@ const GachaPending = ({ pack, packRect, onAnimationComplete }: Props) => {
 				})}
 				{lightBeamSpecs.map((spec, index) => (
 					<span
-						key={`light-${spec.rotation}-${index}`}
+						key={`light-${spec.rotation}-${spec.delay}-${index}`}
 						ref={(node) => {
 							lightRefs.current[index] = node
 						}}
@@ -149,6 +149,7 @@ const GachaPending = ({ pack, packRect, onAnimationComplete }: Props) => {
 								'linear-gradient(180deg, rgba(255,255,120,0.8), rgba(255,255,120,0))',
 							transformOrigin: 'center top',
 							rotate: `${spec.rotation}deg`,
+							transition: `opacity 0.2s ${spec.delay}ms ease-out`,
 						}}
 					></span>
 				))}

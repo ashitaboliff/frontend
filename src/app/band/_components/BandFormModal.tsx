@@ -74,22 +74,10 @@ const BandFormModal = ({
 
 		const formData = new FormData()
 		formData.append('name', data.name.trim())
-		try {
-			const response =
-				isEditing && bandToEdit
-					? await updateBandAction(bandToEdit.id, formData)
-					: await createBandAction(formData)
-
-			if (response.ok) {
-				onFormSubmitSuccess(
-					response.data as BandDetails,
-					isEditing ? 'update' : 'create',
-				)
-				closeAndReset(defaultValues)
-			} else {
-				feedback.showApiError(response)
-			}
-		} catch (error) {
+		const response = await (isEditing && bandToEdit
+			? updateBandAction(bandToEdit.id, formData)
+			: createBandAction(formData)
+		).catch((error: unknown) => {
 			feedback.showError(
 				'バンドの保存に失敗しました。しばらくしてから再度お試しください。',
 				{
@@ -97,6 +85,20 @@ const BandFormModal = ({
 				},
 			)
 			logError('band form submit error', error)
+			return null
+		})
+
+		if (!response) {
+			return
+		}
+		if (response.ok) {
+			onFormSubmitSuccess(
+				response.data as BandDetails,
+				isEditing ? 'update' : 'create',
+			)
+			closeAndReset(defaultValues)
+		} else {
+			feedback.showApiError(response)
 		}
 	}
 

@@ -43,7 +43,6 @@ const GachaConfirm = ({
 
 	useLayoutEffect(() => {
 		if (!packRect || !animatedPackRef.current) {
-			setAnimationDone(true)
 			return
 		}
 		const ratio = 570 / 300

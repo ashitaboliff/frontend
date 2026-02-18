@@ -4,7 +4,7 @@ import { type ReactNode, useState } from 'react'
 import Popup from '@/shared/ui/molecules/Popup'
 import cn from '@/shared/ui/utils/classNames'
 
-export type ModalProps = {
+type Props = {
 	id: string
 	children: ReactNode
 	btnText?: string
@@ -29,7 +29,7 @@ const Modal = ({
 	defaultOpen = false,
 	open: controlledOpen,
 	onOpenChange,
-}: ModalProps) => {
+}: Props) => {
 	const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
 	const open = controlledOpen ?? uncontrolledOpen
 	const dialogTitle =

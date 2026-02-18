@@ -91,27 +91,29 @@ const DeniedBookingPage = ({ deniedBookings, query, headers }: Props) => {
 		setIsActionLoading(true)
 		actionFeedback.clearFeedback()
 		globalFeedback.clearFeedback()
-		try {
-			const res = await deleteDeniedBookingAction({
-				id: selectedBooking.id,
-			})
-			if (res.ok) {
-				await mutateAllBookingCalendars(mutate)
-				setIsDeleteOpen(false)
-				setSelectedBooking(null)
-				globalFeedback.showSuccess('予約禁止日を削除しました。')
-				router.refresh()
-			} else {
-				actionFeedback.showApiError(res)
-			}
-		} catch (error) {
+		const res = await deleteDeniedBookingAction({
+			id: selectedBooking.id,
+		}).catch((error: unknown) => {
 			logError('deleteDeniedBookingAction failed', error)
 			actionFeedback.showError(
 				'予約禁止日の削除中に予期せぬエラーが発生しました。',
 			)
-		} finally {
+			return null
+		})
+		if (!res) {
 			setIsActionLoading(false)
+			return
 		}
+		if (res.ok) {
+			await mutateAllBookingCalendars(mutate)
+			setIsDeleteOpen(false)
+			setSelectedBooking(null)
+			globalFeedback.showSuccess('予約禁止日を削除しました。')
+			router.refresh()
+		} else {
+			actionFeedback.showApiError(res)
+		}
+		setIsActionLoading(false)
 	}, [actionFeedback, router, selectedBooking, globalFeedback, mutate])
 
 	const handleCloseDelete = useCallback(() => {
