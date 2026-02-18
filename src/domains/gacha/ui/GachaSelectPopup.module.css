@@ -1,0 +1,25 @@
+.pullCta {
+  background: linear-gradient(
+    45deg,
+    #ff2d2d 0%,
+    #ff7a21 12%,
+    #ffd326 24%,
+    #c7f543 36%,
+    #56d85f 48%,
+    #2ad0c7 60%,
+    #2a8bff 72%,
+    #1f4bd8 84%,
+    #7b2eff 100%
+  );
+  animation: gacha-yoyo-scale 1.5s ease-in-out infinite;
+}
+
+@keyframes gacha-yoyo-scale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}

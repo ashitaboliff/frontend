@@ -11,6 +11,8 @@ import {
 	MdOutlineEditCalendar,
 	RxCountdownTimer,
 } from '@/shared/ui/icons'
+import cn from '@/shared/ui/utils/classNames'
+import styles from './Header.module.css'
 import HeaderIcon from './HeaderIcon'
 
 const MenuLinks = [
@@ -101,11 +103,16 @@ const Header = async () => {
 					{MenuLinks.map((link) => (
 						<li
 							key={link.href}
-							className={link.id === 'paypal' ? 'gaming' : ''}
+							className={cn(
+								link.id === 'paypal' ? styles.gamingFrame : undefined,
+							)}
 						>
 							<Link
 								href={link.href}
-								className={`flex items-center gap-4 text-lg ${link.id === 'paypal' ? 'inner' : ''}`}
+								className={cn(
+									'flex items-center gap-4 text-lg',
+									link.id === 'paypal' ? styles.gamingInner : undefined,
+								)}
 							>
 								<link.icon />
 								{link.label}

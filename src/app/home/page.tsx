@@ -1,6 +1,14 @@
 import HomeButton from '@/app/home/_components/HomeButton'
 import Carousel from '@/app/home/_components/HomeCarousel'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 import { gkktt } from '@/shared/lib/fonts'
+
+export const metadata = createMetaData({
+	title: 'ホーム',
+	description:
+		'信州大学・長野県立大学の軽音サークル「あしたぼ」の公式ホームページです。',
+	url: '/home',
+})
 
 const Page = async () => {
 	return (

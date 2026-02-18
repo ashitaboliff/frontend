@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import UserPageLayout from '@/app/user/_components/UserPageLayout'
 import UserPageTabs from '@/app/user/_components/UserPageTabs'
 import { UserPageParamsSchema } from '@/app/user/schema'
@@ -43,12 +44,14 @@ const UserPageServer = async ({ searchParams }: Props) => {
 
 				return (
 					<UserPageLayout session={session} profile={profile}>
-						<UserPageTabs
-							session={session}
-							gachaCarouselData={gachaCarouselData}
-							profile={profile}
-							tab={tab}
-						/>
+						<Suspense>
+							<UserPageTabs
+								session={session}
+								gachaCarouselData={gachaCarouselData}
+								profile={profile}
+								tab={tab}
+							/>
+						</Suspense>
 					</UserPageLayout>
 				)
 			}}

@@ -5,7 +5,7 @@ import { buildPathWithSearch } from '@/domains/auth/utils/authRedirect'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export const metadata = createMetaData({
-	title: 'コマ表新規予約 | あしたぼホームページ',
+	title: 'コマ表新規予約',
 	url: '/booking/new',
 })
 

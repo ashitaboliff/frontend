@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import Link from 'next/link'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import { LuCalendar, LuCalendarSync } from '@/shared/ui/icons'
 
@@ -40,9 +41,9 @@ const UsagePage = async () => {
 				</p>
 			</div>
 			<article className="prose mt-8 max-w-none">{content}</article>
-			<a className="btn btn-ghost mt-5 w-full" href="/admin">
+			<Link className="btn btn-ghost mt-5 w-full" href="/admin">
 				ホームに戻る
-			</a>
+			</Link>
 		</div>
 	)
 }

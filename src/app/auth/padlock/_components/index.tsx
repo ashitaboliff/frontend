@@ -7,7 +7,7 @@ import AuthLoadingIndicator from '@/domains/auth/ui/AuthLoadingIndicator'
 import { getImageUrl } from '@/shared/lib/r2'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 
-interface Props {
+type Props = {
 	readonly csrfToken?: string | null
 	readonly callbackUrl?: string | null
 }
@@ -60,9 +60,9 @@ const PadLockPage = ({ csrfToken, callbackUrl }: Props) => {
 					/>
 				</figure>
 				<div className="flex flex-col items-center justify-center gap-y-2 p-4">
-					<div className="mx-2 text-center font-bold text-base">
+					<p className="mx-2 text-center font-bold text-base">
 						部室のパスワードを入力してください
-					</div>
+					</p>
 					<PadlockForm
 						register={register}
 						errors={errors}

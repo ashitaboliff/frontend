@@ -78,6 +78,18 @@
 - **AddToCalendarModal**  
   - 予定情報から Google/Yahoo/Apple 追加リンクを生成するモーダル。
 
+## layout
+- **Header**
+  - PayPalリンクのレインボー枠演出は `Header.module.css` に閉じ込める。呼び出し側からは `gamingFrame` / `gamingInner` を直接参照しない。
+
+## ads
+- **Ads / AdSense / MockAdSense**
+  - 開発環境では `MockAdSense` が描画され、見た目と配置のみを検証できる。
+  - `adFormat="fluid"` の場合、モック側でコンテナ実幅を監視し、`250px` 未満だと警告表示される。
+  - `fluid` の実運用ではラッパーの幅が `250px` 以上になるように `wrapperClassName` や親レイアウトを調整する。
+- **CreepingOverlayAd**
+  - 固定配置・落下アニメーションは `CreepingOverlayAd.module.css` で管理し、`globals.css` に逆流させない。
+
 ## 新規コンポーネントを追加する際のガイド
 1. **階層を決める**:  
    - ドメイン非依存で単一要素 → atoms  
@@ -98,6 +110,7 @@
    - 追加後は `pnpm --filter frontend ts` を必ず実行。必要なら Biome の `check:fix` も。
 6. **スタイル**:  
    - DaisyUI/Tailwind のユーティリティのみで完結させ、レイアウト固定値は極力避ける。  
+   - 固有のスタイルが必要な場合はモジュール CSS に閉じ込め、呼び出し側で上書きできるようにする。
    - 余白・背景・枠線は「最低限」。呼び出し側が上書きしやすい構成にする。
 
 ## 既知の依存ユーティリティ

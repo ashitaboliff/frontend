@@ -2,7 +2,7 @@
 
 このプロジェクトは信州大学／長野県立大学の軽音サークル「あしたぼ」の活動をオンラインで支援する Next.js 16 アプリケーションです。
 
-- **主な機能**: 部室予約管理、バンド管理、動画配信、ガチャ演出、スケジュール管理
+- **主な機能**: 部室予約管理、バンド管理、動画配信、ガチャ演出
 - **言語**: TypeScript, React 19
 - **スタイリング**: Tailwind CSS 4 + daisyUI
 - **状態管理**: SWR + Next.js Server Actions
@@ -14,6 +14,7 @@
 - コード例を含む場合は、適切なコードブロックで囲んでください。
 - タスクを適切に分割し、作業終了後の最終出力に残ったタスクを、その詳細とともにリストアップしてください。
 - Context 7などを適切に参照し、最新の情報を反映してください。
+- `/shared/ui/` 以下のコンポーネントは、プロジェクト全体で再利用される共通 UI コンポーネントです。以下の変更は`/shared/ui/shared-ui-usage.md`を更新してください。
 
 ## アーキテクチャの原則
 
@@ -22,11 +23,10 @@
 ```text
 src/domain/booking/
 ├─ api/
-│  ├─ bookingAction.ts   # サーバーアクション。API 呼び出し＋再検証タグ管理
-│  ├─ bookingFetcher.ts  # SWR 用のキー生成とフェッチャー
-│  └─ dto.ts             # API レスポンスからドメイン型への変換
+│  ├─ action.ts          # サーバーアクション。BE API 呼び出し＋再検証タグ管理
+│  └─ fetcher.ts         # `/api`をbffとしたクライアントフェッチャー + SWR 用のキー生成
 ├─ constants/            # ドメイン固有定数（表示範囲・タイムスロット等）
-├─ hooks/                # 週ナビゲーションや SWR ラッパー
+├─ hooks/                # 週ナビゲーションなどのカスタムフック
 ├─ model/                # Booking ドメインの TypeScript 型, Zod スキーマ
 ├─ ui/                   # 画面 UI（MainPage, Calendar, Create など）
 └─ content/              # 使い方モーダルに表示する MDX
@@ -50,7 +50,6 @@ Page (Server)
       → getBookingByDateAction (Server Action)
         → backend API call
         → response + revalidateTag
-      → response to domain type (service.ts)
     → display on Calendar
 ```
 
@@ -71,10 +70,8 @@ Page (Server)
 
 ### 新機能追加
 
-- [ ] `src/domain/<domain>/model/` に ドメイン型, Zod スキーマ を定義
-- [ ] `src/domain/<domain>/api/dto.ts` に API レスポンス → ドメイン型の変換ロジック を実装
+- [ ] `src/domain/<domain>/model/` に ドメイン型, Zod スキーマ を定義 + API契約スキーマ`@ashitabo/types`を必要に応じて変更
 - [ ] `src/domain/<domain>/api/` にサーバーアクション を実装（`revalidateTag` を忘れずに）
-- [ ] `src/domain/<domain>/hooks/` に SWR ラッパー を実装
 - [ ] `src/domain/<domain>/ui/` に UI を実装
 - [ ] `src/app/<domain>/_components/` に ページ専用クライアントコンポーネント を実装
 - [ ] `src/app/<domain>/page.tsx` から上記コンポーネント・アクション を使用
@@ -131,38 +128,25 @@ export const createBookingAction = async ({
 // fetcher.ts
 export const bookingRangeFetcher = async ([
 	cacheKey,
-	startDate,
-	endDate,
-]: BookingRangeKey): Promise<BookingResponse | null> => {
+	start,
+	end,
+]: BookingRangeKey): Promise<BookingCalendarResponse> => {
 	if (cacheKey !== BOOKING_CALENDAR_SWR_KEY) {
 		throw new Error('Invalid cache key for booking calendar fetcher')
 	}
 
-	const res = await getBookingByDateAction({ startDate, endDate })
+	const res = await bffGet('/booking', {
+		searchParams: { start, end },
+		schemas: {
+			searchParams: BookingRangeQuerySchema,
+			response: BookingCalendarResponseSchema,
+		},
+	})
 	if (res.ok) {
 		return res.data
 	}
 
 	throw res
-}
-
-// hooks.ts
-eexport const useBookingCalendarData = ({
-	viewDate,
-	viewRangeDays,
-	fallbackData,
-	config,
-}: BookingCalendarDataOptions): SWRResponse<
-	BookingResponse | null,
-	unknown
-> => {
-	const key = buildBookingRangeKey(viewDate, viewRangeDays)
-	return useSWR<BookingResponse | null>(key, bookingRangeFetcher, {
-		fallbackData: fallbackData ?? null,
-		revalidateOnFocus: false,
-		keepPreviousData: true,
-		...config,
-	})
 }
 ```
 
@@ -172,12 +156,8 @@ eexport const useBookingCalendarData = ({
 
 コード変更後に必ず実行:
 ```bash
-npm run ts         # 型チェック
-npm run lint:fix   # 自動修正
-npm run format:fix # フォーマット自動修正
-npm run check      # lint + format チェック
-npm run ts         # 型チェック
-npm run build      # 本番ビルド試行（型エラーをキャッチ）
+pnpm ts         # 型チェック
+pnpm check:fix      # lint + format チェック
 ```
 
 ## よくある実装パターン
@@ -185,7 +165,7 @@ npm run build      # 本番ビルド試行（型エラーをキャッチ）
 ### 1. フォーム送信 + キャッシュ更新 + ユーザーフィードバック
 
 ```typescript
-const onSubmit: SubmitHandler<BookingCreateFormValues> = async (data) => {
+const onSubmit = async (data: BookingCreateFormValues) => {
   messageFeedback.clearFeedback()
   try {
     const res = await createBookingAction({ /* ... */ })
@@ -381,11 +361,10 @@ export const updateBookingAction = async ({ /* ... */ }) => {
 ### テスト・型チェック
 
 ```bash
-npm run format:fix # フォーマット自動修正
-npm run check      # lint + format チェック
-npm run ts         # 型チェック
-npm run test       # ユニットテスト実行
-npm run build      # 本番ビルド試行（型エラーをキャッチ）
+pnpm check:ifx  # lint + format チェック
+pnpm ts         # 型チェック
+pnpm test       # ユニットテスト実行
+pnpm build      # 本番ビルド試行（型エラーをキャッチ）
 ```
 
 ## 推奨参照順序

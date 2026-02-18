@@ -1,5 +1,12 @@
 import BandAddForm from '@/app/band/add/_components'
 import { AuthPage } from '@/domains/auth/ui/UnifiedAuth'
+import { createMetaData } from '@/shared/hooks/useMetaData'
+
+export const metadata = createMetaData({
+	title: 'バンド登録',
+	description: '既存のバンドをあしたぼに登録するページです。',
+	url: '/band/add',
+})
 
 const Page = async () => {
 	return (

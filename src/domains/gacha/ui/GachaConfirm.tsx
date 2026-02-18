@@ -6,6 +6,8 @@ import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import type { PackSelectionPayload } from '@/domains/gacha/ui/GachaSelectPopup'
 import { Image } from '@/shared/ui/atoms/ImageWithFallback'
 import { TbArrowBackUp } from '@/shared/ui/icons'
+import cn from '@/shared/ui/utils/classNames'
+import styles from './GachaConfirm.module.css'
 
 type PackRect = PackSelectionPayload['rect']
 
@@ -84,7 +86,12 @@ const GachaConfirm = ({
 					className="h-full w-full object-contain drop-shadow-[0_25px_25px_rgba(0,0,0,0.75)]"
 				/>
 				{animationDone && (
-					<div className="gacha-stripe-overlay -translate-x-1/2 absolute top-[12.7%] left-1/2 z-40 h-2 w-full" />
+					<div
+						className={cn(
+							styles.stripeOverlay,
+							'-translate-x-1/2 absolute top-[12.7%] left-1/2 z-40 h-2 w-full',
+						)}
+					/>
 				)}
 			</button>
 			<div className="fixed bottom-0 z-40 flex h-32 w-full justify-center bg-white py-4">

@@ -1,7 +1,9 @@
 'use client'
 
-import { type CSSProperties, useMemo, useRef } from 'react'
+import { type CSSProperties, useRef, useState } from 'react'
 import type { GachaRarity } from '@/domains/gacha/model/types'
+import cn from '@/shared/ui/utils/classNames'
+import styles from './Sparkle.module.css'
 
 type Props = {
 	size: number
@@ -10,6 +12,27 @@ type Props = {
 	className?: string
 	rarity: GachaRarity
 	gradientId: string
+}
+
+const DEFAULT_STYLE: CSSProperties = {}
+
+const computeSparkleMotion = (rarity: GachaRarity) => {
+	let baseScale = 1.3
+	let baseSpeed = 1.4
+	if (rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE') {
+		baseScale = 1.7
+		baseSpeed = 1.0
+	} else if (rarity === 'SS_RARE') {
+		baseScale = 1.55
+		baseSpeed = 1.2
+	}
+	return {
+		scale: baseScale + Math.random() * 0.4,
+		opacity: 0.45 + Math.random() * 0.35,
+		rotate: `${Math.random() * 40 - 20}deg`,
+		duration: `${baseSpeed + Math.random() * 0.8}s`,
+		delay: `${Math.random() * 0.8}s`,
+	}
 }
 
 /**
@@ -25,30 +48,13 @@ type Props = {
 const Sparkle = ({
 	size,
 	color,
-	style = {},
+	style = DEFAULT_STYLE,
 	className,
 	rarity,
 	gradientId,
 }: Props) => {
 	const sparkleRef = useRef<SVGSVGElement>(null)
-	const sparkleMotion = useMemo(() => {
-		let baseScale = 1.3
-		let baseSpeed = 1.4
-		if (rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE') {
-			baseScale = 1.7
-			baseSpeed = 1.0
-		} else if (rarity === 'SS_RARE') {
-			baseScale = 1.55
-			baseSpeed = 1.2
-		}
-		return {
-			scale: baseScale + Math.random() * 0.4,
-			opacity: 0.45 + Math.random() * 0.35,
-			rotate: `${Math.random() * 40 - 20}deg`,
-			duration: `${baseSpeed + Math.random() * 0.8}s`,
-			delay: `${Math.random() * 0.8}s`,
-		}
-	}, [rarity])
+	const [sparkleMotion] = useState(() => computeSparkleMotion(rarity))
 
 	const sparkleStyle: CSSProperties & Record<`--${string}`, string | number> = {
 		...style,
@@ -58,9 +64,6 @@ const Sparkle = ({
 		animationDuration: sparkleMotion.duration,
 		animationDelay: sparkleMotion.delay,
 	}
-	const sparkleClassName = ['gacha-sparkle', className]
-		.filter(Boolean)
-		.join(' ')
 
 	return (
 		<svg
@@ -68,7 +71,7 @@ const Sparkle = ({
 			width={size}
 			height={size}
 			style={sparkleStyle}
-			className={sparkleClassName}
+			className={cn(styles.sparkle, className)}
 			viewBox="0 0 100 100"
 			aria-hidden="true"
 			focusable="false"

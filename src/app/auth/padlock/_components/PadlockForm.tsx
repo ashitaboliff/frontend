@@ -6,10 +6,9 @@ import {
 	DIGIT_FIELDS,
 	type PadlockDigits,
 } from '@/domains/auth/hooks/usePasswordForm'
+import LineButton from '@/shared/ui/atoms/LineButton'
 
-const inputClass = 'input w-16 h-16 text-center text-2xl'
-
-interface Props {
+type Props = {
 	readonly register: UseFormRegister<PadlockDigits>
 	readonly errors: FieldErrors<PadlockDigits>
 	readonly onSubmit: FormEventHandler<HTMLFormElement>
@@ -34,7 +33,10 @@ const PadlockForm = ({
 	onDigitKeyDown,
 	disableSubmit,
 }: Props) => (
-	<form onSubmit={onSubmit} className="flex flex-col items-center gap-y-2">
+	<form
+		onSubmit={onSubmit}
+		className="flex w-full flex-col items-center gap-y-2"
+	>
 		<div className="flex flex-row justify-center">
 			{DIGIT_FIELDS.map((field, index) => {
 				const next = DIGIT_FIELDS[index + 1]
@@ -45,7 +47,7 @@ const PadlockForm = ({
 						key={field}
 						type="tel"
 						maxLength={1}
-						className={inputClass}
+						className="input h-16 w-16 text-center text-2xl"
 						{...registerProps}
 						onChange={(event) => {
 							registerProps.onChange(event)
@@ -59,15 +61,15 @@ const PadlockForm = ({
 				)
 			})}
 		</div>
-		<div className="flex flex-row justify-center space-x-2">
-			<button
-				type="submit"
-				className="btn btn-primary"
-				disabled={disableSubmit}
-			>
+		<div className="flex w-full justify-center space-x-2">
+			<LineButton className="flex-1" disabled={disableSubmit} type="submit">
 				送信
-			</button>
-			<button type="button" className="btn btn-outline" onClick={onClear}>
+			</LineButton>
+			<button
+				type="button"
+				className="btn btn-outline flex-1"
+				onClick={onClear}
+			>
 				入力をクリア
 			</button>
 		</div>

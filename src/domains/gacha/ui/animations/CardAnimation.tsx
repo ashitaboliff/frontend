@@ -2,7 +2,7 @@
 
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { type CSSProperties, useId, useMemo, useRef, useState } from 'react'
+import { type CSSProperties, useEffect, useId, useRef, useState } from 'react'
 import { GachaRarityMap } from '@/domains/gacha/config/config'
 import type { GachaRarity } from '@/domains/gacha/model/types'
 import {
@@ -22,6 +22,46 @@ type CardProps = {
 }
 
 type SparkleStyle = CSSProperties & Record<`--${string}`, string | number>
+
+const computeStarPositions = (
+	rarity: GachaRarity,
+): Array<{ style: SparkleStyle; id: string }> => {
+	const positions: Array<{ style: SparkleStyle; id: string }> = []
+	const numStars =
+		rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE'
+			? 28
+			: rarity === 'SS_RARE'
+				? 22
+				: 16
+	for (let i = 0; i < numStars; i++) {
+		const side = Math.floor(Math.random() * 4)
+		let style: SparkleStyle = {}
+		const offset = `${Math.random() * 25}%`
+		const mainPos = `${Math.random() * 100}%`
+
+		if (side === 0) style = { top: offset, left: mainPos }
+		else if (side === 1) style = { bottom: offset, left: mainPos }
+		else if (side === 2) style = { left: offset, top: mainPos }
+		else style = { right: offset, top: mainPos }
+		const twinkleDelay = `${Math.random() * 1.1}s`
+		const twinkleDuration = `${1.3 + Math.random() * 1.1}s`
+		const twinkleScale = 1.1 + Math.random() * 0.7
+		const twinkleOpacity = 0.4 + Math.random() * 0.4
+		const twinkleRotate = `${Math.random() * 30 - 15}deg`
+		positions.push({
+			style: {
+				...style,
+				'--sparkle-scale': twinkleScale,
+				'--sparkle-rotate': twinkleRotate,
+				'--sparkle-opacity': twinkleOpacity,
+				animationDelay: twinkleDelay,
+				animationDuration: twinkleDuration,
+			},
+			id: `${side}-${offset}-${mainPos}-${Math.random().toString(36).slice(2)}`,
+		})
+	}
+	return positions
+}
 
 export const CardAnimation = ({
 	frontImageSignedUrl,
@@ -62,7 +102,9 @@ export const CardAnimation = ({
 			return () => {
 				timeline.kill()
 				gsap.killTweensOf(cardElement)
-				gsap.killTweensOf(cardElement?.querySelectorAll('.backface-hidden'))
+				gsap.killTweensOf(
+					cardElement?.querySelectorAll('[data-card-face="true"]'),
+				)
 			}
 		},
 		{ dependencies: [rarity, imagesLoaded, delay], scope: cardRef },
@@ -72,42 +114,12 @@ export const CardAnimation = ({
 		rarity === 'SUPER_RARE' ? 12 : rarity === 'SS_RARE' ? 14 : 16
 	const starColor = rarity === 'SECRET_RARE' ? '#000' : '#FFD700'
 
-	const fixedStarPositions = useMemo(() => {
-		const positions: Array<{ style: SparkleStyle; id: string }> = []
-		const numStars =
-			rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE'
-				? 28
-				: rarity === 'SS_RARE'
-					? 22
-					: 16
-		for (let i = 0; i < numStars; i++) {
-			const side = Math.floor(Math.random() * 4)
-			let style: SparkleStyle = {}
-			const offset = `${Math.random() * 25}%`
-			const mainPos = `${Math.random() * 100}%`
+	const [fixedStarPositions, setFixedStarPositions] = useState(() =>
+		computeStarPositions(rarity),
+	)
 
-			if (side === 0) style = { top: offset, left: mainPos }
-			else if (side === 1) style = { bottom: offset, left: mainPos }
-			else if (side === 2) style = { left: offset, top: mainPos }
-			else style = { right: offset, top: mainPos }
-			const twinkleDelay = `${Math.random() * 1.1}s`
-			const twinkleDuration = `${1.3 + Math.random() * 1.1}s`
-			const twinkleScale = 1.1 + Math.random() * 0.7
-			const twinkleOpacity = 0.4 + Math.random() * 0.4
-			const twinkleRotate = `${Math.random() * 30 - 15}deg`
-			positions.push({
-				style: {
-					...style,
-					'--sparkle-scale': twinkleScale,
-					'--sparkle-rotate': twinkleRotate,
-					'--sparkle-opacity': twinkleOpacity,
-					animationDelay: twinkleDelay,
-					animationDuration: twinkleDuration,
-				},
-				id: `${side}-${offset}-${mainPos}-${Math.random().toString(36).slice(2)}`,
-			})
-		}
-		return positions
+	useEffect(() => {
+		setFixedStarPositions(computeStarPositions(rarity))
 	}, [rarity])
 
 	const sizeVariations = [-6, 0, 6, 0]
@@ -116,10 +128,15 @@ export const CardAnimation = ({
 		<div className="relative flex w-full justify-center">
 			<Hover3D
 				ref={cardRef}
-				className="transform-style-3d relative h-100 w-75"
+				className="relative h-100 w-75"
+				style={{ transformStyle: 'preserve-3d' }}
 				noRenderCells={true}
 			>
-				<div className="backface-hidden absolute h-full w-full overflow-hidden rounded-lg">
+				<div
+					className="absolute h-full w-full overflow-hidden rounded-lg"
+					data-card-face="true"
+					style={{ backfaceVisibility: 'hidden' }}
+				>
 					<Img
 						src={frontImageSignedUrl}
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-おもて面`}
@@ -129,7 +146,11 @@ export const CardAnimation = ({
 					/>
 				</div>
 				<Hover3DCells />
-				<div className="backface-hidden rotateY-180 absolute h-full w-full scale-100! overflow-hidden rounded-lg">
+				<div
+					className="absolute h-full w-full scale-100! overflow-hidden rounded-lg"
+					data-card-face="true"
+					style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+				>
 					<img
 						src="/backimage.webp"
 						alt={`ガチャ結果-${GachaRarityMap[rarity]}-うら面`}

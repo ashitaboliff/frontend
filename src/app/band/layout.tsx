@@ -3,7 +3,7 @@ import { createMetaData } from '@/shared/hooks/useMetaData'
 import HomePageHeader from '@/shared/ui/organisms/HomePageHeader'
 
 export const metadata = createMetaData({
-	title: 'バンド組もうぜ!! | あしたぼホームページ',
+	title: 'バンド組もうぜ!!',
 	description: 'バンドを作成して、メンバーを募集しよう！',
 	url: '/band',
 })

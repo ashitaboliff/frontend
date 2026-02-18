@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { getImageUrl } from '@/shared/lib/r2'
@@ -20,25 +21,24 @@ const NotFoundImages: { id: number; src: string; score: number }[] = [
 	{ id: 10, src: '/error/404/10.webp', score: 135 },
 ]
 
-export default async function NotFound() {
-	const selectImage = async () => {
-		const random = Math.floor(Math.random() * 1000)
-		let cumulativeScore = 0
-
-		for (const image of NotFoundImages) {
-			cumulativeScore += image.score
-			if (random < cumulativeScore) {
-				return image.src
-			}
+const selectNotFoundImage = (): string => {
+	const random = Math.floor(Math.random() * 1000)
+	let cumulativeScore = 0
+	for (const image of NotFoundImages) {
+		cumulativeScore += image.score
+		if (random < cumulativeScore) {
+			return image.src
 		}
-		return NotFoundImages[0].src
 	}
+	return NotFoundImages[0].src
+}
 
-	const selectedImage = await selectImage()
+export default async function NotFound() {
+	const selectedImage = selectNotFoundImage()
 
 	return (
 		<div className="flex flex-col justify-center text-center">
-			<img
+			<Image
 				src={getImageUrl(selectedImage)}
 				alt="404 Not Found"
 				width={400}

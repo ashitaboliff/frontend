@@ -113,10 +113,7 @@ export const BookingEditProvider = ({
 		flashMessage: null,
 	})
 
-	const isOwner = useMemo(
-		() => state.booking.userId === session.user.id,
-		[state.booking.userId, session.user.id],
-	)
+	const isOwner = state.booking.userId === session.user.id
 
 	const requireAuth = useCallback((message: string) => {
 		dispatch({ type: 'REQUIRE_AUTH', message })

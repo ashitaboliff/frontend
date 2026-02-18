@@ -58,6 +58,10 @@ export const Tabs = ({
 
 	const isControlled = value !== undefined
 
+	const [internalValue, setInternalValue] = useState<string>(() => {
+		return value ?? tabValues[0] ?? 'tab-0'
+	})
+
 	const setActive = useCallback(
 		(nextValue: string) => {
 			if (!isControlled) {
@@ -68,26 +72,11 @@ export const Tabs = ({
 		[isControlled, onChange],
 	)
 
-	const [internalValue, setInternalValue] = useState<string>(() => {
-		return value ?? tabValues[0] ?? 'tab-0'
-	})
+	const validInternalValue = tabValues.includes(internalValue)
+		? internalValue
+		: (tabValues[0] ?? internalValue)
 
-	useEffect(() => {
-		if (value) {
-			setInternalValue(value)
-		}
-	}, [value])
-
-	useEffect(() => {
-		setInternalValue((prev) => {
-			if (tabValues.includes(prev)) {
-				return prev
-			}
-			return tabValues[0] ?? prev
-		})
-	}, [tabValues])
-
-	const activeValue = value ?? internalValue
+	const activeValue = value ?? validInternalValue
 	const [mountedTabs, setMountedTabs] = useState<string[]>([])
 
 	useEffect(() => {

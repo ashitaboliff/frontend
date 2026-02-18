@@ -4,7 +4,7 @@ import { getSafeRedirectFrom } from '@/domains/auth/utils/authRedirect'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export const metadata = createMetaData({
-	title: 'ユーザ設定 | あしたぼホームページ',
+	title: 'ユーザ設定',
 	description: 'ユーザ設定ページです。必要な情報を入力してください。',
 	url: '/auth/signin/setting',
 })

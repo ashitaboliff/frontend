@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export const metadata = createMetaData({
-	title: 'コマ表 | あしたぼホームページ',
+	title: 'コマ表',
 	description: 'こちらからあしたぼ内でのサークル棟音楽室の予約が可能です。',
 	url: '/booking',
 })

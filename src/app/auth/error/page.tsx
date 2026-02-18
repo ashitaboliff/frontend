@@ -4,7 +4,7 @@ import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function generateMetadata() {
 	return createMetaData({
-		title: '認証エラー | あしたぼホームページ',
+		title: '認証エラー',
 		description: '認証エラーが発生しました。',
 		url: '/auth/error',
 	})
