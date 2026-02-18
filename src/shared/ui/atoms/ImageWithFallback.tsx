@@ -2,13 +2,13 @@
 
 import type { ImageProps as NextImageProps } from 'next/image'
 import NextImage from 'next/image'
-import { type ImgHTMLAttributes, useState } from 'react'
+import { useState } from 'react'
 
 export type ImgProps = {
 	src?: string
 	alt?: string
 	fallback?: string
-} & ImgHTMLAttributes<HTMLImageElement>
+} & Omit<NextImageProps, 'src' | 'alt'>
 
 /**
  * 素の img タグ版。src が空または読み込み失敗時に fallback を表示する。
@@ -27,7 +27,7 @@ const Img = ({
 		if (imgSrc !== fallback) setImgSrc(fallback)
 	}
 
-	return <img src={imgSrc} alt={alt} onError={handleError} {...props} />
+	return <NextImage src={imgSrc} alt={alt} onError={handleError} {...props} />
 }
 
 export type ImageProps = { src: string; fallback?: string } & Omit<

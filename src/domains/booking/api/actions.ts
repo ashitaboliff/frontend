@@ -17,14 +17,8 @@ import {
 	BookingPasswordVerifyRequestSchema,
 	BookingPublicSchema,
 	BookingUpdateRequestSchema,
-	BookingUserListQuerySchema,
-	BookingUserListResponseSchema,
 } from '@/domains/booking/model/schema'
-import type {
-	Booking,
-	BookingAccessGrant,
-	BookingUserListResponse,
-} from '@/domains/booking/model/types'
+import type { Booking, BookingAccessGrant } from '@/domains/booking/model/types'
 import {
 	buildFlashMessageValue,
 	FLASH_MESSAGE_COOKIE_OPTIONS,
@@ -86,37 +80,6 @@ export const getBookingByIdAction = async (
 		logError('getBookingByIdAction error', error)
 		throw error
 	}
-}
-
-export const getBookingByUserIdAction = async ({
-	userId,
-	page,
-	perPage,
-	sort,
-}: {
-	userId: string
-	page: number
-	perPage: number
-	sort: 'new' | 'old'
-}): Promise<ApiResponse<BookingUserListResponse>> => {
-	const res = await apiGet(`/booking/user/${userId}`, {
-		searchParams: {
-			page,
-			perPage,
-			sort,
-		},
-		next: { revalidate: 24 * 60 * 60, tags: [`booking-user-${userId}`] },
-		schemas: {
-			searchParams: BookingUserListQuerySchema,
-			response: BookingUserListResponseSchema,
-		},
-	})
-
-	if (!res.ok) {
-		return withFallbackMessage(res, 'ユーザーの予約一覧の取得に失敗しました。')
-	}
-
-	return okResponse(res.data)
 }
 
 export const createBookingAction = async ({

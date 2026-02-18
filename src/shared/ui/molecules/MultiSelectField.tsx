@@ -1,6 +1,5 @@
 'use client'
 
-import { useMemo } from 'react'
 import {
 	type Control,
 	Controller,
@@ -45,7 +44,6 @@ const MultiSelectField = <
 	placeholder = '選択してください',
 }: MultiSelectFieldProps<TFieldValues, TValue>) => {
 	const { isOpen, toggle, dropdownRef } = useDropdown()
-	const optionEntries = useMemo(() => options, [options])
 
 	return (
 		<Controller
@@ -59,9 +57,7 @@ const MultiSelectField = <
 						? placeholder
 						: selectedValues
 								.map((val) => {
-									const entry = optionEntries.find(
-										(option) => option.value === val,
-									)
+									const entry = options.find((option) => option.value === val)
 									return entry ? entry.label : String(val)
 								})
 								.join(', ')
@@ -108,7 +104,7 @@ const MultiSelectField = <
 									className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 max-h-60 space-y-2 overflow-y-auto pb-4"
 									aria-label={label ?? '選択肢'}
 								>
-									{optionEntries.map((option) => (
+									{options.map((option) => (
 										<li key={`li-${String(option.value)}`}>
 											<label className="flex cursor-pointer items-center space-x-2 rounded-md p-1 hover:bg-base-200">
 												<input
@@ -124,7 +120,7 @@ const MultiSelectField = <
 										</li>
 									))}
 								</ul>
-								{optionEntries.length > 8 && (
+								{options.length > 8 && (
 									<div className="pointer-events-none absolute bottom-0 left-0 h-10 w-full bg-linear-to-t from-white to-transparent" />
 								)}
 							</div>

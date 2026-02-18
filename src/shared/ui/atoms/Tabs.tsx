@@ -6,7 +6,6 @@ import {
 	type ReactNode,
 	Suspense,
 	useCallback,
-	useEffect,
 	useMemo,
 	useState,
 } from 'react'
@@ -58,54 +57,39 @@ export const Tabs = ({
 
 	const isControlled = value !== undefined
 
+	const [internalValue, setInternalValue] = useState<string>(() => {
+		return value ?? tabValues[0] ?? 'tab-0'
+	})
+
+	const [mountedTabsState, setMountedTabsState] = useState<string[]>(() => {
+		const initialTab = value ?? tabValues[0]
+		return initialTab ? [initialTab] : []
+	})
+
 	const setActive = useCallback(
 		(nextValue: string) => {
 			if (!isControlled) {
 				setInternalValue(nextValue)
 			}
+			if (mountStrategy === 'lazy') {
+				setMountedTabsState((prev) =>
+					prev.includes(nextValue) ? prev : [...prev, nextValue],
+				)
+			}
 			onChange?.(nextValue)
 		},
-		[isControlled, onChange],
+		[isControlled, mountStrategy, onChange],
 	)
 
-	const [internalValue, setInternalValue] = useState<string>(() => {
-		return value ?? tabValues[0] ?? 'tab-0'
-	})
+	const validInternalValue = tabValues.includes(internalValue)
+		? internalValue
+		: (tabValues[0] ?? internalValue)
 
-	useEffect(() => {
-		if (value) {
-			setInternalValue(value)
-		}
-	}, [value])
-
-	useEffect(() => {
-		setInternalValue((prev) => {
-			if (tabValues.includes(prev)) {
-				return prev
-			}
-			return tabValues[0] ?? prev
-		})
-	}, [tabValues])
-
-	const activeValue = value ?? internalValue
-	const [mountedTabs, setMountedTabs] = useState<string[]>([])
-
-	useEffect(() => {
-		if (mountStrategy !== 'lazy') {
-			return
-		}
-		setMountedTabs((prev) => {
-			const next = new Set(prev)
-			next.add(activeValue)
-			const filtered = Array.from(next).filter((tabValue) =>
-				tabValues.includes(tabValue),
-			)
-			const isSame =
-				filtered.length === prev.length &&
-				filtered.every((tabValue) => prev.includes(tabValue))
-			return isSame ? prev : filtered
-		})
-	}, [activeValue, mountStrategy, tabValues])
+	const activeValue = value ?? validInternalValue
+	const mountedTabs = useMemo(
+		() => mountedTabsState.filter((tabValue) => tabValues.includes(tabValue)),
+		[mountedTabsState, tabValues],
+	)
 
 	if (tabChildren.length === 0) {
 		return null

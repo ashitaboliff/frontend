@@ -5,8 +5,16 @@ import Loading from '@/app/video/_components/VideoSearchLoading'
 import { VideoSearchPageParamsSchema } from '@/app/video/schema'
 import { searchYoutubeAction } from '@/domains/video/api/actions'
 import type { VideoSearchQuery } from '@/domains/video/model/types'
+import { createMetaData } from '@/shared/hooks/useMetaData'
 import PaginatedErrorView from '@/shared/ui/organisms/PaginatedErrorView'
 import { logError } from '@/shared/utils/logger'
+
+export const metadata = createMetaData({
+	title: '動画一覧',
+	description:
+		'あしたぼのライブ動画一覧です。バンド名やライブ名で検索できます。',
+	url: '/video',
+})
 
 type Props = {
 	readonly searchParams: Promise<Record<string, string | string[] | undefined>>

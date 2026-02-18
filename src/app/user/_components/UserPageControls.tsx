@@ -28,21 +28,23 @@ const UserPageControls = ({ session }: Props) => {
 	const handleSignOut = useCallback(async () => {
 		signOutFeedback.clearFeedback()
 		setIsSigningOut(true)
-		try {
-			const result = await signOutAction()
-			if (result.ok) {
-				router.push('/home')
-				return
-			}
-			signOutFeedback.showApiError(result)
-		} catch (error) {
+		const result = await signOutAction().catch((error: unknown) => {
 			signOutFeedback.showError('サインアウトに失敗しました。', {
 				details: error instanceof Error ? error.message : String(error),
 				code: 500,
 			})
-		} finally {
+			return null
+		})
+		if (!result) {
 			setIsSigningOut(false)
+			return
 		}
+		if (result.ok) {
+			router.push('/home')
+			return
+		}
+		signOutFeedback.showApiError(result)
+		setIsSigningOut(false)
 	}, [router, signOutFeedback])
 
 	const role = session.user.role ?? 'USER'

@@ -6,8 +6,8 @@ import { getImageUrl } from '@/shared/lib/r2'
 import { FaInstagram, FaXTwitter, FaYoutube } from '@/shared/ui/icons'
 
 export const metadata = createMetaData({
-	title: '活動内容 あしたぼホームページ',
-	description: '信州大学工학部軽音サークルあしたぼの活動内容です！',
+	title: '活動内容',
+	description: '信州大学工学部軽音サークルあしたぼの活動内容です！',
 	url: '/home/activity',
 })
 
@@ -144,7 +144,7 @@ const Page = async () => {
 							href="https://twitter.com/ashitabo_dongri"
 							target="_blank"
 							rel="noopener noreferrer"
-							className="btn btn-twitter text-sm"
+							className="btn border-none bg-none bg-other-twitter text-sm text-white hover:bg-[#188ad6]"
 						>
 							<FaXTwitter size={15} />
 							Twitter
@@ -153,7 +153,7 @@ const Page = async () => {
 							href="https://www.instagram.com/ashitabo2023/"
 							target="_blank"
 							rel="noopener noreferrer"
-							className="btn btn-instagram text-sm"
+							className="btn border-none text-sm text-white [background:linear-gradient(45deg,#fed475_0%,#e53d5d_50%,#c23186_70%,#9c38bb_100%)] hover:brightness-95"
 						>
 							<FaInstagram size={15} />
 							Instagram

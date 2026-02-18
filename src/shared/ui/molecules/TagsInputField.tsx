@@ -4,8 +4,6 @@ import {
 	type ChangeEvent,
 	type KeyboardEvent,
 	type ReactNode,
-	useEffect,
-	useMemo,
 	useState,
 } from 'react'
 import { type Control, Controller, type UseFormSetValue } from 'react-hook-form'
@@ -29,6 +27,8 @@ export type TagInputFieldProps = {
 	inputClassName?: string
 }
 
+const EMPTY_TAGS: string[] = []
+
 const dedupeTags = (tags: string[]) =>
 	Array.from(new Set(tags.map((t) => t.trim()).filter(Boolean)))
 
@@ -39,19 +39,13 @@ const TagsInputField = ({
 	infoDropdown,
 	placeholder = 'タグを入力しEnterかカンマで追加',
 	control,
-	defaultValue = [],
+	defaultValue = EMPTY_TAGS,
 	onChange,
 	className,
 	inputClassName,
 }: TagInputFieldProps) => {
-	const [tags, setTags] = useState<string[]>(dedupeTags(defaultValue))
+	const [tags, setTags] = useState<string[]>(() => dedupeTags(defaultValue))
 	const [inputValue, setInputValue] = useState<string>('')
-
-	useEffect(() => {
-		if (!control) {
-			setTags(dedupeTags(defaultValue))
-		}
-	}, [control, defaultValue])
 
 	const addTagInternal = (
 		tagValue: string,
@@ -131,7 +125,7 @@ const TagsInputField = ({
 		),
 	}
 
-	const Controlled = useMemo(() => control !== undefined, [control])
+	const Controlled = control !== undefined
 
 	if (Controlled && control) {
 		return (

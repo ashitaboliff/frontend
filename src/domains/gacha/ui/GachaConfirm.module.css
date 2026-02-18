@@ -1,0 +1,20 @@
+.stripeOverlay {
+  background-image: linear-gradient(
+    45deg,
+    #008ffa 0%,
+    #ffffff 25%,
+    #008ffa 50%,
+    #ffffff 75%,
+    #008ffa 100%
+  );
+  animation: gacha-stripe-loop 1s linear infinite;
+}
+
+@keyframes gacha-stripe-loop {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 150px 0;
+  }
+}

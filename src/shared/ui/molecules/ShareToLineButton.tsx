@@ -5,7 +5,7 @@ import { useWindowAlert, useWindowOpen } from '@/shared/hooks/useBrowserApis'
 import PublicEnv from '@/shared/lib/env/public'
 import LineButton from '@/shared/ui/atoms/LineButton'
 
-export type ShareToLineButtonProps = Omit<
+type Props = Omit<
 	ButtonHTMLAttributes<HTMLButtonElement>,
 	'onClick' | 'type' | 'children'
 > & {
@@ -40,7 +40,7 @@ const ShareToLineButton = ({
 	className,
 	label = 'LINEで共有',
 	...rest
-}: ShareToLineButtonProps) => {
+}: Props) => {
 	const openWindow = useWindowOpen()
 	const alertUser = useWindowAlert()
 	const { 'aria-label': ariaLabel, ...buttonProps } = rest

@@ -25,7 +25,7 @@ export default function RootLayout({
 	return (
 		<html lang="ja">
 			<body className={`overflow-x-hidden ${inter.className}`}>
-				<Script strategy="afterInteractive">
+				<Script id="dev-console-message" strategy="afterInteractive">
 					{`console.log('%c拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ watabegg', 'color: #000000; font-size: 20px; padding: 10px; font-weight: bold;');
 console.log('%cRespect for 変態糞学生', 'color: #ff0000; font-size: 20px; padding: 5px; font-weight: bold; font-style: italic;');
 console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size: 14px; padding: 5px; text-decoration: underline;');`}
@@ -35,14 +35,12 @@ console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size
 				<AdSenseScript adsId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''} />
 				<AdSenseProvider clientId={PublicEnv.NEXT_PUBLIC_ADS_ID || ''}>
 					<Header />
-					<main className="mx-auto mt-24 max-w-screen-lg px-3">{children}</main>
-					<Ads placement="Field" />
+					<main className="mx-auto mt-24 max-w-screen-lg px-3">
+						{children}
+						<Ads placement="Field" />
+					</main>
 					<Footer />
 				</AdSenseProvider>
-				<Script
-					src={`https://www.googletagmanager.com/gtag/js?id=${PublicEnv.NEXT_PUBLIC_GA_ID}`}
-					strategy="afterInteractive"
-				/>
 			</body>
 		</html>
 	)

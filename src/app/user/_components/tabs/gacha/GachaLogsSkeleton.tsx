@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 
-interface Props {
+type Props = {
 	readonly logsPerPage: number
 }
 

@@ -8,7 +8,7 @@ import { getSafeRedirectFrom } from '@/domains/auth/utils/authRedirect'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export const metadata = createMetaData({
-	title: '部室鍵認証 | あしたぼホームページ',
+	title: '部室鍵認証',
 	description: '部室鍵認証ページです。部室の鍵を入力してください。',
 	url: '/auth/padlock',
 })

@@ -60,17 +60,20 @@ const MemberRecruitmentForm = () => {
 		setLoading(true)
 		setError(null)
 
-		try {
-			// await createMemberRecruitmentAction(data)
-			// 成功時の処理
-			setPopupOpen(true)
-			// router.push('/band/board') // 募集完了後のリダイレクト
-		} catch (err) {
-			setError('募集の作成に失敗しました。もう一度お試しください。')
-			logError('Member recruitment submission failed', err)
-		} finally {
-			setLoading(false)
-		}
+		await Promise.resolve()
+			.then(() => {
+				// await createMemberRecruitmentAction(data)
+				// 成功時の処理
+				setPopupOpen(true)
+				// router.push('/band/board') // 募集完了後のリダイレクト
+			})
+			.catch((err: unknown) => {
+				setError('募集の作成に失敗しました。もう一度お試しください。')
+				logError('Member recruitment submission failed', err)
+			})
+			.finally(() => {
+				setLoading(false)
+			})
 	}, [])
 
 	return (

@@ -1,12 +1,13 @@
 import { Inter } from 'next/font/google'
 import Image from 'next/image'
+import Link from 'next/link'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { getImageUrl } from '@/shared/lib/r2'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = createMetaData({
-	title: 'ライブ予定 | あしたぼホームページ',
+	title: 'ライブ予定',
 	description:
 		'あしたぼのライブ予定です。あしたぼ関係のライブ情報を随時更新していきます。見に来てね。',
 	url: '/home/live',
@@ -368,13 +369,9 @@ const Page = async () => {
 					</div>
 				</div>
 				<div className="flex flex-row justify-center">
-					<a
-						className="btn btn-outline mt-4 w-44"
-						href="/home"
-						rel="noopener noreferrer"
-					>
+					<Link className="btn btn-outline mt-4 w-44" href="/home">
 						ホームに戻る
-					</a>
+					</Link>
 				</div>
 			</div>
 		</div>

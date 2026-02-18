@@ -5,7 +5,7 @@ import { compileMDX } from 'next-mdx-remote/rsc'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 import { logError } from '@/shared/utils/logger'
 export const metadata = createMetaData({
-	title: '開発者ブログ | あしたぼホームページ',
+	title: '開発者ブログ',
 	description: 'あしたぼホームページ開発チームのブログです。',
 	url: '/blogs',
 })

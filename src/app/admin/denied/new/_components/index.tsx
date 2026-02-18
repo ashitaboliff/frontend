@@ -3,7 +3,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
-import { Controller, type UseFormRegister, useForm } from 'react-hook-form'
+import {
+	Controller,
+	type UseFormRegister,
+	useForm,
+	useWatch,
+} from 'react-hook-form'
 import { useSWRConfig } from 'swr'
 import { createDeniedBookingAction } from '@/domains/admin/api/actions/denied'
 import { deniedBookingFormSchema } from '@/domains/admin/model/schema'
@@ -65,14 +70,13 @@ const DeniedBookingCreatePage = () => {
 		handleSubmit,
 		formState: { errors },
 		control,
-		watch,
 	} = useForm<DeniedBookingFormInput, undefined, DeniedBookingFormValues>({
 		mode: 'onBlur',
 		resolver: zodResolver(deniedBookingFormSchema),
 		defaultValues: defaultFormValues,
 	})
 
-	const type = watch('type')
+	const type = useWatch({ control, name: 'type' }) ?? 'single'
 
 	const onSubmit = useCallback(
 		async (data: DeniedBookingFormValues) => {

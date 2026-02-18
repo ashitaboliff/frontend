@@ -7,6 +7,7 @@ import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import { Image } from '@/shared/ui/atoms/ImageWithFallback'
 import Popup from '@/shared/ui/molecules/Popup'
 import cn from '@/shared/ui/utils/classNames'
+import styles from './GachaSelectPopup.module.css'
 
 export type PackSelectionPayload = {
 	version: string
@@ -86,10 +87,7 @@ const GachaSelectCarousel = ({
 		packs.length > 0 ? packs.length - 1 : 0,
 	)
 
-	const startIndex = useMemo(
-		() => (packs.length > 0 ? packs.length - 1 : 0),
-		[packs.length],
-	)
+	const startIndex = packs.length > 0 ? packs.length - 1 : 0
 	const emblaOptions = useMemo<EmblaOptionsType>(
 		() => ({
 			align: 'center',
@@ -131,7 +129,6 @@ const GachaSelectCarousel = ({
 
 	useEffect(() => {
 		if (!emblaApi) return
-		updateControls()
 		const handleScroll = () => tweenSlides(emblaApi)
 		handleScroll()
 		emblaApi.on('select', updateControls)
@@ -148,11 +145,9 @@ const GachaSelectCarousel = ({
 
 	useEffect(() => {
 		if (!emblaApi || packs.length === 0) {
-			setCurrentIndex(0)
 			return
 		}
 		slideRefs.current = slideRefs.current.slice(0, packs.length)
-		setCurrentIndex(startIndex)
 		emblaApi.scrollTo(startIndex, true)
 		tweenSlides(emblaApi)
 	}, [emblaApi, packs.length, startIndex, tweenSlides])
@@ -255,7 +250,13 @@ const GachaSelectCarousel = ({
 							</div>
 						)}
 						{isActive && (
-							<div className="gacha-yoyo-scale -translate-x-1/2 pointer-events-none absolute bottom-3 left-1/2 flex w-4/5 justify-center rounded-full bg-rainbow-45 px-4 py-2 ring-2 ring-white/50">
+							<div
+								className={cn(
+									styles.pullCta,
+									'-translate-x-1/2 pointer-events-none absolute bottom-3 left-1/2 flex w-4/5 justify-center rounded-full px-4 py-2 ring-2 ring-white/50',
+								)}
+								aria-hidden="true"
+							>
 								<span className="text-center font-black text-white tracking-wide">
 									このパックを引く
 								</span>

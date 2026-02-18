@@ -1,13 +1,13 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { CarouselPackDataItem } from '@/domains/gacha/model/types'
 import GachaController from '@/domains/gacha/ui/GachaController'
 import { Ads, CreepingOverlayAd } from '@/shared/ui/ads'
 import type { AdPlacement } from '@/shared/ui/ads/Ads'
 import type { Session } from '@/types/session'
 
-interface Props {
+type Props = {
 	readonly session: Session
 	readonly carouselPackData: CarouselPackDataItem[]
 }
@@ -94,10 +94,6 @@ const GachaAdPage = ({ session, carouselPackData }: Props) => {
 		setSlots(createRandomSlots())
 	}, [])
 
-	useEffect(() => {
-		reshuffleSlots()
-	}, [reshuffleSlots])
-
 	const handleTriggerClick = useCallback(() => {
 		setIsControllerOpen(true)
 	}, [])
@@ -120,7 +116,6 @@ const GachaAdPage = ({ session, carouselPackData }: Props) => {
 						return (
 							<Ads
 								placement={slot.placement}
-								className="w-full"
 								enableClickDetection={true}
 								key={slot.id}
 							/>
@@ -133,24 +128,26 @@ const GachaAdPage = ({ session, carouselPackData }: Props) => {
 							onClick={handleTriggerClick}
 							className="relative mx-auto flex h-full flex-col text-base-content transition"
 						>
-							<span className="rounded px-2 py-1 font-slim text-base-content text-xxs ring transition group-hover:scale-105">
+							<span className="px-2 py-1 font-slim text-base-content text-xxs transition group-hover:scale-105">
 								ガチャを引く
 							</span>
 						</button>
 					)
 				})}
 			</div>
-			<GachaController
-				session={session}
-				gachaPlayCountToday={playCount}
-				onGachaPlayedSuccessfully={handleGachaSuccess}
-				open={isControllerOpen}
-				onClose={handleControllerClose}
-				carouselPackData={carouselPackData}
-				ignorePlayCountLimit={true}
-				closeOnResultReset={true}
-				maxPlayCountOverride={Number.POSITIVE_INFINITY}
-			/>
+			{isControllerOpen && (
+				<GachaController
+					session={session}
+					gachaPlayCountToday={playCount}
+					onGachaPlayedSuccessfully={handleGachaSuccess}
+					open={isControllerOpen}
+					onClose={handleControllerClose}
+					carouselPackData={carouselPackData}
+					ignorePlayCountLimit={true}
+					closeOnResultReset={true}
+					maxPlayCountOverride={Number.POSITIVE_INFINITY}
+				/>
+			)}
 		</div>
 	)
 }

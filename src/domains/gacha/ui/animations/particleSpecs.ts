@@ -107,6 +107,7 @@ const getConfettiLayerByIndex = (index: number): ConfettiLayerConfig => {
 }
 
 export type ConfettiSpec = {
+	id: string
 	color: string
 	dx: number
 	dy: number
@@ -123,6 +124,7 @@ export type ConfettiSpec = {
 }
 
 export type RibbonSpec = {
+	id: string
 	color: string
 	dx: number
 	dy: number
@@ -135,6 +137,7 @@ export type RibbonSpec = {
 }
 
 export type LightBeamSpec = {
+	id: string
 	rotation: number
 	delay: number
 	anchorOffsetX: number
@@ -184,6 +187,7 @@ export const createConfettiSpecs = (): ConfettiSpec[] =>
 		const dx = Math.cos(rad) * distance
 		const dy = Math.sin(rad) * distance
 		return {
+			id: `confetti-${index}`,
 			color,
 			dx,
 			dy,
@@ -217,6 +221,7 @@ export const createRibbonSpecs = (): RibbonSpec[] =>
 		const dx = Math.cos(rad) * distance
 		const dy = Math.sin(rad) * distance - 140
 		return {
+			id: `ribbon-${index}`,
 			color,
 			dx,
 			dy,
@@ -241,6 +246,7 @@ export const createLightBeamSpecs = (): LightBeamSpec[] =>
 			LIGHT_CONE_SPREAD,
 		)
 		return {
+			id: `light-${index}`,
 			rotation:
 				-5 +
 				computeConeAngleOffset(index, LIGHT_BEAM_COUNT, LIGHT_CONE_SPREAD) +

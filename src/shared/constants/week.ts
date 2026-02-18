@@ -7,5 +7,3 @@ export const DAY_OF_WEEK_OPTIONS = [
 	{ value: '5', label: '金' },
 	{ value: '6', label: '土' },
 ] as const
-
-export type DayOfWeekOption = (typeof DAY_OF_WEEK_OPTIONS)[number]

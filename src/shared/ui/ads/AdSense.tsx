@@ -101,7 +101,12 @@ const RealAdSense = ({
 	return (
 		<ins
 			className="adsbygoogle"
-			style={{ display: 'block', textAlign: 'center', ...adStyle }}
+			style={{
+				display: 'block',
+				textAlign: 'center',
+				margin: '16px 0',
+				...adStyle,
+			}}
 			data-ad-client={effectiveClientId}
 			data-ad-slot={adSlot}
 			data-ad-format={adFormat}

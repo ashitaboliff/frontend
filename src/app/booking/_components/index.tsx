@@ -23,6 +23,28 @@ import { getCurrentJSTDateString } from '@/shared/utils'
 import { formatMonthDay, formatWeekday } from '@/shared/utils/dateFormat'
 import type { ApiError } from '@/types/response'
 
+type BookingCalendarContentProps = {
+	swrKey: ReturnType<typeof buildBookingRangeKey>
+	emptyBookingData: ReturnType<typeof buildEmptyBookingResponse>
+	onError: (err: ApiError) => void
+}
+
+const BookingCalendarContent = ({
+	swrKey,
+	emptyBookingData,
+	onError,
+}: BookingCalendarContentProps) => {
+	const { data, isValidating } = useSWR(swrKey, bookingRangeFetcher, {
+		revalidateOnFocus: false,
+		keepPreviousData: true,
+		onError,
+		suspense: true,
+		fallbackData: emptyBookingData,
+	})
+	const isInitialLoading = data === emptyBookingData && isValidating
+	return <BookingCalendar data={data} isLoading={isInitialLoading} />
+}
+
 const BookingMainPage = () => {
 	const { type, message } = useFlashMessage({
 		key: FLASH_MESSAGE_KEYS.booking,
@@ -61,21 +83,6 @@ const BookingMainPage = () => {
 		await mutate(key)
 	}
 
-	const Content = () => {
-		const { data, isValidating } = useSWR(key, bookingRangeFetcher, {
-			revalidateOnFocus: false,
-			keepPreviousData: true,
-			onError: (err: ApiError) => {
-				errorFeedback.showApiError(err)
-			},
-			suspense: true,
-			fallbackData: emptyBookingData,
-		})
-
-		const isInitialLoading = data === emptyBookingData && isValidating
-		return <BookingCalendar data={data} isLoading={isInitialLoading} />
-	}
-
 	return (
 		<>
 			{type && message && <FlashMessage type={type}>{message}</FlashMessage>}
@@ -93,7 +100,7 @@ const BookingMainPage = () => {
 					</button>
 				</div>
 			)}
-			<div className="mx-auto my-2 flex items-center justify-between">
+			<nav className="mx-auto my-2 flex max-w-xl items-center justify-between">
 				<button
 					type="button"
 					className="btn btn-outline"
@@ -102,7 +109,7 @@ const BookingMainPage = () => {
 				>
 					{'<'}
 				</button>
-				<div className="w-64 text-center font-bold text-md sm:w-72 sm:text-lg">
+				<h2 className="w-64 text-center font-bold text-md sm:w-72 sm:text-lg">
 					{`${formatMonthDay(viewDate, {
 						pad: false,
 						separator: '/',
@@ -115,7 +122,7 @@ const BookingMainPage = () => {
 						enclosed: true,
 					})}`}
 					までのコマ表
-				</div>
+				</h2>
 				<button
 					type="button"
 					className="btn btn-outline"
@@ -124,8 +131,12 @@ const BookingMainPage = () => {
 				>
 					{'>'}
 				</button>
-			</div>
-			<Content />
+			</nav>
+			<BookingCalendarContent
+				swrKey={key}
+				emptyBookingData={emptyBookingData}
+				onError={errorFeedback.showApiError}
+			/>
 		</>
 	)
 }

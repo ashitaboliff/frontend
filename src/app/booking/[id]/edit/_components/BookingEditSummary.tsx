@@ -30,32 +30,16 @@ const BookingEditSummary = () => {
 	const handleDelete = async () => {
 		deleteFeedback.clearFeedback()
 		setIsDeleting(true)
-		try {
-			const token = ensureAccessToken()
-			if (!isOwner && !token) {
-				return
-			}
-			const response = await deleteBookingAction({
-				bookingId: booking.id,
-				userId: session.user.id,
-				authToken: token ?? undefined,
-			})
-
-			if (response.ok) {
-				await mutateBookingCalendarsForDate(
-					mutate,
-					toDateKey(booking.bookingDate),
-				)
-				router.push('/booking')
-			} else {
-				if (response.status === StatusCode.FORBIDDEN) {
-					requireAuth(
-						'予約の操作トークンが無効になりました。再度認証してください。',
-					)
-				}
-				deleteFeedback.showApiError(response)
-			}
-		} catch (error) {
+		const token = ensureAccessToken()
+		if (!isOwner && !token) {
+			setIsDeleting(false)
+			return
+		}
+		const response = await deleteBookingAction({
+			bookingId: booking.id,
+			userId: session.user.id,
+			authToken: token ?? undefined,
+		}).catch((error: unknown) => {
 			deleteFeedback.showError(
 				'予約の削除に失敗しました。時間をおいて再度お試しください。',
 				{
@@ -63,7 +47,28 @@ const BookingEditSummary = () => {
 				},
 			)
 			logError('Error deleting booking', error)
+			return null
+		})
+
+		if (!response) {
+			setIsDeleting(false)
+			return
 		}
+		if (response.ok) {
+			await mutateBookingCalendarsForDate(
+				mutate,
+				toDateKey(booking.bookingDate),
+			)
+			router.push('/booking')
+			return
+		}
+		if (response.status === StatusCode.FORBIDDEN) {
+			requireAuth(
+				'予約の操作トークンが無効になりました。再度認証してください。',
+			)
+		}
+		deleteFeedback.showApiError(response)
+		setIsDeleting(false)
 	}
 
 	return (

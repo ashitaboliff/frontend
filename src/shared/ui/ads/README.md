@@ -19,6 +19,7 @@ NEXT_PUBLIC_ADS_ID="ca-pub-XXXXXXXXXXXXXXXX"
 - 広告スロットIDに応じて異なる色とリンク先が表示される
 - 実際のAdSense APIを呼び出さないため、動作確認が容易
 - 広告のフォーマットや配置をテスト可能
+- `fluid` フォーマット時はコンテナ実幅を計測し、250px未満の場合に警告表示する（`Fluid responsive ads must be at least 250px wide` 対策）
 
 本番環境（`NODE_ENV=production`）では実際のGoogle AdSense広告が表示されます。
 

@@ -3,7 +3,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import BookingRefreshButton from '@/app/booking/_components/BookingRefreshButton'
-import Modal from '@/shared/ui/molecules/Modal'
+import BookingRuleModal from '@/app/booking/_components/BookingRuleModal'
 
 const MainPageLayout = async () => {
 	const readmePath = path.join(
@@ -20,14 +20,9 @@ const MainPageLayout = async () => {
 	return (
 		<div className="flex justify-center gap-x-2">
 			<BookingRefreshButton />
-			<Modal
-				id={modalId}
-				btnText="使い方の表示"
-				btnClass="btn btn-outline btn-md w-30"
-				modalClass="prose prose-h3:text-center max-w-lg text-base-content"
-			>
+			<BookingRuleModal id={modalId}>
 				<MDXRemote source={markdownContent} />
-			</Modal>
+			</BookingRuleModal>
 		</div>
 	)
 }

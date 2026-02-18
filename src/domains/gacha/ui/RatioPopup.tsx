@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Fragment, useId, useState } from 'react'
+import { Fragment, useId } from 'react'
 import { listGachaConfigEntries } from '@/domains/gacha/config/selectors'
 import { calculateCategoryProbabilityBreakdown } from '@/domains/gacha/domain/gachaProbability'
 import type { GachaRarity } from '@/domains/gacha/model/types'
@@ -29,95 +29,89 @@ const rarityImageMap: Record<GachaRarity, string> = {
 	SECRET_RARE: 'Secret',
 }
 
-const RatioPopup = () => {
-	const [isPopupOpen, setIsPopupOpen] = useState(false)
+type Props = {
+	isPopupOpen: boolean
+	setIsPopupOpen: (open: boolean) => void
+}
 
+const RatioPopup = ({ isPopupOpen, setIsPopupOpen }: Props) => {
 	const versionEntries = listGachaConfigEntries()
 
 	const popupId = useId()
 
 	return (
-		<>
-			<button
-				type="button"
-				className="btn btn-outline w-full sm:flex-1"
-				onClick={() => setIsPopupOpen(true)}
-			>
-				提供割合
-			</button>
-
-			<Popup
-				id={popupId}
-				title="提供割合"
-				open={isPopupOpen}
-				onClose={() => setIsPopupOpen(false)}
-			>
-				<Tabs tabButtonClassName="text-sm">
-					{versionEntries.map(([versionKey, versionConfig]) => {
-						const allProcessedCategories =
-							calculateCategoryProbabilityBreakdown(versionConfig.categories)
-						const processedCategories = allProcessedCategories.filter(
-							(cat) => cat.name !== 'SECRET_RARE',
-						)
-						return (
-							<Tab key={versionKey} label={versionConfig.title}>
-								<div className="flex max-h-[50vh] flex-col items-center space-y-2 overflow-y-auto p-1 text-sm">
-									<p className={cn('w-full text-4xl', gkktt.className)}>
-										{versionConfig.title}
-									</p>
-									{processedCategories.map((category, catIndex) => {
-										const displayName =
-											rarityDisplayNameMap[category.name] || category.name
-										const imageName = rarityImageMap[category.name] || 'Common'
-										const titleClassName = cn(
-											'bg-white px-4 rounded-lg shadow-md w-full text-2xl',
-											gkktt.className,
-											catIndex > 0 ? 'mt-4' : '',
-										)
-										return (
-											<Fragment key={category.name}>
-												<p className={titleClassName}>{displayName}</p>
-												<div className="my-2 flex w-full flex-row">
-													<Image
-														src={getImageUrl(`/gacha/preset/${imageName}.webp`)}
-														width={72}
-														height={104}
-														alt={displayName}
-														className="mr-4 basis-1/4 rounded-md bg-base-content object-contain"
-														unoptimized
-													/>
-													<div className="flex basis-2/3 flex-col justify-center gap-1">
-														<div>
-															全体確率:{' '}
-															{category.overallProbabilityPercent.toFixed(2)}%
-														</div>
-														<div>封入数: {category.count}枚</div>
-														<div>
-															一枚当たりの確率:{' '}
-															{category.individualCardProbabilityPercent.toFixed(
-																4,
-															)}
-															%
-														</div>
+		<Popup
+			id={popupId}
+			title="提供割合"
+			open={isPopupOpen}
+			onClose={() => setIsPopupOpen(false)}
+		>
+			<Tabs tabButtonClassName="text-sm">
+				{versionEntries.map(([versionKey, versionConfig]) => {
+					const allProcessedCategories = calculateCategoryProbabilityBreakdown(
+						versionConfig.categories,
+					)
+					const processedCategories = allProcessedCategories.filter(
+						(cat) => cat.name !== 'SECRET_RARE',
+					)
+					return (
+						<Tab key={versionKey} label={versionConfig.title}>
+							<div className="flex max-h-[50vh] flex-col items-center space-y-2 overflow-y-auto p-1 text-sm">
+								<p className={cn('w-full text-4xl', gkktt.className)}>
+									{versionConfig.title}
+								</p>
+								{processedCategories.map((category, catIndex) => {
+									const displayName =
+										rarityDisplayNameMap[category.name] || category.name
+									const imageName = rarityImageMap[category.name] || 'Common'
+									const titleClassName = cn(
+										'bg-white px-4 rounded-lg shadow-md w-full text-2xl',
+										gkktt.className,
+										catIndex > 0 ? 'mt-4' : '',
+									)
+									return (
+										<Fragment key={category.name}>
+											<p className={titleClassName}>{displayName}</p>
+											<div className="my-2 flex w-full flex-row">
+												<Image
+													src={getImageUrl(`/gacha/preset/${imageName}.webp`)}
+													width={72}
+													height={104}
+													alt={displayName}
+													className="mr-4 basis-1/4 rounded-md bg-base-content object-contain"
+													unoptimized
+												/>
+												<div className="flex basis-2/3 flex-col justify-center gap-1">
+													<div>
+														全体確率:{' '}
+														{category.overallProbabilityPercent.toFixed(2)}%
+													</div>
+													<div>封入数: {category.count}枚</div>
+													<div>
+														一枚当たりの確率:{' '}
+														{category.individualCardProbabilityPercent.toFixed(
+															4,
+														)}
+														%
 													</div>
 												</div>
-											</Fragment>
-										)
-									})}
-								</div>
-							</Tab>
-						)
-					})}
-				</Tabs>
-				<button
-					type="button"
-					className="btn btn-ghost mt-4 w-full"
-					onClick={() => setIsPopupOpen(false)}
-				>
-					閉じる
-				</button>
-			</Popup>
-		</>
+											</div>
+										</Fragment>
+									)
+								})}
+							</div>
+						</Tab>
+					)
+				})}
+			</Tabs>
+			<button
+				type="button"
+				className="btn btn-ghost mt-4 w-full"
+				onClick={() => setIsPopupOpen(false)}
+			>
+				閉じる
+			</button>
+		</Popup>
 	)
 }
 

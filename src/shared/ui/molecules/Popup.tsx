@@ -1,13 +1,6 @@
 'use client'
 
-import {
-	memo,
-	type ReactNode,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-} from 'react'
+import { memo, type ReactNode, useCallback, useEffect, useRef } from 'react'
 import cn from '@/shared/ui/utils/classNames'
 
 export type PopupProps = {
@@ -103,7 +96,7 @@ const Popup = ({
 		}
 	}, [])
 
-	const titleId = useMemo(() => `${id}-title`, [id])
+	const titleId = `${id}-title`
 
 	// maxWidth: Tailwindトークンならクラス、そうでなければstyleで適用
 	const useTailwindMaxW = maxWidth && TAILWIND_MAXW.has(maxWidth)

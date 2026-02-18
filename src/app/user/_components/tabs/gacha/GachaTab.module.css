@@ -1,0 +1,69 @@
+.btnGaming {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  z-index: 0;
+  background-color: transparent;
+  border-color: transparent;
+  --btn-gaming-border: 4px;
+  --btn-gaming-bg: var(--color-bg-white, #fff);
+}
+
+.btnGaming::before,
+.btnGaming::after {
+  pointer-events: none;
+  border-start-start-radius: var(--join-ss, var(--radius-field));
+  border-start-end-radius: var(--join-se, var(--radius-field));
+  border-end-start-radius: var(--join-es, var(--radius-field));
+  border-end-end-radius: var(--join-ee, var(--radius-field));
+}
+
+.btnGaming::before {
+  content: "";
+  position: absolute;
+  inset: -400%;
+  background: conic-gradient(
+    from 0deg,
+    #ff3b30,
+    #ff9500,
+    #ffcc00,
+    #34c759,
+    #32ade6,
+    #007aff,
+    #5856d6,
+    #ff2d55,
+    #ff3b30
+  );
+  animation: gaming-rotate 2s linear infinite;
+  z-index: -2;
+}
+
+.btnGaming::after {
+  content: "";
+  position: absolute;
+  inset: var(--btn-gaming-border);
+  background-color: var(--btn-gaming-bg);
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.btnGaming:disabled,
+.btnGaming[disabled] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btnGaming::before {
+    animation: none;
+  }
+}
+
+@keyframes gaming-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

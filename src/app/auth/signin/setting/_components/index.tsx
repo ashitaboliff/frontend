@@ -13,7 +13,7 @@ import TextInputField from '@/shared/ui/atoms/TextInputField'
 import FeedbackMessage from '@/shared/ui/molecules/FeedbackMessage'
 import MultiSelectField from '@/shared/ui/molecules/MultiSelectField'
 
-interface Props {
+type Props = {
 	readonly redirectFrom?: string | null
 }
 

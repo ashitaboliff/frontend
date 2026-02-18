@@ -20,6 +20,29 @@ type PadlockListProps = {
 	readonly headers: Array<{ key: string; label: string }>
 }
 
+const PadlockRowCells = ({ item: padLock }: { readonly item: Padlock }) => (
+	<>
+		<td className="w-14 align-middle">
+			{padLock.isDeleted ? (
+				<span className="badge badge-error">
+					<TiDeleteOutline className="inline" />
+				</span>
+			) : null}
+		</td>
+		<td>{padLock.name}</td>
+		<td>
+			{formatDateTimeJaWithUnits(padLock.createdAt, {
+				hour12: true,
+			})}
+		</td>
+		<td>
+			{formatDateTimeJaWithUnits(padLock.updatedAt, {
+				hour12: true,
+			})}
+		</td>
+	</>
+)
+
 const PadlockList = ({
 	padLocks,
 	perPage,
@@ -45,28 +68,7 @@ const PadlockList = ({
 				onRowClick={onSelect}
 				itemKeyExtractor={(padLock) => padLock.id}
 				rowClassName="cursor-pointer"
-				renderCells={(padLock) => (
-					<>
-						<td className="w-14 align-middle">
-							{padLock.isDeleted ? (
-								<span className="badge badge-error">
-									<TiDeleteOutline className="inline" />
-								</span>
-							) : null}
-						</td>
-						<td>{padLock.name}</td>
-						<td>
-							{formatDateTimeJaWithUnits(padLock.createdAt, {
-								hour12: true,
-							})}
-						</td>
-						<td>
-							{formatDateTimeJaWithUnits(padLock.updatedAt, {
-								hour12: true,
-							})}
-						</td>
-					</>
-				)}
+				RowCells={PadlockRowCells}
 			/>
 		</PaginatedResourceLayout>
 	)

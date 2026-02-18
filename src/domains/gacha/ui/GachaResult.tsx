@@ -13,7 +13,7 @@ type Props = {
 	readonly state: GachaResultViewState
 }
 
-export const GachaResult = ({ state }: Props) => {
+const GachaResult = ({ state }: Props) => {
 	if (state.status === 'idle') {
 		return null
 	}

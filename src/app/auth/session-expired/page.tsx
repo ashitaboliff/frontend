@@ -5,7 +5,7 @@ import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export async function generateMetadata() {
 	return createMetaData({
-		title: 'セッションエラー | あしたぼホームページ',
+		title: 'セッションエラー',
 		description: 'セッションが無効か期限切れです。再度ログインしてください。',
 		url: '/auth/session-expired',
 	})

@@ -4,7 +4,7 @@ import { getAllBookingAction } from '@/domains/booking/api/actions'
 import { createMetaData } from '@/shared/hooks/useMetaData'
 
 export const metadata = createMetaData({
-	title: 'コマ表予約ログ | あしたぼホームページ',
+	title: 'コマ表予約ログ',
 	url: '/booking/logs',
 })
 

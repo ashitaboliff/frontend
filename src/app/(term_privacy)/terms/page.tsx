@@ -5,8 +5,8 @@ import { createMetaData } from '@/shared/hooks/useMetaData'
 import { LuCalendar, LuCalendarSync } from '@/shared/ui/icons'
 
 export const metadata = createMetaData({
-	title: '利用規約 | あしたぼホームページ',
-	description: 'あしたぼホームページのプライバシーポリシーです。',
+	title: '利用規約',
+	description: 'あしたぼホームページの利用規約です。',
 	url: '/terms',
 })
 

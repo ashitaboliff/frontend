@@ -73,45 +73,55 @@ const AdminUserPage = ({ users, query, headers }: Props) => {
 
 		setIsActionLoading(true)
 		actionFeedback.clearFeedback()
-		try {
-			const res = await deleteUserAction({ id: selectedUser.id })
-			if (res.ok) {
-				actionFeedback.showSuccess('ユーザーを削除しました。')
-				setIsDeleteOpen(false)
-				setIsDetailOpen(false)
-				router.refresh()
-			} else {
-				actionFeedback.showApiError(res)
-			}
-		} catch (error) {
-			logError('deleteUserAction failed', error)
-			actionFeedback.showError('ユーザー削除中に予期せぬエラーが発生しました。')
-		} finally {
+		const res = await deleteUserAction({ id: selectedUser.id }).catch(
+			(error: unknown) => {
+				logError('deleteUserAction failed', error)
+				actionFeedback.showError(
+					'ユーザー削除中に予期せぬエラーが発生しました。',
+				)
+				return null
+			},
+		)
+		if (!res) {
 			setIsActionLoading(false)
+			return
 		}
+		if (res.ok) {
+			actionFeedback.showSuccess('ユーザーを削除しました。')
+			setIsDeleteOpen(false)
+			setIsDetailOpen(false)
+			router.refresh()
+		} else {
+			actionFeedback.showApiError(res)
+		}
+		setIsActionLoading(false)
 	}, [actionFeedback, router, selectedUser])
 
 	const handleRoleChange = useCallback(
 		async (userId: string, role: AccountRole) => {
 			setIsActionLoading(true)
 			actionFeedback.clearFeedback()
-			try {
-				const res = await updateUserRoleAction({ id: userId, role })
-				if (res.ok) {
-					actionFeedback.showSuccess('ユーザー権限を更新しました。')
-					setIsDetailOpen(false)
-					router.refresh()
-				} else {
-					actionFeedback.showApiError(res)
-				}
-			} catch (error) {
-				logError('updateUserRoleAction failed', error)
-				actionFeedback.showError(
-					'ユーザー権限更新中に予期せぬエラーが発生しました。',
-				)
-			} finally {
+			const res = await updateUserRoleAction({ id: userId, role }).catch(
+				(error: unknown) => {
+					logError('updateUserRoleAction failed', error)
+					actionFeedback.showError(
+						'ユーザー権限更新中に予期せぬエラーが発生しました。',
+					)
+					return null
+				},
+			)
+			if (!res) {
 				setIsActionLoading(false)
+				return
 			}
+			if (res.ok) {
+				actionFeedback.showSuccess('ユーザー権限を更新しました。')
+				setIsDetailOpen(false)
+				router.refresh()
+			} else {
+				actionFeedback.showApiError(res)
+			}
+			setIsActionLoading(false)
 		},
 		[actionFeedback, router],
 	)

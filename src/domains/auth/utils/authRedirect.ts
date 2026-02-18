@@ -1,7 +1,7 @@
 import { buildFlashMessageValue } from '@/shared/constants/flashMessage'
 import PublicEnv from '@/shared/lib/env/public'
 
-export const AUTH_REDIRECT_FROM_PARAM = 'from'
+const AUTH_REDIRECT_FROM_PARAM = 'from'
 export const AUTH_REDIRECT_REASON_PARAM = 'reason'
 export const AUTH_REDIRECT_TARGET_PARAM = 'to'
 export const AUTH_REDIRECT_BOUNCE_PATH = '/auth/redirect'
@@ -54,7 +54,7 @@ const isAuthPath = (value: string) => {
 	return pathname === '/auth' || pathname.startsWith('/auth/')
 }
 
-export const getAuthRedirectMessage = (reason: AuthRedirectReason) =>
+const getAuthRedirectMessage = (reason: AuthRedirectReason) =>
 	AUTH_REDIRECT_MESSAGES[reason]
 
 export const buildAuthFlashValue = (reason: AuthRedirectReason) =>

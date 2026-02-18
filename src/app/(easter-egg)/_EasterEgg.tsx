@@ -5,14 +5,14 @@ import Image from 'next/image'
 import type { CSSProperties } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
-interface Petal {
+type Petal = {
 	id: string
 	left: number
 	top: number
 	hue: number
 }
 
-export interface CornerImage {
+type CornerImage = {
 	src: string
 	alt: string
 	width?: number
@@ -20,14 +20,14 @@ export interface CornerImage {
 	style?: CSSProperties
 }
 
-export interface CenterImage {
+type CenterImage = {
 	src: string
 	alt: string
 	width?: number
 	height?: number
 }
 
-interface Props {
+type Props = {
 	readonly background: string
 	readonly centerImage: CenterImage
 	readonly message: string
@@ -36,6 +36,8 @@ interface Props {
 	readonly textStrokeColor?: string
 	readonly petalCount?: number
 }
+
+const EMPTY_CORNER_IMAGES: CornerImage[] = []
 
 const createPetals = (count: number): Petal[] =>
 	Array.from({ length: count }).map((_, index) => ({
@@ -49,7 +51,7 @@ const EasterEgg = ({
 	background,
 	centerImage,
 	message,
-	cornerImages = [],
+	cornerImages = EMPTY_CORNER_IMAGES,
 	textColor = 'black',
 	textStrokeColor = 'white',
 	petalCount = 20,

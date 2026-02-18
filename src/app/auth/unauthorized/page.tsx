@@ -5,7 +5,7 @@ import { LuShieldAlert } from '@/shared/ui/icons'
 
 export async function generateMetadata() {
 	return createMetaData({
-		title: '403 Forbidden | あしたぼホームページ',
+		title: '403 Forbidden',
 		description: '権限エラーが発生しました。',
 		url: '/auth/unauthorized',
 	})
